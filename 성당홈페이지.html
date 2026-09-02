@@ -61,8 +61,8 @@
   section + section{border-top:1px solid var(--line);}
 
   /* ---------- Header ---------- */
+  .sticky-top{position:sticky; top:0; z-index:50;}
   .site-header{
-    position:sticky; top:0; z-index:50;
     background:rgba(246,241,228,0.92);
     backdrop-filter:blur(6px);
     border-bottom:1px solid var(--line);
@@ -105,41 +105,6 @@
     overflow:hidden; opacity:0; pointer-events:none;
   }
   .cpbc-radio-panel iframe{display:block; width:1px; height:1px; border:none;}
-  .nav-dropdown{position:relative;}
-  .nav-dropdown > summary{list-style:none; cursor:pointer;}
-  .nav-dropdown > summary::-webkit-details-marker{display:none;}
-  .nav-dropdown[open] > .nav-sites-btn{color:var(--wine); border-color:var(--wine); background:var(--paper-2);}
-  .nav-dropdown-chevron{width:11px; height:11px; flex:none; transition:transform .2s ease;}
-  .nav-dropdown[open] .nav-dropdown-chevron{transform:rotate(180deg);}
-  .main-nav .nav-sites-btn{
-    display:flex; align-items:center; gap:6px;
-    padding:7px 16px; border:1px solid var(--line); border-radius:999px;
-    font-size:12.5px; font-weight:600; white-space:nowrap;
-  }
-  .main-nav .nav-sites-btn:hover{color:var(--wine); border-color:var(--wine); background:var(--paper-2);}
-  .main-nav .nav-sites-btn::before{display:none;}
-  .nav-dropdown-panel{
-    position:absolute; top:calc(100% + 10px); right:0; z-index:60;
-    width:max-content; max-width:calc(100vw - 56px);
-    background:var(--white); border:1px solid var(--line); border-radius:10px;
-    box-shadow:0 20px 40px -18px rgba(30,20,15,.35);
-    padding:26px 28px; display:grid; grid-template-columns:repeat(4,260px);
-    gap:20px 32px; overflow-x:auto;
-  }
-  .nav-dropdown-col h4{
-    font-family:'Work Sans', sans-serif; font-size:13.5px; color:var(--gold); font-weight:700;
-    margin:0 0 12px; padding-bottom:9px; border-bottom:1px solid var(--line); letter-spacing:.01em;
-  }
-  .nav-dropdown-col ul{
-    display:flex; flex-wrap:wrap; gap:6px 12px;
-  }
-  .nav-dropdown-col li a{display:inline-block; padding:2px 0; font-size:13.5px; line-height:1.5; color:var(--ink-soft); white-space:nowrap;}
-  .nav-dropdown-col li a:hover{color:var(--wine);}
-  .nav-dropdown-panel-foot{
-    grid-column:1/-1; border-top:1px solid var(--line); padding-top:14px; margin-top:2px;
-    display:flex; justify-content:flex-end;
-  }
-  .nav-dropdown-panel-foot a{font-size:12.5px; font-weight:600; color:var(--wine); text-decoration:underline;}
   .nav-toggle{
     display:none; background:none; border:none; cursor:pointer; padding:6px;
   }
@@ -162,15 +127,6 @@
       border-bottom:1px solid var(--line); background:none;
     }
     .main-nav .cafe-btn.cpbc-radio-btn-active{border-bottom-color:var(--wine);}
-    .main-nav .nav-sites-btn{
-      display:flex; justify-content:space-between; padding:12px 4px; border:none; border-radius:0;
-      border-bottom:1px solid var(--line); background:none;
-    }
-    .nav-dropdown-panel{
-      position:static; width:auto; max-width:none; margin-top:0;
-      grid-template-columns:repeat(4,160px); gap:18px 24px;
-      box-shadow:none; border:none; border-radius:0; border-bottom:1px solid var(--line);
-    }
     .nav-toggle{display:block;}
   }
 
@@ -621,6 +577,7 @@
 </head>
 <body id="top">
 
+<div class="sticky-top">
 <header class="site-header">
   <div class="header-inner">
     <div class="brand-group">
@@ -652,94 +609,10 @@
             <iframe id="cpbcRadioFrame" title="cpbc 평화방송 라디오" allow="autoplay"></iframe>
           </div>
         </div>
-        <details class="nav-dropdown" id="navSitesDropdown">
-          <summary class="nav-sites-btn">
-            가톨릭 관련 사이트
-            <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m6 9 6 6 6-6"/></svg>
-          </summary>
-          <div class="nav-dropdown-panel">
-            <div class="nav-dropdown-col">
-              <h4>전국교구</h4>
-              <ul>
-                <li><a href="http://www.cbck.or.kr" target="_blank" rel="noopener">한국천주교주교회의</a></li>
-                <li><a href="http://aos.catholic.or.kr" target="_blank" rel="noopener">서울대교구</a></li>
-                <li><a href="http://www.caincheon.or.kr" target="_blank" rel="noopener">인천교구</a></li>
-                <li><a href="http://ucatholic.or.kr" target="_blank" rel="noopener">의정부교구</a></li>
-                <li><a href="http://www.cccatholic.or.kr" target="_blank" rel="noopener">춘천교구</a></li>
-                <li><a href="http://www.wjcatholic.or.kr" target="_blank" rel="noopener">원주교구</a></li>
-                <li><a href="http://www.djcatholic.or.kr" target="_blank" rel="noopener">대전교구</a></li>
-                <li><a href="http://www.cdcj.or.kr" target="_blank" rel="noopener">청주교구</a></li>
-                <li><a href="http://www.gjcatholic.or.kr" target="_blank" rel="noopener">광주대교구</a></li>
-                <li><a href="http://www.daegu-archdiocese.or.kr" target="_blank" rel="noopener">대구대교구</a></li>
-                <li><a href="http://cathms.kr/" target="_blank" rel="noopener">마산교구</a></li>
-                <li><a href="http://www.acatholic.or.kr" target="_blank" rel="noopener">안동교구</a></li>
-                <li><a href="http://www.catholicbusan.or.kr/" target="_blank" rel="noopener">부산교구</a></li>
-                <li><a href="http://www.diocesejeju.or.kr" target="_blank" rel="noopener">제주교구</a></li>
-                <li><a href="http://www.gunjong.or.kr" target="_blank" rel="noopener">군종교구</a></li>
-                <li><a href="https://www.casuwon.or.kr/" target="_blank" rel="noopener">수원교구</a></li>
-              </ul>
-            </div>
-            <div class="nav-dropdown-col">
-              <h4>교구성당</h4>
-              <ul>
-                <li><a href="http://hosung.net/" target="_blank" rel="noopener">호성동 성당</a></li>
-                <li><a href="http://kscatholic.or.kr" target="_blank" rel="noopener">금상동 성당</a></li>
-                <li><a href="http://www.jeondong.or.kr/" target="_blank" rel="noopener">전동 성당</a></li>
-                <li><a href="http://www.nabawi.kr/" target="_blank" rel="noopener">나바위 성당</a></li>
-                <li><a href="http://www.scwrsd.or.kr/" target="_blank" rel="noopener">송천와룡 성당</a></li>
-                <li><a href="http://www.sigidong.or.kr/" target="_blank" rel="noopener">시기동 성당</a></li>
-                <li><a href="http://www.songcheon.org/" target="_blank" rel="noopener">송천동 성당</a></li>
-                <li><a href="http://www.susin.org/" target="_blank" rel="noopener">서신동 성당</a></li>
-                <li><a href="http://www.yjdsd.or.kr/" target="_blank" rel="noopener">연지동 성당</a></li>
-                <li><a href="http://www.ysparish.com/" target="_blank" rel="noopener">영등소라 성당</a></li>
-              </ul>
-            </div>
-            <div class="nav-dropdown-col">
-              <h4>성지</h4>
-              <ul>
-                <li><a href="http://www.martyr.co.kr/assets/holy/" target="_blank" rel="noopener">순교의 땅 전주</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=4" target="_blank" rel="noopener">초남이성지</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=5" target="_blank" rel="noopener">천호성지</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=12" target="_blank" rel="noopener">개갑장터순교성지</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=1" target="_blank" rel="noopener">치명자산성지</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=8" target="_blank" rel="noopener">서천교순교터</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=7" target="_blank" rel="noopener">나바위성지</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=16" target="_blank" rel="noopener">신시도최양업공원</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=2" target="_blank" rel="noopener">전동성당</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=9" target="_blank" rel="noopener">초록바위순교터</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=6" target="_blank" rel="noopener">여산순교성지</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=20" target="_blank" rel="noopener">수분공소</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=3" target="_blank" rel="noopener">전주숲정이성지</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=10" target="_blank" rel="noopener">전주옥순교지</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=11" target="_blank" rel="noopener">김제순교성지</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=23" target="_blank" rel="noopener">어은공소</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=17" target="_blank" rel="noopener">되재성당지</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=24" target="_blank" rel="noopener">전라감영</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=19" target="_blank" rel="noopener">수류성당</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=21" target="_blank" rel="noopener">신성공소</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=22" target="_blank" rel="noopener">안대동성당지</a></li>
-                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=18" target="_blank" rel="noopener">범바위</a></li>
-                <li><a href="http://www.jcatholic.or.kr/theme/main/pages/pilgrimage01.html" target="_blank" rel="noopener">교우촌 도보순례</a></li>
-              </ul>
-            </div>
-            <div class="nav-dropdown-col">
-              <h4>기관</h4>
-              <ul>
-                <li><a href="http://www.cate-ins.com/" target="_blank" rel="noopener">전주가톨릭신학원</a></li>
-                <li><a href="http://www.shalom-house.com/" target="_blank" rel="noopener">평화의 전당</a></li>
-                <li><a href="http://kscatholic.or.kr/" target="_blank" rel="noopener">금상동 성당 하늘자리 봉안당</a></li>
-                <li><a href="http://cafe.daum.net/jpregia" target="_blank" rel="noopener">전주 파티마의 모후 레지아</a></li>
-                <li><a href="http://cafe.daum.net/gcjahwal" target="_blank" rel="noopener">고창 지역 자활센터</a></li>
-                <li><a href="http://www.gs1004.or.kr/" target="_blank" rel="noopener">군산 장애인 종합복지관</a></li>
-                <li><a href="http://lspkorea.com" target="_blank" rel="noopener">성요셉동산 양로원</a></li>
-                <li><a href="http://www.issm.co.kr/" target="_blank" rel="noopener">익산 성모병원</a></li>
-              </ul>
-            </div>
-            <div class="nav-dropdown-panel-foot">
-              <a href="https://www.jcatholic.or.kr/index.php" target="_blank" rel="noopener">천주교 전주교구 홈페이지 →</a>
-            </div>
-          </div>
-        </details>
+        <a href="https://www.jcatholic.or.kr/index.php" target="_blank" rel="noopener" class="cafe-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 21V9l8-6 8 6v12"/><path d="M9 21v-7h6v7"/></svg>
+          <span>전주교구</span>
+        </a>
       </div>
     </nav>
     <button class="nav-toggle" id="navToggle" aria-label="메뉴 열기">
@@ -763,6 +636,7 @@
   </div>
 </div>
 <!-- /TODAYWORD -->
+</div>
 
 <section class="hero">
   <div class="wrap hero-inner">
@@ -1118,15 +992,6 @@
   });
   document.getElementById('heroMassBtn').addEventListener('click', e => { e.preventDefault(); openInfoModal('massModal'); });
   document.getElementById('heroLocationBtn').addEventListener('click', e => { e.preventDefault(); openInfoModal('locationModal'); });
-
-  // "가톨릭 관련 사이트" dropdown: close on outside click or Escape
-  const navSitesDropdown = document.getElementById('navSitesDropdown');
-  document.addEventListener('click', (e) => {
-    if (navSitesDropdown.open && !navSitesDropdown.contains(e.target)) navSitesDropdown.removeAttribute('open');
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && navSitesDropdown.open) navSitesDropdown.removeAttribute('open');
-  });
 
   // Notice accordion
   document.querySelectorAll('.notice-item').forEach(item => {
