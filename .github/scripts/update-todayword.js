@@ -47,7 +47,7 @@ async function main() {
 
   const ym = `${yyyymmdd.slice(0, 4)}.${yyyymmdd.slice(4, 6)}`;
   const day = yyyymmdd.slice(6, 8);
-  const verse = `${quote} (✝ ${book} ${citation})`;
+  const verse = `${quote} (${book} ${citation})`;
 
   console.log('Extracted:', JSON.stringify({ ym, day, color, feastName, verse }, null, 2));
 
