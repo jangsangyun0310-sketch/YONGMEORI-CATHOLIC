@@ -53,6 +53,10 @@
     color:var(--ink);
     margin:0;
   }
+  .section-verse{font-size:30px;}
+  @media (max-width:640px){
+    .section-verse{font-size:22px;}
+  }
   a{color:inherit;text-decoration:none;}
   ul{margin:0;padding:0;list-style:none;}
   img{max-width:100%;display:block;}
@@ -203,6 +207,10 @@
   .intro-grid{display:grid; grid-template-columns:0.9fr 1.1fr; gap:64px; align-items:start;}
   .intro-grid h2{font-size:32px; line-height:1.35; margin-bottom:20px;}
   .intro-grid h2 .verse-line2{display:block; white-space:nowrap;}
+  @media (max-width:640px){
+    .intro-grid h2{font-size:21px;}
+    .intro-grid h2 .verse-cite{font-size:15px;}
+  }
   .intro-grid h2 .verse-cite{display:block; text-align:right; margin-top:8px; font-size:20px;}
   .intro-grid p{color:var(--ink-soft); margin-bottom:16px;}
   .intro-grid .eyebrow{color:var(--wine);}
@@ -719,7 +727,7 @@
 <section id="mass">
   <div class="wrap reveal">
     <p class="eyebrow">미사시간 안내</p>
-    <h2 style="font-size:30px; margin-bottom:28px;">"너희는 나를 기억하여 이를 행하여라." (루카 22,19)</h2>
+    <h2 class="section-verse" style="margin-bottom:28px;">"너희는 나를 기억하여 이를 행하여라." (루카 22,19)</h2>
 
     <div class="mass-grid">
       <div class="mass-col">
@@ -757,7 +765,7 @@
     <div class="notice-head">
       <div>
         <p class="eyebrow">공지사항 · 주보</p>
-        <h2 style="font-size:30px;">"기쁜 소식을 전하는 이들의 발이 얼마나 아름다운가!" (로마서 10,15)</h2>
+        <h2 class="section-verse">"기쁜 소식을 전하는 이들의 발이 얼마나 아름다운가!" (로마서 10,15)</h2>
       </div>
     </div>
 
@@ -803,7 +811,7 @@
 <section id="schedule">
   <div class="wrap reveal">
     <p class="eyebrow">본당 일정</p>
-    <h2 style="font-size:30px; margin-bottom:28px;">"당신의 길을 주님께 맡겨라." (시편 37,5)</h2>
+    <h2 class="section-verse" style="margin-bottom:28px;">"당신의 길을 주님께 맡겨라." (시편 37,5)</h2>
 
     <div class="cal-nav">
       <button class="cal-nav-btn" id="calPrev" type="button" aria-label="이전 달">‹</button>
@@ -828,7 +836,7 @@
 <section id="gallery">
   <div class="wrap reveal">
     <p class="eyebrow">갤러리</p>
-    <h2 style="font-size:30px;">"주님께서 우리에게 큰일을 하셨기에 우리는 기뻐하였네." (시편 126,3)</h2>
+    <h2 class="section-verse">"주님께서 우리에게 큰일을 하셨기에 우리는 기뻐하였네." (시편 126,3)</h2>
 
     <div class="gallery-year-tabs" id="galleryYearTabs"></div>
 
@@ -842,7 +850,7 @@
 <section id="location">
   <div class="wrap">
     <p class="eyebrow">오시는 길</p>
-    <h2 style="font-size:30px; margin-bottom:24px;">"목마른 사람은 다 나에게 와서 마셔라." (요한 7,37)</h2>
+    <h2 class="section-verse" style="margin-bottom:24px;">"목마른 사람은 다 나에게 와서 마셔라." (요한 7,37)</h2>
 
     <div class="loc-map" id="locMap">
       <div class="loc-map-hint" id="locMapHint">지도를 클릭하면 스크롤로 확대·축소할 수 있어요</div>
