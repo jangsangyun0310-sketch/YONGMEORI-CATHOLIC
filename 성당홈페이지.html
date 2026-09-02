@@ -283,14 +283,6 @@
   }
   .notice-item.open .notice-body{max-height:220px;}
   .notice-body-inner{padding:0 4px 24px; font-size:14px; color:var(--ink-soft); max-width:70ch;}
-  .bulletin-card{
-    margin-top:36px; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;
-    background:var(--navy); color:var(--white); padding:26px 32px; border-radius:6px;
-  }
-  .bulletin-card h3{color:var(--white); font-size:19px; margin-bottom:6px;}
-  .bulletin-card p{margin:0; font-size:13.5px; color:#C7CCD6;}
-  .bulletin-card .btn-primary{background:var(--gold); color:var(--navy);}
-  .bulletin-card .btn-primary:hover{background:#C09B3E;}
 
   /* ---------- Gallery ---------- */
   .gallery-grid{
@@ -445,7 +437,6 @@
     background:var(--paper-2); border:1px solid var(--line); border-radius:6px; padding:24px 28px; margin-bottom:36px;
   }
   .bulletin-latest h3{font-size:19px; margin:4px 0 8px;}
-  .bulletin-latest .warn{font-size:12.5px; color:var(--wine); margin:0; max-width:56ch;}
   .bulletin-year-tabs{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px;}
   .year-tab{
     padding:8px 16px; font-size:13.5px; font-weight:600; color:var(--ink-soft);
@@ -783,12 +774,15 @@
       </div>
     </div>
 
-    <div class="bulletin-card">
-      <div>
-        <h3>본당 주보 안내</h3>
-        <p>매주 주일 배부되는 주보는 성당 로비에서 받아보실 수 있습니다. 지난 주보는 아래 주보 아카이브에서 연도별로 확인하실 수 있어요.</p>
-      </div>
-      <a href="#bulletin" class="btn btn-primary">지난 주보 보기</a>
+    <div id="bulletin" style="margin-top:44px; padding-top:36px; border-top:1px solid var(--line);">
+      <p class="eyebrow" style="margin-bottom:8px;">본당 주보 아카이브</p>
+      <h3 style="font-size:22px; margin-bottom:8px;">주보로 보는 본당의 발자취</h3>
+      <p style="color:var(--ink-soft); font-size:14px; margin-bottom:28px; max-width:64ch;">매주 주일 배부되는 주보는 성당 로비에서 받아보실 수 있습니다.</p>
+
+      <div class="bulletin-latest" id="bulletinLatest"></div>
+
+      <div class="bulletin-year-tabs" id="bulletinYearTabs"></div>
+      <ul class="bulletin-week-list" id="bulletinWeekList"></ul>
     </div>
   </div>
 </section>
@@ -815,19 +809,6 @@
       </table>
       <div class="cal-detail" id="calDetail"></div>
     </div>
-  </div>
-</section>
-
-<section id="bulletin">
-  <div class="wrap reveal">
-    <p class="eyebrow">본당 주보 아카이브</p>
-    <h2 style="font-size:30px; margin-bottom:8px;">주보로 보는 본당의 발자취</h2>
-    <p style="color:var(--ink-soft); font-size:14px; margin-bottom:28px; max-width:64ch;">다음카페 주보 게시판에 기록된 주보를 연도별로 모았습니다. 본당 역사의 중요한 기록인 만큼 계속 채워나갈 예정입니다.</p>
-
-    <div class="bulletin-latest" id="bulletinLatest"></div>
-
-    <div class="bulletin-year-tabs" id="bulletinYearTabs"></div>
-    <ul class="bulletin-week-list" id="bulletinWeekList"></ul>
   </div>
 </section>
 
@@ -1546,7 +1527,6 @@
       <div>
         <p class="eyebrow" style="margin-bottom:6px;">최근 게시된 주보 (${latest.d})</p>
         <h3>${latest.t}</h3>
-        <p class="warn">⚠ 다음카페 주보 게시판은 2024년 6월 이후 갱신되지 않았습니다. 이번 주 실제 주보는 사무실(063-287-0441)로 문의해 주세요.</p>
       </div>
       <button class="btn btn-primary" id="bulletinLatestBtn" type="button">주보 보기</button>
     `;
