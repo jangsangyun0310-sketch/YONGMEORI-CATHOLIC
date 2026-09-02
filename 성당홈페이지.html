@@ -1,0 +1,1908 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script>
+  // Strip any leftover #hash from a previous nav click (e.g. #location) BEFORE the
+  // browser auto-scrolls to it, so every reload lands on the top of the page.
+  if (location.hash) { history.replaceState(null, '', location.pathname + location.search); }
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>천주교 전주교구 용머리성당</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=Black+Han+Sans&family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.24.0/maplibre-gl.min.css">
+<style>
+  :root{
+    --paper:#F6F1E4;
+    --paper-2:#EFE7D2;
+    --ink:#2A2320;
+    --ink-soft:#5B5148;
+    --wine:#6E1E2C;
+    --wine-deep:#4E1420;
+    --gold:#A9822F;
+    --navy:#1D2A3D;
+    --line:#D8CDB8;
+    --white:#FFFDF8;
+    --radius-arch: 240px 240px 12px 12px;
+    --maxw: 1120px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    word-break:keep-all;
+    overflow-wrap:break-word;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    color:var(--ink);
+    margin:0;
+  }
+  a{color:inherit;text-decoration:none;}
+  ul{margin:0;padding:0;list-style:none;}
+  img{max-width:100%;display:block;}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px;}
+  .eyebrow{
+    font-size:13px;
+    color:var(--wine);
+    font-weight:600;
+    letter-spacing:0.02em;
+  }
+  section{padding:88px 0;}
+  section + section{border-top:1px solid var(--line);}
+
+  /* ---------- Header ---------- */
+  .site-header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(246,241,228,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .header-inner{
+    max-width:var(--maxw); margin:0 auto; padding:10px 28px;
+    display:flex; align-items:flex-end; justify-content:space-between;
+  }
+  .brand-group{display:flex; align-items:flex-end; gap:16px;}
+  .brand{display:flex; align-items:center;}
+  .cafe-btn{
+    display:flex; align-items:center; gap:6px; flex:none;
+    padding:7px 14px; font-size:12.5px; font-weight:600; color:var(--ink-soft);
+    border:1px solid var(--line); border-radius:999px;
+    transition:color .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .cafe-btn:hover{color:var(--wine); border-color:var(--wine); background:var(--paper-2);}
+  .brand-mark{height:112px; width:auto; flex:none;}
+  .main-nav{display:flex; flex-direction:column; align-items:flex-end; gap:10px;}
+  .main-nav ul{display:flex; gap:34px;}
+  .main-nav a{
+    font-size:17px; font-weight:500; color:var(--ink-soft);
+    padding:6px 0; border-bottom:2px solid transparent;
+    transition:color .15s ease, border-color .15s ease;
+  }
+  .main-nav a:hover{color:var(--wine);}
+  .nav-sites-row{display:flex; align-items:center; gap:10px;}
+  .main-nav .cafe-btn{
+    padding:7px 14px; font-size:12.5px; font-weight:600; border-bottom:1px solid var(--line);
+  }
+  .main-nav .cafe-btn:hover{border-bottom-color:var(--wine);}
+  .main-nav .cafe-btn::before{display:none;}
+  .nav-dropdown{position:relative;}
+  .nav-dropdown > summary{list-style:none; cursor:pointer;}
+  .nav-dropdown > summary::-webkit-details-marker{display:none;}
+  .nav-dropdown[open] > .nav-sites-btn{color:var(--wine); border-color:var(--wine); background:var(--paper-2);}
+  .nav-dropdown-chevron{width:11px; height:11px; flex:none; transition:transform .2s ease;}
+  .nav-dropdown[open] .nav-dropdown-chevron{transform:rotate(180deg);}
+  .main-nav .nav-sites-btn{
+    display:flex; align-items:center; gap:6px;
+    padding:7px 16px; border:1px solid var(--line); border-radius:999px;
+    font-size:12.5px; font-weight:600; white-space:nowrap;
+  }
+  .main-nav .nav-sites-btn:hover{color:var(--wine); border-color:var(--wine); background:var(--paper-2);}
+  .main-nav .nav-sites-btn::before{display:none;}
+  .nav-dropdown-panel{
+    position:absolute; top:calc(100% + 10px); right:0; z-index:60;
+    width:max-content; max-width:calc(100vw - 56px);
+    background:var(--white); border:1px solid var(--line); border-radius:10px;
+    box-shadow:0 20px 40px -18px rgba(30,20,15,.35);
+    padding:26px 28px; display:grid; grid-template-columns:repeat(4,260px);
+    gap:20px 32px; overflow-x:auto;
+  }
+  .nav-dropdown-col h4{
+    font-family:'Work Sans', sans-serif; font-size:13.5px; color:var(--gold); font-weight:700;
+    margin:0 0 12px; padding-bottom:9px; border-bottom:1px solid var(--line); letter-spacing:.01em;
+  }
+  .nav-dropdown-col ul{
+    display:flex; flex-wrap:wrap; gap:6px 12px;
+  }
+  .nav-dropdown-col li a{display:inline-block; padding:2px 0; font-size:13.5px; line-height:1.5; color:var(--ink-soft); white-space:nowrap;}
+  .nav-dropdown-col li a:hover{color:var(--wine);}
+  .nav-dropdown-panel-foot{
+    grid-column:1/-1; border-top:1px solid var(--line); padding-top:14px; margin-top:2px;
+    display:flex; justify-content:flex-end;
+  }
+  .nav-dropdown-panel-foot a{font-size:12.5px; font-weight:600; color:var(--wine); text-decoration:underline;}
+  .nav-toggle{
+    display:none; background:none; border:none; cursor:pointer; padding:6px;
+  }
+  .nav-toggle svg{width:26px;height:26px;}
+
+  @media (max-width:860px){
+    .main-nav{
+      align-items:stretch; gap:0;
+      position:fixed; inset:60px 0 auto 0; background:var(--paper);
+      border-bottom:1px solid var(--line);
+      transform:translateY(-120%); transition:transform .25s ease;
+      padding:10px 28px 24px; max-height:calc(100vh - 60px); overflow-y:auto;
+    }
+    .main-nav.open{transform:translateY(0);}
+    .main-nav ul{flex-direction:column; gap:4px;}
+    .main-nav a{display:block; padding:12px 4px; border-bottom:1px solid var(--line);}
+    .nav-sites-row{flex-direction:column; align-items:stretch; gap:0;}
+    .main-nav .cafe-btn{
+      display:flex; padding:12px 4px; border:none; border-radius:0;
+      border-bottom:1px solid var(--line); background:none;
+    }
+    .main-nav .nav-sites-btn{
+      display:flex; justify-content:space-between; padding:12px 4px; border:none; border-radius:0;
+      border-bottom:1px solid var(--line); background:none;
+    }
+    .nav-dropdown-panel{
+      position:static; width:auto; max-width:none; margin-top:0;
+      grid-template-columns:repeat(4,160px); gap:18px 24px;
+      box-shadow:none; border:none; border-radius:0; border-bottom:1px solid var(--line);
+    }
+    .nav-toggle{display:block;}
+  }
+
+  /* ---------- Today's Word bar ---------- */
+  .todayword-bar{
+    display:block; background:var(--paper-2); border-bottom:1px solid var(--line);
+    transition:background .15s ease;
+  }
+  .todayword-bar:hover{background:var(--white);}
+  .todayword-inner{
+    display:flex; align-items:center; gap:18px; padding:12px 28px;
+  }
+  .todayword-date{
+    display:flex; flex-direction:column; align-items:center; line-height:1; flex:none;
+  }
+  .todayword-ym{font-size:10.5px; color:var(--ink-soft); letter-spacing:.03em;}
+  .todayword-day{font-family:'Fraunces',serif; font-size:20px; font-weight:700; color:var(--wine);}
+  .todayword-icon{
+    flex:none; width:34px; height:34px; border-radius:50%; border:1px solid var(--gold);
+    color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:15px;
+  }
+  .todayword-text{flex:1; min-width:0; display:flex; flex-direction:column; gap:2px;}
+  .todayword-text strong{font-size:13.5px; color:var(--ink);}
+  .todayword-text span{font-size:12px; color:var(--ink-soft);}
+  .todayword-arrow{
+    flex:none; font-size:12.5px; font-weight:600; color:var(--wine); white-space:nowrap;
+  }
+  @media (max-width:640px){
+    .todayword-text span{display:none;}
+    .todayword-inner{padding:10px 20px; gap:12px;}
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{padding:64px 0 96px; border-top:none;}
+  .hero-inner{
+    display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center;
+  }
+  .hero h1{font-family:'Black Han Sans', sans-serif; font-weight:400; font-size:52px; line-height:1.1; margin-bottom:14px; letter-spacing:.04em;}
+  .hero p.hero-motto{
+    font-family:'Nanum Myeongjo', serif; font-weight:800; font-size:26px; color:var(--wine);
+    margin-bottom:20px;
+  }
+  .hero p.lead{font-size:17px; color:var(--ink-soft); max-width:44ch; margin-bottom:36px;}
+  .btn-row{display:flex; gap:14px; flex-wrap:wrap;}
+  .btn{
+    display:inline-block; padding:13px 26px; font-size:14.5px; font-weight:600;
+    border-radius:4px; transition:transform .15s ease, background .15s ease;
+  }
+  .btn-primary{background:var(--wine); color:var(--white);}
+  .btn-primary:hover{background:var(--wine-deep);}
+  .btn-ghost{border:1px solid var(--ink); color:var(--ink);}
+  .btn-ghost:hover{background:var(--ink); color:var(--paper);}
+
+  .arch-frame{
+    position:relative; width:100%; aspect-ratio:4/3;
+    border-radius:32px;
+    overflow:hidden;
+    background:
+      radial-gradient(120% 90% at 50% 0%, #7C2632 0%, var(--wine) 45%, var(--wine-deep) 100%);
+    box-shadow:0 24px 48px -18px rgba(30,20,15,0.35);
+    outline:1px solid rgba(169,130,47,0.35);
+    outline-offset:-1px;
+  }
+  .arch-frame svg{position:absolute; inset:0; width:100%; height:100%;}
+  .arch-frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 38%;}
+  .hero-slide{opacity:0; transition:opacity 1.8s ease;}
+  .hero-slide.active{opacity:1;}
+
+  /* ---------- Intro ---------- */
+  .intro-grid{display:grid; grid-template-columns:0.9fr 1.1fr; gap:64px; align-items:start;}
+  .intro-grid h2{font-size:32px; line-height:1.35; margin-bottom:20px;}
+  .intro-grid h2 .verse-line2{display:block; white-space:nowrap;}
+  .intro-grid h2 .verse-cite{display:block; text-align:right; margin-top:8px; font-size:20px;}
+  .intro-grid p{color:var(--ink-soft); margin-bottom:16px;}
+  .fact-list{margin-top:28px; border-top:1px solid var(--line);}
+  .fact-list li{
+    display:flex; justify-content:space-between; gap:20px;
+    padding:14px 0; border-bottom:1px solid var(--line); font-size:14.5px;
+  }
+  .fact-list span:first-child{color:var(--ink-soft);}
+  .fact-list span:last-child{font-weight:600; text-align:right;}
+
+  .pastor-list{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:22px;
+    border-top:1px solid var(--ink); padding-top:24px; margin-top:16px;
+  }
+  .pastor-list li{display:flex; flex-direction:column; align-items:center; gap:8px; min-width:0; text-align:center;}
+  .pastor-photo{
+    aspect-ratio:3/4; border-radius:6px; overflow:hidden; background:var(--paper-2);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .pastor-photo img{width:100%; height:100%; object-fit:cover; display:block;}
+  .pastor-photo .noimg{font-family:'Fraunces',serif; font-size:26px; color:var(--gold); font-weight:600;}
+  .pastor-list .gen{font-size:12px; color:var(--gold); font-weight:600; letter-spacing:.02em;}
+  .pastor-list .pname{
+    font-family:'Fraunces',serif; font-weight:600; font-size:13px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .pastor-list .pdate{font-size:12px; color:var(--ink-soft); line-height:1.4;}
+
+  /* ---------- Intro photo ---------- */
+  .intro-photo{
+    position:relative; margin:32px 0 0; height:310px; border-radius:4px; overflow:hidden;
+    outline:1px solid var(--line); outline-offset:-1px; box-shadow:0 16px 32px -20px rgba(30,20,15,.4);
+  }
+  .intro-photo img{width:100%; height:100%; object-fit:cover; display:block;}
+
+  /* ---------- Mass times ---------- */
+  .mass-grid{display:grid; grid-template-columns:1fr 1fr; gap:56px;}
+  .mass-col-title{
+    font-family:'Fraunces',serif; font-size:18px; font-weight:600; color:var(--wine);
+    margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--line);
+  }
+  .mass-table{width:100%; border-collapse:collapse;}
+  .mass-table thead th{
+    text-align:left; font-size:13px; font-weight:600; color:var(--ink-soft);
+    padding:10px 4px; border-bottom:1px solid var(--ink);
+  }
+  .mass-table td{padding:16px 4px; border-bottom:1px solid var(--line); font-size:15px; white-space:nowrap;}
+  .mass-table td.time{font-family:'Fraunces',serif; font-size:20px; font-weight:600; color:var(--wine); width:110px;}
+  .mass-table td.note{color:var(--ink-soft); font-size:13.5px;}
+  .note-box{
+    margin-top:24px; padding:16px 20px; background:var(--paper-2); border-left:3px solid var(--gold);
+    font-size:13.5px; color:var(--ink-soft); border-radius:2px;
+  }
+
+  /* ---------- Notices ---------- */
+  .notice-head{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px; gap:20px; flex-wrap:wrap;}
+  .notice-list{margin-top:20px; border-top:1px solid var(--ink);}
+  .notice-item{border-bottom:1px solid var(--line);}
+  .notice-row{
+    display:flex; align-items:center; gap:20px; padding:20px 4px; cursor:pointer; width:100%;
+    background:none; border:none; text-align:left; font-family:inherit;
+  }
+  .notice-tag{
+    flex:none; font-size:12px; font-weight:600; color:var(--wine);
+    border:1px solid var(--wine); padding:4px 10px; border-radius:999px;
+  }
+  .notice-title{flex:1; font-size:15.5px; font-weight:500;}
+  .notice-date{flex:none; font-size:13px; color:var(--ink-soft);}
+  .notice-plus{flex:none; width:18px; height:18px; position:relative;}
+  .notice-plus::before, .notice-plus::after{
+    content:""; position:absolute; background:var(--ink-soft); transition:transform .2s ease;
+  }
+  .notice-plus::before{left:0; top:50%; width:100%; height:1.5px; transform:translateY(-50%);}
+  .notice-plus::after{top:0; left:50%; width:1.5px; height:100%; transform:translateX(-50%);}
+  .notice-item.open .notice-plus::after{transform:translateX(-50%) rotate(90deg); opacity:0;}
+  .notice-body{
+    max-height:0; overflow:hidden; transition:max-height .25s ease;
+  }
+  .notice-item.open .notice-body{max-height:220px;}
+  .notice-body-inner{padding:0 4px 24px; font-size:14px; color:var(--ink-soft); max-width:70ch;}
+  .bulletin-card{
+    margin-top:36px; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;
+    background:var(--navy); color:var(--white); padding:26px 32px; border-radius:6px;
+  }
+  .bulletin-card h3{color:var(--white); font-size:19px; margin-bottom:6px;}
+  .bulletin-card p{margin:0; font-size:13.5px; color:#C7CCD6;}
+  .bulletin-card .btn-primary{background:var(--gold); color:var(--navy);}
+  .bulletin-card .btn-primary:hover{background:#C09B3E;}
+
+  /* ---------- Gallery ---------- */
+  .gallery-grid{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:14px; margin-top:36px;
+  }
+  .gallery-item{
+    cursor:pointer; border:none; padding:0; background:none; text-align:left; font-family:inherit;
+  }
+  .gallery-thumb{
+    aspect-ratio:4/5; border-radius:4px; overflow:hidden; position:relative;
+    box-shadow:0 10px 24px -14px rgba(30,20,15,.35);
+    outline:1px solid var(--line); outline-offset:-1px;
+  }
+  .gallery-thumb svg{width:100%; height:100%;}
+  .gallery-thumb img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .4s ease;}
+  .gallery-item:hover .gallery-thumb img{transform:scale(1.04);}
+  .gallery-count{
+    position:absolute; right:8px; bottom:8px; padding:3px 9px; border-radius:999px;
+    background:rgba(20,15,12,.62); color:var(--white); font-size:11.5px; font-weight:600; letter-spacing:.02em;
+  }
+  .gallery-cap{margin-top:12px; text-align:center; display:flex; flex-direction:column; gap:3px;}
+  .gallery-cap-date{font-size:11.5px; color:var(--ink-soft); letter-spacing:.03em;}
+  .gallery-cap-title{font-size:13px; color:var(--ink); font-weight:600; letter-spacing:.01em; line-height:1.35;}
+  .gallery-cap-extra{font-size:11.5px; color:var(--ink-soft); font-weight:400;}
+  @media (max-width:860px){.gallery-grid{grid-template-columns:repeat(2,1fr);}}
+
+  .gallery-year-tabs{display:flex; flex-wrap:wrap; gap:8px; margin:28px 0 8px;}
+  .gallery-year-tabs .year-tab[data-soon]{position:relative;}
+
+  .gallery-pagination{
+    display:flex; align-items:center; justify-content:center; gap:6px; margin-top:36px; flex-wrap:wrap;
+  }
+  .gallery-pagination button{
+    font-family:inherit; cursor:pointer; background:none; border:1px solid var(--line); border-radius:4px;
+    color:var(--ink-soft); font-size:13px; padding:8px 13px; line-height:1; transition:border-color .2s ease, color .2s ease, background .2s ease;
+  }
+  .gallery-pagination button:hover:not(:disabled){border-color:var(--ink-soft); color:var(--ink);}
+  .gallery-pagination button:disabled{opacity:.35; cursor:default;}
+  .gallery-pagination button.active{background:var(--wine); border-color:var(--wine); color:var(--white);}
+  .gallery-pagination .ellipsis{padding:8px 4px; color:var(--ink-soft); font-size:13px;}
+
+  .info-modal{
+    position:fixed; inset:0; background:rgba(20,15,12,0.72); z-index:110;
+    display:none; align-items:center; justify-content:center; padding:24px;
+  }
+  .info-modal.open{display:flex;}
+  .info-modal-inner{
+    max-width:480px; width:100%; max-height:86vh; overflow-y:auto;
+    background:var(--paper); border-radius:8px; box-shadow:0 24px 60px -20px rgba(20,15,12,.5);
+  }
+  .info-modal-head{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:20px 24px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--paper);
+  }
+  .info-modal-head h3{font-family:'Fraunces',serif; font-size:20px; margin:0;}
+  .info-modal-close{background:none; border:1px solid var(--ink); border-radius:999px; width:32px; height:32px; cursor:pointer; flex:none;}
+  .info-modal-body{padding:20px 24px;}
+  .info-modal-body .contact-list--row{grid-template-columns:1fr; gap:20px; margin-top:0; padding-top:0; border-top:none;}
+  .info-modal-body .note-box{margin-top:20px;}
+
+  #massModal .info-modal-inner{max-width:620px;}
+  .info-modal-body .mass-grid{grid-template-columns:1fr 1fr; gap:20px;}
+  .info-modal-body .mass-col-title{font-size:15px; margin-bottom:6px; padding-bottom:6px;}
+  .info-modal-body .mass-table thead th{padding:6px 4px; font-size:11.5px;}
+  .info-modal-body .mass-table td{padding:8px 4px; font-size:13px;}
+  .info-modal-body .mass-table td.time{font-size:16px; width:auto;}
+  .info-modal-body .mass-table td.note{font-size:11px;}
+  @media (max-width:600px){
+    .info-modal-body .mass-grid{grid-template-columns:1fr;}
+  }
+
+  .lightbox{
+    position:fixed; inset:0; background:rgba(20,15,12,0.86); z-index:100;
+    display:none; align-items:center; justify-content:center; padding:30px;
+  }
+  .lightbox.open{display:flex;}
+  .lightbox-inner{max-width:640px; width:100%; background:var(--paper); border-radius:8px; overflow:hidden; max-height:88vh; display:flex; flex-direction:column;}
+  .lightbox-img-wrap{position:relative;}
+  .lightbox-img{background:var(--ink); overflow-y:auto; max-height:76vh;}
+  .lightbox-img svg{width:100%; height:100%;}
+  .lightbox-img img{width:100%; height:auto; display:block; background:var(--ink);}
+  .lightbox-img img + img{border-top:4px solid var(--paper);}
+  .lightbox-nav{
+    display:none; position:absolute; top:50%; transform:translateY(-50%); z-index:2;
+    width:40px; height:40px; border-radius:50%; border:none; background:rgba(20,15,12,.55); color:var(--white);
+    font-size:22px; line-height:1; cursor:pointer; align-items:center; justify-content:center;
+  }
+  .lightbox-nav:hover{background:rgba(20,15,12,.8);}
+  .lightbox-prev{left:12px;}
+  .lightbox-next{right:12px;}
+  .lightbox-inner.has-nav .lightbox-nav{display:flex;}
+  .lightbox-inner.is-photo{max-width:760px;}
+  .lightbox-inner.is-photo .lightbox-img{
+    height:70vh; max-height:70vh; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .lightbox-inner.is-photo .lightbox-img img{
+    width:auto; height:100%; max-width:100%; object-fit:contain;
+  }
+  @media (max-width:640px){
+    .lightbox-inner.is-photo .lightbox-img{height:60vh; max-height:60vh;}
+  }
+
+  /* ---------- Schedule (본당 일정) ---------- */
+  .cal-nav{
+    display:flex; align-items:center; justify-content:center; gap:20px; margin-bottom:28px;
+  }
+  .cal-nav-btn{
+    width:36px; height:36px; border-radius:50%; border:1px solid var(--line); background:var(--white);
+    font-size:18px; color:var(--ink-soft); cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .cal-nav-btn:hover{border-color:var(--wine); color:var(--wine); background:var(--paper-2);}
+  .cal-month{font-family:'Fraunces',serif; font-size:22px; font-weight:600; min-width:9ch; text-align:center;}
+  .cal-layout{display:grid; grid-template-columns:1.1fr 1fr; gap:40px; align-items:start;}
+  .cal-grid{width:100%; border-collapse:collapse; table-layout:fixed;}
+  .cal-grid th{
+    font-size:12.5px; font-weight:600; color:var(--ink-soft); padding:8px 0; border-bottom:1px solid var(--ink);
+  }
+  .cal-grid th.sun{color:var(--wine);}
+  .cal-grid th.sat{color:var(--navy);}
+  .cal-grid td{padding:4px; text-align:center; vertical-align:top;}
+  .cal-day{
+    width:36px; height:36px; margin:0 auto; display:flex; align-items:center; justify-content:center;
+    border-radius:50%; font-size:14px; color:var(--ink); cursor:pointer; border:1px solid transparent;
+    transition:border-color .15s ease, background .15s ease, color .15s ease;
+  }
+  .cal-day.outside{color:var(--line); cursor:default;}
+  .cal-day.has-event{border-color:var(--gold); font-weight:600;}
+  .cal-day.today{background:var(--paper-2); font-weight:700;}
+  .cal-day:not(.outside):hover{background:var(--paper-2);}
+  .cal-day.selected{background:var(--wine); border-color:var(--wine); color:var(--white);}
+  .cal-detail{
+    background:var(--paper-2); border-radius:6px; padding:24px; min-height:220px;
+  }
+  .cal-detail-date{
+    font-family:'Fraunces',serif; font-size:17px; font-weight:600; color:var(--wine);
+    padding-bottom:12px; margin-bottom:12px; border-bottom:1px solid var(--line);
+  }
+  .cal-detail-item{padding:12px 0; border-bottom:1px solid var(--line);}
+  .cal-detail-item:last-child{border-bottom:none;}
+  .cal-detail-item .cal-item-title{font-weight:600; font-size:14.5px;}
+  .cal-detail-item .cal-item-meta{font-size:12.5px; color:var(--ink-soft); margin-top:4px; line-height:1.6;}
+  .cal-detail-empty{color:var(--ink-soft); font-size:13.5px; text-align:center; padding:40px 10px;}
+  @media (max-width:860px){
+    .cal-layout{grid-template-columns:1fr; gap:24px;}
+  }
+
+  /* ---------- Bulletin archive ---------- */
+  .bulletin-latest{
+    display:flex; justify-content:space-between; align-items:center; gap:24px; flex-wrap:wrap;
+    background:var(--paper-2); border:1px solid var(--line); border-radius:6px; padding:24px 28px; margin-bottom:36px;
+  }
+  .bulletin-latest h3{font-size:19px; margin:4px 0 8px;}
+  .bulletin-latest .warn{font-size:12.5px; color:var(--wine); margin:0; max-width:56ch;}
+  .bulletin-year-tabs{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px;}
+  .year-tab{
+    padding:8px 16px; font-size:13.5px; font-weight:600; color:var(--ink-soft);
+    border:1px solid var(--line); border-radius:999px; background:var(--white); cursor:pointer;
+  }
+  .year-tab.active{background:var(--wine); border-color:var(--wine); color:var(--white);}
+  .year-tab:disabled{opacity:.4; cursor:default;}
+  .bulletin-week-list{border-top:1px solid var(--ink);}
+  .bulletin-week-row{
+    display:flex; align-items:center; gap:16px; padding:14px 4px; width:100%;
+    background:none; border:none; border-bottom:1px solid var(--line); cursor:pointer; text-align:left; font-family:inherit;
+  }
+  .bulletin-week-row:hover{background:var(--paper-2);}
+  .bulletin-week-row .wdate{font-family:'Fraunces',serif; font-weight:600; color:var(--wine); width:104px; flex:none; font-size:15px;}
+  .bulletin-week-row .wtitle{flex:1; font-size:14px; color:var(--ink-soft);}
+  .bulletin-empty-note{padding:28px 4px; color:var(--ink-soft); font-size:13.5px; border-bottom:1px solid var(--line);}
+  .lightbox-cap{padding:18px 22px; display:flex; justify-content:space-between; align-items:center; gap:16px;}
+  .lightbox-close{background:none; border:1px solid var(--ink); border-radius:999px; width:32px; height:32px; cursor:pointer; flex:none;}
+
+  /* ---------- Location ---------- */
+  .loc-map{
+    position:relative; height:560px; border-radius:6px; overflow:hidden; border:1px solid var(--line);
+  }
+  .loc-map-hint{
+    position:absolute; inset:0; z-index:5; display:flex; align-items:center; justify-content:center;
+    background:rgba(20,15,12,0.35); color:#fff; font-size:14.5px; font-weight:600; text-align:center;
+    padding:20px; cursor:pointer; transition:opacity .35s ease;
+  }
+  .loc-map-hint.hide{opacity:0; pointer-events:none;}
+  .loc-map-caption{
+    margin-top:14px; padding:12px 18px; background:var(--paper-2); border-radius:4px;
+    font-size:13px; color:var(--ink-soft); text-align:center;
+  }
+  .loc-map-caption .directions-link{margin-left:8px; color:var(--wine); text-decoration:underline; font-weight:600;}
+  .loc-map .maplibregl-map{font-family:'Work Sans', sans-serif; background:#F4F1EA;}
+  .loc-map .maplibregl-ctrl-attrib{font-size:10.5px;}
+  .map-pin-main{
+    width:32px; height:32px; border-radius:50%; background:#D7263D; border:3px solid #fff;
+    box-shadow:0 3px 8px rgba(30,20,15,.45); cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .map-pin-nearby{
+    width:26px; height:26px; border-radius:50%; background:#2563EB; border:3px solid #fff;
+    box-shadow:0 2px 8px rgba(30,20,15,.45); display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .map-popup{font-family:'Work Sans', sans-serif; font-size:13.5px;}
+  .map-popup strong{font-family:'Fraunces',serif; font-size:15.5px; display:block; margin-bottom:2px; color:var(--ink);}
+  .map-legend{display:flex; gap:22px; margin-top:14px; font-size:13px; color:var(--ink-soft); flex-wrap:wrap;}
+  .map-legend span{display:inline-flex; align-items:center; gap:7px;}
+  .map-legend i{width:12px; height:12px; border-radius:50%; display:inline-block;}
+  .contact-list--row{
+    display:grid; grid-template-columns:repeat(5,1fr); gap:24px; margin-top:40px; padding-top:32px; border-top:1px solid var(--ink);
+  }
+  .contact-list--row li{display:flex; gap:14px; padding:0; border-bottom:none;}
+  .contact-list svg{flex:none; width:20px; height:20px; margin-top:2px; color:var(--wine);}
+  .contact-list .label{font-size:12.5px; color:var(--ink-soft); display:block; margin-bottom:3px;}
+  .contact-list .value{font-size:15px; font-weight:500;}
+  .contact-list .value-blue{color:#000;}
+
+  /* ---------- Footer ---------- */
+  footer{background:var(--navy); color:#C7CCD6; padding:26px 0;}
+  .footer-bottom{font-size:12.5px; color:#8B93A3; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+
+  @media (max-width:860px){
+    .hero-inner{grid-template-columns:1fr;}
+    .hero-inner .arch-frame{order:-1; max-width:320px; margin:0 auto;}
+    .intro-grid{grid-template-columns:1fr;}
+    .loc-map{height:360px;}
+    .contact-list--row{grid-template-columns:1fr 1fr;}
+    .intro-photo{height:220px;}
+    .mass-grid{grid-template-columns:1fr; gap:36px;}
+    section{padding:64px 0;}
+    .hero h1{font-size:38px;}
+    .brand-mark{height:64px;}
+  }
+
+  /* ---------- Motion ---------- */
+  @media (prefers-reduced-motion: no-preference){
+    .site-header{transition:box-shadow .3s ease, background-color .3s ease;}
+    .site-header.scrolled{box-shadow:0 8px 24px -18px rgba(30,20,15,.45); background:rgba(246,241,228,0.97);}
+
+    .reveal{opacity:0; transform:translateY(30px); transition:opacity .8s cubic-bezier(.22,.61,.36,1), transform .8s cubic-bezier(.22,.61,.36,1);}
+    .reveal.in-view{opacity:1; transform:translateY(0);}
+
+    .reveal-stagger > *{opacity:0; transform:translateY(24px); transition:opacity .6s ease, transform .6s ease;}
+    .reveal-stagger.in-view > *{opacity:1; transform:translateY(0);}
+    .reveal-stagger.in-view > *:nth-child(1){transition-delay:.03s;}
+    .reveal-stagger.in-view > *:nth-child(2){transition-delay:.09s;}
+    .reveal-stagger.in-view > *:nth-child(3){transition-delay:.15s;}
+    .reveal-stagger.in-view > *:nth-child(4){transition-delay:.21s;}
+    .reveal-stagger.in-view > *:nth-child(5){transition-delay:.27s;}
+    .reveal-stagger.in-view > *:nth-child(6){transition-delay:.33s;}
+    .reveal-stagger.in-view > *:nth-child(7){transition-delay:.39s;}
+    .reveal-stagger.in-view > *:nth-child(8){transition-delay:.45s;}
+    .reveal-stagger.in-view > *:nth-child(9){transition-delay:.51s;}
+    .reveal-stagger.in-view > *:nth-child(10){transition-delay:.57s;}
+    .reveal-stagger.in-view > *:nth-child(11){transition-delay:.63s;}
+
+    .arch-frame img{animation:kenburns 24s ease-in-out infinite alternate;}
+    @keyframes kenburns{from{transform:scale(1);} to{transform:scale(1.08);}}
+
+    .hero h1, .hero p.hero-motto, .hero p.lead, .hero .btn-row{
+      opacity:0; transform:translateY(18px); animation:heroIn .8s cubic-bezier(.22,.61,.36,1) forwards;
+    }
+    .hero h1{animation-delay:.05s;}
+    .hero p.hero-motto{animation-delay:.16s;}
+    .hero p.lead{animation-delay:.27s;}
+    .hero .btn-row{animation-delay:.38s;}
+    @keyframes heroIn{to{opacity:1; transform:translateY(0);}}
+
+    .main-nav a{position:relative;}
+    .main-nav a::before{
+      content:''; position:absolute; left:0; bottom:0; width:0; height:2px; background:var(--gold);
+      transition:width .3s ease;
+    }
+    .main-nav a:hover::before{width:100%;}
+  }
+
+  .back-to-top{
+    position:fixed; right:22px; bottom:22px; width:46px; height:46px; border-radius:50%;
+    background:var(--wine); color:var(--white); border:none; cursor:pointer; z-index:70;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 24px -10px rgba(30,20,15,.55);
+    opacity:0; visibility:hidden; transform:translateY(14px);
+    transition:opacity .3s ease, transform .3s ease, visibility .3s, background .2s ease;
+  }
+  .back-to-top.show{opacity:1; visibility:visible; transform:translateY(0);}
+  .back-to-top:hover{background:var(--wine-deep);}
+</style>
+</head>
+<body id="top">
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand-group">
+      <a href="#top" class="brand">
+        <img class="brand-mark" src="images/logo-horizontal.png" alt="용머리성당 YONGMEORI CATHOLIC CHURCH SINCE 1989">
+      </a>
+    </div>
+    <nav class="main-nav" id="mainNav">
+      <ul>
+        <li><a href="#intro">본당 소개</a></li>
+        <li><a href="#mass">미사시간</a></li>
+        <li><a href="#notice">공지사항</a></li>
+        <li><a href="#schedule">본당 일정</a></li>
+        <li><a href="#bulletin">주보</a></li>
+        <li><a href="#gallery">갤러리</a></li>
+        <li><a href="#location">오시는 길</a></li>
+      </ul>
+      <div class="nav-sites-row">
+        <a href="https://cafe.daum.net/yong-meo-ri" target="_blank" rel="noopener" class="cafe-btn">
+          <img src="images/daumcafe-icon.png" alt="" width="16" height="16">
+          <span>다음카페</span>
+        </a>
+        <details class="nav-dropdown" id="navSitesDropdown">
+          <summary class="nav-sites-btn">
+            가톨릭 관련 사이트
+            <svg class="nav-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <div class="nav-dropdown-panel">
+            <div class="nav-dropdown-col">
+              <h4>전국교구</h4>
+              <ul>
+                <li><a href="http://www.cbck.or.kr" target="_blank" rel="noopener">한국천주교주교회의</a></li>
+                <li><a href="http://aos.catholic.or.kr" target="_blank" rel="noopener">서울대교구</a></li>
+                <li><a href="http://www.caincheon.or.kr" target="_blank" rel="noopener">인천교구</a></li>
+                <li><a href="http://ucatholic.or.kr" target="_blank" rel="noopener">의정부교구</a></li>
+                <li><a href="http://www.cccatholic.or.kr" target="_blank" rel="noopener">춘천교구</a></li>
+                <li><a href="http://www.wjcatholic.or.kr" target="_blank" rel="noopener">원주교구</a></li>
+                <li><a href="http://www.djcatholic.or.kr" target="_blank" rel="noopener">대전교구</a></li>
+                <li><a href="http://www.cdcj.or.kr" target="_blank" rel="noopener">청주교구</a></li>
+                <li><a href="http://www.gjcatholic.or.kr" target="_blank" rel="noopener">광주대교구</a></li>
+                <li><a href="http://www.daegu-archdiocese.or.kr" target="_blank" rel="noopener">대구대교구</a></li>
+                <li><a href="http://cathms.kr/" target="_blank" rel="noopener">마산교구</a></li>
+                <li><a href="http://www.acatholic.or.kr" target="_blank" rel="noopener">안동교구</a></li>
+                <li><a href="http://www.catholicbusan.or.kr/" target="_blank" rel="noopener">부산교구</a></li>
+                <li><a href="http://www.diocesejeju.or.kr" target="_blank" rel="noopener">제주교구</a></li>
+                <li><a href="http://www.gunjong.or.kr" target="_blank" rel="noopener">군종교구</a></li>
+                <li><a href="https://www.casuwon.or.kr/" target="_blank" rel="noopener">수원교구</a></li>
+              </ul>
+            </div>
+            <div class="nav-dropdown-col">
+              <h4>교구성당</h4>
+              <ul>
+                <li><a href="http://hosung.net/" target="_blank" rel="noopener">호성동 성당</a></li>
+                <li><a href="http://kscatholic.or.kr" target="_blank" rel="noopener">금상동 성당</a></li>
+                <li><a href="http://www.jeondong.or.kr/" target="_blank" rel="noopener">전동 성당</a></li>
+                <li><a href="http://www.nabawi.kr/" target="_blank" rel="noopener">나바위 성당</a></li>
+                <li><a href="http://www.scwrsd.or.kr/" target="_blank" rel="noopener">송천와룡 성당</a></li>
+                <li><a href="http://www.sigidong.or.kr/" target="_blank" rel="noopener">시기동 성당</a></li>
+                <li><a href="http://www.songcheon.org/" target="_blank" rel="noopener">송천동 성당</a></li>
+                <li><a href="http://www.susin.org/" target="_blank" rel="noopener">서신동 성당</a></li>
+                <li><a href="http://www.yjdsd.or.kr/" target="_blank" rel="noopener">연지동 성당</a></li>
+                <li><a href="http://www.ysparish.com/" target="_blank" rel="noopener">영등소라 성당</a></li>
+              </ul>
+            </div>
+            <div class="nav-dropdown-col">
+              <h4>성지</h4>
+              <ul>
+                <li><a href="http://www.martyr.co.kr/assets/holy/" target="_blank" rel="noopener">순교의 땅 전주</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=4" target="_blank" rel="noopener">초남이성지</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=5" target="_blank" rel="noopener">천호성지</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=12" target="_blank" rel="noopener">개갑장터순교성지</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=1" target="_blank" rel="noopener">치명자산성지</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=8" target="_blank" rel="noopener">서천교순교터</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=7" target="_blank" rel="noopener">나바위성지</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=16" target="_blank" rel="noopener">신시도최양업공원</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=2" target="_blank" rel="noopener">전동성당</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=9" target="_blank" rel="noopener">초록바위순교터</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=6" target="_blank" rel="noopener">여산순교성지</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=20" target="_blank" rel="noopener">수분공소</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=3" target="_blank" rel="noopener">전주숲정이성지</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=10" target="_blank" rel="noopener">전주옥순교지</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=11" target="_blank" rel="noopener">김제순교성지</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=23" target="_blank" rel="noopener">어은공소</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=17" target="_blank" rel="noopener">되재성당지</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=24" target="_blank" rel="noopener">전라감영</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=19" target="_blank" rel="noopener">수류성당</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=21" target="_blank" rel="noopener">신성공소</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=22" target="_blank" rel="noopener">안대동성당지</a></li>
+                <li><a href="http://www.martyr.co.kr/assets/holy/view.html?sid=18" target="_blank" rel="noopener">범바위</a></li>
+                <li><a href="http://www.jcatholic.or.kr/theme/main/pages/pilgrimage01.html" target="_blank" rel="noopener">교우촌 도보순례</a></li>
+              </ul>
+            </div>
+            <div class="nav-dropdown-col">
+              <h4>기관</h4>
+              <ul>
+                <li><a href="http://www.cate-ins.com/" target="_blank" rel="noopener">전주가톨릭신학원</a></li>
+                <li><a href="http://www.shalom-house.com/" target="_blank" rel="noopener">평화의 전당</a></li>
+                <li><a href="http://kscatholic.or.kr/" target="_blank" rel="noopener">금상동 성당 하늘자리 봉안당</a></li>
+                <li><a href="http://cafe.daum.net/jpregia" target="_blank" rel="noopener">전주 파티마의 모후 레지아</a></li>
+                <li><a href="http://cafe.daum.net/gcjahwal" target="_blank" rel="noopener">고창 지역 자활센터</a></li>
+                <li><a href="http://www.gs1004.or.kr/" target="_blank" rel="noopener">군산 장애인 종합복지관</a></li>
+                <li><a href="http://lspkorea.com" target="_blank" rel="noopener">성요셉동산 양로원</a></li>
+                <li><a href="http://www.issm.co.kr/" target="_blank" rel="noopener">익산 성모병원</a></li>
+              </ul>
+            </div>
+            <div class="nav-dropdown-panel-foot">
+              <a href="https://www.jcatholic.or.kr/index.php" target="_blank" rel="noopener">천주교 전주교구 홈페이지 →</a>
+            </div>
+          </div>
+        </details>
+      </div>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="메뉴 열기">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</header>
+
+<a href="https://maria.catholic.or.kr/mi_pr/missa/missa.asp" target="_blank" rel="noopener" class="todayword-bar">
+  <div class="wrap todayword-inner">
+    <div class="todayword-date">
+      <span class="todayword-ym" id="twYm"></span>
+      <span class="todayword-day" id="twDay"></span>
+    </div>
+    <span class="todayword-icon">✟</span>
+    <div class="todayword-text">
+      <strong>오늘의 말씀</strong>
+      <span>가톨릭굿뉴스에서 오늘의 미사 독서와 복음 말씀을 확인하세요</span>
+    </div>
+    <span class="todayword-arrow">확인하기 →</span>
+  </div>
+</a>
+
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <p class="eyebrow">천주교 전주교구</p>
+      <h1>용머리성당</h1>
+      <p class="hero-motto">"모이면 기도, 흩어지면 선교"</p>
+      <p class="lead">용머리 언덕에서 안행동 이웃들과 함께 기도해온 성당입니다. 처음 오시는 걸음도 낯설지 않도록, 문은 늘 열려 있습니다.</p>
+      <div class="btn-row">
+        <a href="#mass" class="btn btn-primary" id="heroMassBtn">미사시간 안내</a>
+        <a href="#location" class="btn btn-ghost" id="heroLocationBtn">연락처 안내</a>
+      </div>
+    </div>
+    <div class="arch-frame" id="heroSlideshow">
+      <img src="images/hero-slide-01.jpg" alt="용머리성당 성전 외관" class="hero-slide active">
+      <img src="images/hero-slide-02.jpg" alt="용머리성당 성전 내부" class="hero-slide">
+      <img src="images/hero-slide-03.jpg" alt="용머리성당 부속 건물" class="hero-slide">
+      <img src="images/hero-slide-04.jpg" alt="용머리성당 성모상" class="hero-slide">
+    </div>
+  </div>
+</section>
+
+<section id="intro">
+  <div class="wrap intro-grid reveal">
+    <div>
+      <p class="eyebrow">본당 소개</p>
+      <h2>"나의 집은 모든 민족들을 위한<br><span class="verse-line2">&nbsp;&nbsp;기도의 집이라 불리리라."</span><span class="verse-cite">(이사야 56,7)</span></h2>
+      <figure class="intro-photo" id="introPhoto">
+        <img src="images/gallery-06-adoration.jpg" alt="성체조배실">
+      </figure>
+    </div>
+    <div id="introText">
+      <p>용머리성당은 1989년 효자동본당에서 분리 설립되어,<br>효자3동성당이라는 이름으로 시작해 이후 용머리성당으로 개칭하였습니다.<br>현재의 성전은 1997년 12월 6일에 봉헌되었습니다.</p>
+      <p>"모이면 기도, 흩어지면 선교"라는 표어 아래,<br>미사와 성사, 예비신자 교리, 각 단체 활동을 통해<br>신자들이 신앙 안에서 서로 연결될 수 있도록 돕고 있습니다.<br>처음 오시는 분도 편안하게 머무실 수 있습니다.</p>
+      <ul class="fact-list">
+        <li><span>설립</span><span>1989년 1월 27일</span></li>
+        <li><span>주보성인</span><span>성 조윤호 요셉</span></li>
+        <li><span>주임신부</span><span>권완성 사도요한 신부</span></li>
+        <li><span>신자 수</span><span>757세대 1,809명</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wrap" style="margin-top:64px;">
+    <p class="eyebrow" style="margin-bottom:16px;">역대 주임신부</p>
+    <ul class="pastor-list reveal-stagger">
+      <li><div class="pastor-photo"><img src="images/priest-01-jojeongo.jpg" alt="조정오 요셉 신부"></div><span class="gen">초대</span><span class="pname">조정오 요셉 신부</span><span class="pdate">1989.01.27 ~ 1993.02.10</span></li>
+      <li><div class="pastor-photo"><img src="images/priest-02-hyunyubok.jpg" alt="현유복 베네딕도 신부"></div><span class="gen">2대</span><span class="pname">현유복 베네딕도 신부</span><span class="pdate">1993.02.12 ~ 1998.02.10</span></li>
+      <li><div class="pastor-photo"><img src="images/priest-03-parkgijun.jpg" alt="박기준 라우렌시오 신부"></div><span class="gen">3대</span><span class="pname">박기준 라우렌시오 신부</span><span class="pdate">1998.02.11 ~ 2002.01.20</span></li>
+      <li><div class="pastor-photo"><img src="images/priest-04-jeongcheonbong.jpg" alt="정천봉 베네딕도 신부"></div><span class="gen">4대</span><span class="pname">정천봉 베네딕도 신부</span><span class="pdate">2002.01.23 ~ 2005.01.23</span></li>
+      <li><div class="pastor-photo"><img src="images/priest-05-kimyoungsoo.jpg" alt="김영수 헨리코 신부"></div><span class="gen">5대</span><span class="pname">김영수 헨리코 신부</span><span class="pdate">2005.01.24 ~ 2008.01.28</span></li>
+      <li><div class="pastor-photo"><img src="images/priest-06-hanjeonghyun.jpg" alt="한정현 아우구스티노 신부"></div><span class="gen">6대</span><span class="pname">한정현 아우구스티노 신부</span><span class="pdate">2008.01.29 ~ 2010.01.03</span></li>
+      <li><div class="pastor-photo"><img src="images/priest-07-kimhyungsoo.jpg" alt="김형수 바오로 신부"></div><span class="gen">7대</span><span class="pname">김형수 바오로 신부</span><span class="pdate">2010.01.29 ~ 2014.01.28</span></li>
+      <li><div class="pastor-photo"><img src="images/priest-08-leegeumjae.jpg" alt="이금재 마르코 신부"></div><span class="gen">8대</span><span class="pname">이금재 마르코 신부</span><span class="pdate">2014.01.29 ~ 2016.01.28</span></li>
+      <li><div class="pastor-photo"><img src="images/priest-09-jeongyanghyun.jpg" alt="정양현 베드로 신부"></div><span class="gen">9대</span><span class="pname">정양현 베드로 신부</span><span class="pdate">2016.01.29 ~ 2020.01.22</span></li>
+      <li><div class="pastor-photo"><img src="images/priest-10-shinwoncheol.jpg" alt="신원철 안토니오 신부"></div><span class="gen">10대</span><span class="pname">신원철 안토니오 신부</span><span class="pdate">2020.01.22 ~ 2024.01.17</span></li>
+      <li><div class="pastor-photo"><img src="images/priest-11-kwonwanseong.jpg" alt="권완성 사도요한 신부"></div><span class="gen">11대 · 현 주임</span><span class="pname">권완성 사도요한 신부</span><span class="pdate">2024.01.17 ~ 현재</span></li>
+    </ul>
+  </div>
+
+  <div class="wrap" style="margin-top:56px;">
+    <p class="eyebrow" style="margin-bottom:16px;">본당 출신 신부님</p>
+    <ul class="pastor-list reveal-stagger" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));">
+      <li><div class="pastor-photo"><img src="images/alumni-01-hwang.jpg" alt="황의현 바오로 신부"></div><span class="gen">서품 2001</span><span class="pname">황의현 바오로 신부</span><span class="pdate">서학동성당 주임</span></li>
+      <li><div class="pastor-photo"><img src="images/alumni-02-park.jpg" alt="박성환 요셉 신부"></div><span class="gen">서품 2006</span><span class="pname">박성환 요셉 신부</span><span class="pdate">우림성당 주임</span></li>
+      <li><div class="pastor-photo"><img src="images/alumni-03-lee.jpg" alt="이치선 시몬 신부"></div><span class="gen">서품 2019</span><span class="pname">이치선 시몬 신부</span><span class="pdate">주현동성당 주임</span></li>
+    </ul>
+  </div>
+</section>
+
+<section id="mass">
+  <div class="wrap reveal">
+    <p class="eyebrow">미사시간 안내</p>
+    <h2 style="font-size:30px; margin-bottom:28px;">"너희는 나를 기억하여 이를 행하여라." (루카 22,19)</h2>
+
+    <div class="mass-grid">
+      <div class="mass-col">
+        <h3 class="mass-col-title">주일미사</h3>
+        <table class="mass-table">
+          <thead><tr><th>시간</th><th>미사</th><th></th></tr></thead>
+          <tbody>
+            <tr><td class="time">토 18:00</td><td>저녁 주일미사</td><td class="note">학생미사</td></tr>
+            <tr><td class="time">06:00</td><td>아침미사</td><td class="note"></td></tr>
+            <tr><td class="time">10:30</td><td>교중미사</td><td class="note"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mass-col">
+        <h3 class="mass-col-title">평일미사</h3>
+        <table class="mass-table">
+          <thead><tr><th>요일</th><th>시간</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>월요일</td><td class="time">06:00</td><td class="note"></td></tr>
+            <tr><td>화요일</td><td class="time">19:30</td><td class="note"></td></tr>
+            <tr><td>수요일</td><td class="time">10:00</td><td class="note"></td></tr>
+            <tr><td>목요일</td><td class="time">19:30</td><td class="note"></td></tr>
+            <tr><td>금요일</td><td class="time">10:00</td><td class="note"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="note-box">미사시간은 사정에 따라 변경될 수 있습니다. 참례 전 본당 사무실(063-287-0441)로 확인해 주시기 바랍니다. 고해성사 등 성사 관련 문의도 사무실로 연락해 주세요.</div>
+  </div>
+</section>
+
+<section id="notice">
+  <div class="wrap reveal">
+    <div class="notice-head">
+      <div>
+        <p class="eyebrow">공지사항 · 주보</p>
+        <h2 style="font-size:30px;">본당 소식</h2>
+      </div>
+    </div>
+
+    <div class="notice-list reveal-stagger" id="noticeList">
+      <div class="notice-item">
+        <button class="notice-row">
+          <span class="notice-tag">채용</span>
+          <span class="notice-title">본당 사무장(사무직원) 채용 공고</span>
+          <span class="notice-date">접수마감 2026.09.13</span>
+          <span class="notice-plus"></span>
+        </button>
+        <div class="notice-body"><div class="notice-body-inner">본당 사무장을 모집합니다. 세례받은 지 3년 이상, 컴퓨터 운영 가능자, 운전면허 1종 소지자이면 지원 가능합니다. 접수는 9월 13일(주일)까지이며, 자세한 사항은 사무실(063-287-0441)로 문의해 주세요.</div></div>
+      </div>
+      <div class="notice-item">
+        <button class="notice-row">
+          <span class="notice-tag">안내</span>
+          <span class="notice-title">예비신자 교리반 안내</span>
+          <span class="notice-date">상시 모집</span>
+          <span class="notice-plus"></span>
+        </button>
+        <div class="notice-body"><div class="notice-body-inner">예비신자를 위한 교리반을 운영하고 있습니다. 참여를 원하시는 분은 사무실(063-287-0441)로 연락해 주시기 바랍니다.</div></div>
+      </div>
+      <div class="notice-item">
+        <button class="notice-row">
+          <span class="notice-tag">안내</span>
+          <span class="notice-title">성사(고해성사·병자성사) 문의</span>
+          <span class="notice-date">상시</span>
+          <span class="notice-plus"></span>
+        </button>
+        <div class="notice-body"><div class="notice-body-inner">고해성사, 병자성사 등 성사 관련 문의는 사무실(063-287-0441)로 연락해 주시면 안내해 드립니다.</div></div>
+      </div>
+    </div>
+
+    <div class="bulletin-card">
+      <div>
+        <h3>본당 주보 안내</h3>
+        <p>매주 주일 배부되는 주보는 성당 로비에서 받아보실 수 있습니다. 지난 주보는 아래 주보 아카이브에서 연도별로 확인하실 수 있어요.</p>
+      </div>
+      <a href="#bulletin" class="btn btn-primary">지난 주보 보기</a>
+    </div>
+  </div>
+</section>
+
+<section id="schedule">
+  <div class="wrap reveal">
+    <p class="eyebrow">본당 일정</p>
+    <h2 style="font-size:30px; margin-bottom:28px;">"당신의 길을 주님께 맡겨라." (시편 37,5)</h2>
+
+    <div class="cal-nav">
+      <button class="cal-nav-btn" id="calPrev" type="button" aria-label="이전 달">‹</button>
+      <div class="cal-month" id="calMonthLabel"></div>
+      <button class="cal-nav-btn" id="calNext" type="button" aria-label="다음 달">›</button>
+    </div>
+
+    <div class="cal-layout">
+      <table class="cal-grid">
+        <thead>
+          <tr>
+            <th class="sun">일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th class="sat">토</th>
+          </tr>
+        </thead>
+        <tbody id="calBody"></tbody>
+      </table>
+      <div class="cal-detail" id="calDetail"></div>
+    </div>
+  </div>
+</section>
+
+<section id="bulletin">
+  <div class="wrap reveal">
+    <p class="eyebrow">본당 주보 아카이브</p>
+    <h2 style="font-size:30px; margin-bottom:8px;">주보로 보는 본당의 발자취</h2>
+    <p style="color:var(--ink-soft); font-size:14px; margin-bottom:28px; max-width:64ch;">다음카페 주보 게시판에 기록된 주보를 연도별로 모았습니다. 본당 역사의 중요한 기록인 만큼 계속 채워나갈 예정입니다.</p>
+
+    <div class="bulletin-latest" id="bulletinLatest"></div>
+
+    <div class="bulletin-year-tabs" id="bulletinYearTabs"></div>
+    <ul class="bulletin-week-list" id="bulletinWeekList"></ul>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="wrap reveal">
+    <p class="eyebrow">갤러리</p>
+    <h2 style="font-size:30px;">본당의 순간들</h2>
+
+    <div class="gallery-year-tabs" id="galleryYearTabs"></div>
+
+    <div class="gallery-grid reveal-stagger" id="galleryGrid">
+      <!-- items injected by JS -->
+    </div>
+    <nav class="gallery-pagination" id="galleryPagination" aria-label="갤러리 페이지"></nav>
+  </div>
+</section>
+
+<section id="location">
+  <div class="wrap">
+    <p class="eyebrow">오시는 길</p>
+    <h2 style="font-size:30px; margin-bottom:24px;">용머리성당 찾아오시는 길</h2>
+
+    <div class="loc-map" id="locMap">
+      <div class="loc-map-hint" id="locMapHint">지도를 클릭하면 스크롤로 확대·축소할 수 있어요</div>
+    </div>
+    <p class="loc-map-caption">전북특별자치도 전주시 완산구 안행9길 5-8 (55105) · 용머리성당<a class="directions-link" href="https://m.map.kakao.com/scheme/route?sp=&ep=35.8030668,127.1343234&by=CAR" target="_blank" rel="noopener">길찾기</a></p>
+    <div class="map-legend">
+      <span><i style="background:#D7263D;"></i> 용머리성당</span>
+      <span><i style="background:#2563EB;"></i> 인근 성당</span>
+    </div>
+
+    <ul class="contact-list contact-list--row reveal-stagger">
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 22s7-7.2 7-12.5A7 7 0 0 0 5 9.5C5 14.8 12 22 12 22Z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
+        <div><span class="label">주소</span><span class="value value-blue">전북특별자치도 전주시 완산구 안행9길 5-8 (55105)</span></div>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5h4l2 5-2.5 1.5a12 12 0 0 0 6 6L15 15l5 2v4a2 2 0 0 1-2 2C9.5 23 1 14.5 1 5a2 2 0 0 1 2-2Z"/></svg>
+        <div><span class="label">전화 (사무실)</span><span class="value value-blue">063-287-0441</span></div>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5h4l2 5-2.5 1.5a12 12 0 0 0 6 6L15 15l5 2v4a2 2 0 0 1-2 2C9.5 23 1 14.5 1 5a2 2 0 0 1 2-2Z"/></svg>
+        <div><span class="label">사제관</span><span class="value value-blue">063-287-0900</span></div>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5h4l2 5-2.5 1.5a12 12 0 0 0 6 6L15 15l5 2v4a2 2 0 0 1-2 2C9.5 23 1 14.5 1 5a2 2 0 0 1 2-2Z"/></svg>
+        <div><span class="label">수녀원</span><span class="value value-blue">063-281-0441</span></div>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg>
+        <div><span class="label">팩스</span><span class="value">063-287-0440</span></div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-bottom">
+    <span>© <span id="year"></span> 천주교 전주교구 용머리성당. All rights reserved.</span>
+    <span>모이면 기도, 흩어지면 선교</span>
+  </div>
+</footer>
+
+<div class="info-modal" id="massModal">
+  <div class="info-modal-inner">
+    <div class="info-modal-head">
+      <h3>미사시간 안내</h3>
+      <button class="info-modal-close" data-close="massModal" aria-label="닫기">✕</button>
+    </div>
+    <div class="info-modal-body" id="massModalBody"></div>
+  </div>
+</div>
+
+<div class="info-modal" id="locationModal">
+  <div class="info-modal-inner">
+    <div class="info-modal-head">
+      <h3>연락처 안내</h3>
+      <button class="info-modal-close" data-close="locationModal" aria-label="닫기">✕</button>
+    </div>
+    <div class="info-modal-body" id="locationModalBody"></div>
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-inner" id="lightboxInner">
+    <div class="lightbox-img-wrap">
+      <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="이전 사진">‹</button>
+      <div class="lightbox-img" id="lightboxImg"></div>
+      <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="다음 사진">›</button>
+    </div>
+    <div class="lightbox-cap">
+      <span id="lightboxCap"></span>
+      <button class="lightbox-close" id="lightboxClose" aria-label="닫기">✕</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.24.0/maplibre-gl.min.js"></script>
+<script>
+  // Always open on the top of the page (ignore remembered scroll position / URL hash)
+  if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+  let scrollLockUntil = Date.now() + 800;
+  function scrollLockLoop(){
+    window.scrollTo(0, 0);
+    if (Date.now() < scrollLockUntil) requestAnimationFrame(scrollLockLoop);
+  }
+  scrollLockLoop();
+  window.addEventListener('load', () => { scrollLockUntil = Date.now() + 800; scrollLockLoop(); });
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Today's Word bar: date always reflects the visitor's current date
+  (function(){
+    const now = new Date();
+    document.getElementById('twYm').textContent = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}`;
+    document.getElementById('twDay').textContent = String(now.getDate()).padStart(2, '0');
+  })();
+
+  // Hero slideshow: cross-fade through the front-page photos
+  (function(){
+    const slides = document.querySelectorAll('#heroSlideshow .hero-slide');
+    if (slides.length < 2) return;
+    let heroSlideIndex = 0;
+    setInterval(() => {
+      slides[heroSlideIndex].classList.remove('active');
+      heroSlideIndex = (heroSlideIndex + 1) % slides.length;
+      slides[heroSlideIndex].classList.add('active');
+    }, 8000);
+  })();
+
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const mainNav = document.getElementById('mainNav');
+  navToggle.addEventListener('click', () => mainNav.classList.toggle('open'));
+  mainNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mainNav.classList.remove('open')));
+
+  // Hero quick-info popups: show mass times / directions instantly instead of jump-scrolling
+  document.getElementById('massModalBody').innerHTML =
+    document.querySelector('#mass .mass-grid').outerHTML;
+  document.getElementById('locationModalBody').innerHTML =
+    document.querySelector('#location .contact-list').outerHTML;
+
+  function openInfoModal(id){ document.getElementById(id).classList.add('open'); }
+  function closeInfoModal(id){ document.getElementById(id).classList.remove('open'); }
+  document.querySelectorAll('.info-modal-close').forEach(btn => {
+    btn.addEventListener('click', () => closeInfoModal(btn.dataset.close));
+  });
+  document.querySelectorAll('.info-modal').forEach(modal => {
+    modal.addEventListener('click', e => { if (e.target === modal) closeInfoModal(modal.id); });
+  });
+  document.getElementById('heroMassBtn').addEventListener('click', e => { e.preventDefault(); openInfoModal('massModal'); });
+  document.getElementById('heroLocationBtn').addEventListener('click', e => { e.preventDefault(); openInfoModal('locationModal'); });
+
+  // "가톨릭 관련 사이트" dropdown: close on outside click or Escape
+  const navSitesDropdown = document.getElementById('navSitesDropdown');
+  document.addEventListener('click', (e) => {
+    if (navSitesDropdown.open && !navSitesDropdown.contains(e.target)) navSitesDropdown.removeAttribute('open');
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navSitesDropdown.open) navSitesDropdown.removeAttribute('open');
+  });
+
+  // Notice accordion
+  document.querySelectorAll('.notice-item').forEach(item => {
+    item.querySelector('.notice-row').addEventListener('click', () => {
+      item.classList.toggle('open');
+    });
+  });
+
+  // Gallery: 2026년 행사사진 (일자순, 날짜별 여러 장) + lightbox
+  const galleryData = [
+    { cap: '한영자 요안나 수녀님 영명축일', date: '2026.08.09', images: ['images/event-20260809-312-01.jpg', 'images/event-20260809-312-02.jpg', 'images/event-20260809-312-03.jpg', 'images/event-20260809-312-04.jpg', 'images/event-20260809-312-05.jpg', 'images/event-20260809-312-06.jpg', 'images/event-20260809-312-07.jpg'] },
+    { cap: '복달음 전신자 나눔잔치', date: '2026.08.02', images: ['images/event-20260802-311-01.jpg', 'images/event-20260802-311-02.jpg', 'images/event-20260802-311-03.jpg'] },
+    { cap: '20대 사목회 야외 행사', date: '2026.07.19', images: ['images/event-20260719-310-01.jpg', 'images/event-20260719-310-02.jpg', 'images/event-20260719-310-03.jpg', 'images/event-20260719-310-04.jpg', 'images/event-20260719-310-05.jpg', 'images/event-20260719-310-06.jpg', 'images/event-20260719-310-07.jpg', 'images/event-20260719-310-08.jpg', 'images/event-20260719-310-09.jpg', 'images/event-20260719-310-10.jpg', 'images/event-20260719-310-11.jpg', 'images/event-20260719-310-12.jpg', 'images/event-20260719-310-13.jpg', 'images/event-20260719-310-14.jpg', 'images/event-20260719-310-15.jpg', 'images/event-20260719-310-16.jpg', 'images/event-20260719-310-17.jpg'] },
+    { cap: '입교식', date: '2026.06.07', images: ['images/event-20260607-309-01.jpg', 'images/event-20260607-309-02.jpg', 'images/event-20260607-309-03.jpg', 'images/event-20260607-309-04.jpg', 'images/event-20260607-309-05.jpg'] },
+    { cap: '성금요일 예수 수난 성극', date: '2026.04.03', images: ['images/event-20260403-308-01.jpg', 'images/event-20260403-308-02.jpg', 'images/event-20260403-308-03.jpg', 'images/event-20260403-308-04.jpg', 'images/event-20260403-308-05.jpg', 'images/event-20260403-308-06.jpg', 'images/event-20260403-308-07.jpg', 'images/event-20260403-308-08.jpg', 'images/event-20260403-308-09.jpg', 'images/event-20260403-308-10.jpg', 'images/event-20260403-308-11.jpg', 'images/event-20260403-308-12.jpg', 'images/event-20260403-308-13.jpg', 'images/event-20260403-308-14.jpg', 'images/event-20260403-308-15.jpg', 'images/event-20260403-308-16.jpg', 'images/event-20260403-308-17.jpg', 'images/event-20260403-308-18.jpg', 'images/event-20260403-308-19.jpg', 'images/event-20260403-308-20.jpg', 'images/event-20260403-308-21.jpg', 'images/event-20260403-308-22.jpg', 'images/event-20260403-308-23.jpg', 'images/event-20260403-308-24.jpg', 'images/event-20260403-308-25.jpg', 'images/event-20260403-308-26.jpg', 'images/event-20260403-308-27.jpg', 'images/event-20260403-308-28.jpg', 'images/event-20260403-308-29.jpg', 'images/event-20260403-308-30.jpg', 'images/event-20260403-308-31.jpg', 'images/event-20260403-308-32.jpg', 'images/event-20260403-308-33.jpg', 'images/event-20260403-308-34.jpg', 'images/event-20260403-308-35.jpg', 'images/event-20260403-308-36.jpg', 'images/event-20260403-308-37.jpg', 'images/event-20260403-308-38.jpg', 'images/event-20260403-308-39.jpg', 'images/event-20260403-308-40.jpg', 'images/event-20260403-308-41.jpg', 'images/event-20260403-308-42.jpg', 'images/event-20260403-308-43.jpg', 'images/event-20260403-308-44.jpg', 'images/event-20260403-308-45.jpg', 'images/event-20260403-308-46.jpg', 'images/event-20260403-308-47.jpg', 'images/event-20260403-308-48.jpg', 'images/event-20260403-308-49.jpg', 'images/event-20260403-308-50.jpg', 'images/event-20260403-308-51.jpg', 'images/event-20260403-308-52.jpg', 'images/event-20260403-308-53.jpg', 'images/event-20260403-308-54.jpg', 'images/event-20260403-308-55.jpg'] },
+    { cap: '성목요일 세족례', date: '2026.04.02', images: ['images/event-20260402-307-01.jpg', 'images/event-20260402-307-02.jpg', 'images/event-20260402-307-03.jpg', 'images/event-20260402-307-04.jpg', 'images/event-20260402-307-05.jpg', 'images/event-20260402-307-06.jpg', 'images/event-20260402-307-07.jpg', 'images/event-20260402-307-08.jpg', 'images/event-20260402-307-09.jpg', 'images/event-20260402-307-10.jpg', 'images/event-20260402-307-11.jpg', 'images/event-20260402-307-12.jpg', 'images/event-20260402-307-13.jpg', 'images/event-20260402-307-14.jpg', 'images/event-20260402-307-15.jpg', 'images/event-20260402-307-16.jpg', 'images/event-20260402-307-17.jpg', 'images/event-20260402-307-18.jpg', 'images/event-20260402-307-19.jpg', 'images/event-20260402-307-20.jpg', 'images/event-20260402-307-21.jpg'] },
+    { cap: '주님수난 성지주일', date: '2026.03.29', images: ['images/event-20260329-306-01.jpg', 'images/event-20260329-306-02.jpg', 'images/event-20260329-306-03.jpg', 'images/event-20260329-306-04.jpg', 'images/event-20260329-306-05.jpg', 'images/event-20260329-306-06.jpg', 'images/event-20260329-306-07.jpg', 'images/event-20260329-306-08.jpg', 'images/event-20260329-306-09.jpg', 'images/event-20260329-306-10.jpg', 'images/event-20260329-306-11.jpg', 'images/event-20260329-306-12.jpg', 'images/event-20260329-306-13.jpg', 'images/event-20260329-306-14.jpg', 'images/event-20260329-306-15.jpg'] },
+    { cap: '만민의 어머니 단원 기념촬영', date: '2026.03.22', images: ['images/event-20260322-305-01.jpg', 'images/event-20260322-305-02.jpg', 'images/event-20260322-305-03.jpg', 'images/event-20260322-305-04.jpg', 'images/event-20260322-305-05.jpg', 'images/event-20260322-305-06.jpg'] },
+    { cap: '아치에스 행사', date: '2026.03.22', images: ['images/event-20260322-304-01.jpg', 'images/event-20260322-304-02.jpg', 'images/event-20260322-304-03.jpg', 'images/event-20260322-304-04.jpg', 'images/event-20260322-304-05.jpg', 'images/event-20260322-304-06.jpg', 'images/event-20260322-304-07.jpg', 'images/event-20260322-304-08.jpg', 'images/event-20260322-304-09.jpg', 'images/event-20260322-304-10.jpg', 'images/event-20260322-304-11.jpg', 'images/event-20260322-304-12.jpg', 'images/event-20260322-304-13.jpg', 'images/event-20260322-304-14.jpg'] },
+    { cap: '파티마 성모님 가정방문 순례기도', date: '2026.03.12', images: ['images/event-20260312-302-01.jpg', 'images/event-20260312-302-02.jpg', 'images/event-20260312-302-03.jpg', 'images/event-20260312-302-04.jpg', 'images/event-20260312-302-05.jpg', 'images/event-20260312-302-06.jpg', 'images/event-20260312-302-07.jpg', 'images/event-20260312-302-08.jpg'] },
+    { cap: '마르코 신부님과 포도나무에서', date: '2026.03.10', images: ['images/event-20260310-300-01.jpg', 'images/event-20260310-300-02.jpg', 'images/event-20260310-300-03.jpg', 'images/event-20260310-300-04.jpg', 'images/event-20260310-300-05.jpg'] },
+    { cap: '이금재 마르코 신부님 은경축일', date: '2026.03.10', images: ['images/event-20260310-299-01.jpg', 'images/event-20260310-299-02.jpg', 'images/event-20260310-299-03.jpg', 'images/event-20260310-299-04.jpg', 'images/event-20260310-299-05.jpg'] },
+    { cap: '이금재 마르코 신부님 사순특강', date: '2026.03.10', images: ['images/event-20260310-298-01.jpg', 'images/event-20260310-298-02.jpg', 'images/event-20260310-298-03.jpg'] },
+    { cap: '파티마 성모님 가정방문 순례기도 (오명숙 세라피나)', date: '2026.03.08', images: ['images/event-20260308-301-01.jpg', 'images/event-20260308-301-02.jpg'] },
+    { cap: '파티마 성모님 가정방문 순례기도 (안인숙 아녜스)', date: '2026.03.08', images: ['images/event-20260308-297-01.jpg', 'images/event-20260308-297-02.jpg', 'images/event-20260308-297-03.jpg', 'images/event-20260308-297-04.jpg', 'images/event-20260308-297-05.jpg', 'images/event-20260308-297-06.jpg', 'images/event-20260308-297-07.jpg', 'images/event-20260308-297-08.jpg', 'images/event-20260308-297-09.jpg', 'images/event-20260308-297-10.jpg', 'images/event-20260308-297-11.jpg', 'images/event-20260308-297-12.jpg', 'images/event-20260308-297-13.jpg'] },
+    { cap: '파티마 성모님 가정방문 순례기도 (위민숙 마리아)', date: '2026.03.07', images: ['images/event-20260307-296-01.jpg', 'images/event-20260307-296-02.jpg', 'images/event-20260307-296-03.jpg', 'images/event-20260307-296-04.jpg', 'images/event-20260307-296-05.jpg', 'images/event-20260307-296-06.jpg', 'images/event-20260307-296-07.jpg', 'images/event-20260307-296-08.jpg', 'images/event-20260307-296-09.jpg', 'images/event-20260307-296-10.jpg', 'images/event-20260307-296-11.jpg'] },
+    { cap: '파티마 성모님 가정방문 순례기도 (황순옥 크레센시아)', date: '2026.03.06', images: ['images/event-20260306-295-01.jpg', 'images/event-20260306-295-02.jpg', 'images/event-20260306-295-03.jpg', 'images/event-20260306-295-04.jpg'] },
+    { cap: '파티마 성모님 가정방문 순례기도 (김대중 베난시오)', date: '2026.03.04', images: ['images/event-20260304-294-01.jpg', 'images/event-20260304-294-02.jpg', 'images/event-20260304-294-03.jpg', 'images/event-20260304-294-04.jpg', 'images/event-20260304-294-05.jpg', 'images/event-20260304-294-06.jpg', 'images/event-20260304-294-07.jpg', 'images/event-20260304-294-08.jpg', 'images/event-20260304-294-09.jpg'] },
+    { cap: '파티마 성모님 가정방문 순례기도 (정성종 아우구스티노)', date: '2026.03.01', images: ['images/event-20260301-293-01.jpg', 'images/event-20260301-293-02.jpg', 'images/event-20260301-293-03.jpg', 'images/event-20260301-293-04.jpg', 'images/event-20260301-293-05.jpg'] },
+    { cap: '파티마 성모님 가정방문 순례기도 (유형수 사목회장님)', date: '2026.02.27', images: ['images/event-20260227-292-01.jpg', 'images/event-20260227-292-02.jpg', 'images/event-20260227-292-03.jpg', 'images/event-20260227-292-04.jpg', 'images/event-20260227-292-05.jpg', 'images/event-20260227-292-06.jpg'] },
+    { cap: '파티마 성모님 가정방문 순례기도 (이정자 마리아)', date: '2026.02.27', images: ['images/event-20260227-291-01.jpg', 'images/event-20260227-291-02.jpg', 'images/event-20260227-291-03.jpg', 'images/event-20260227-291-04.jpg'] },
+    { cap: '파티마 성모님 가정방문 순례기도 (한상철 사도요한)', date: '2026.02.27', images: ['images/event-20260227-290-01.jpg', 'images/event-20260227-290-02.jpg', 'images/event-20260227-290-03.jpg', 'images/event-20260227-290-04.jpg', 'images/event-20260227-290-05.jpg', 'images/event-20260227-290-06.jpg'] },
+    { cap: '파티마 성모님 가정방문 순례기도 (김수덕 요셉피나)', date: '2026.02.27', images: ['images/event-20260227-289-01.jpg'] },
+    { cap: '평화의 전당 파티마 성모님 모셔오기', date: '2026.02.27', images: ['images/event-20260227-288-01.jpg', 'images/event-20260227-288-02.jpg', 'images/event-20260227-288-03.jpg', 'images/event-20260227-288-04.jpg', 'images/event-20260227-288-05.jpg', 'images/event-20260227-288-06.jpg', 'images/event-20260227-288-07.jpg', 'images/event-20260227-288-08.jpg', 'images/event-20260227-288-09.jpg', 'images/event-20260227-288-10.jpg', 'images/event-20260227-288-11.jpg', 'images/event-20260227-288-12.jpg', 'images/event-20260227-288-13.jpg', 'images/event-20260227-288-14.jpg', 'images/event-20260227-288-15.jpg'] },
+    { cap: '강신문 벨라뎃다 수녀님 송별식', date: '2026.02.22', images: ['images/event-20260222-287-01.jpg', 'images/event-20260222-287-02.jpg', 'images/event-20260222-287-03.jpg', 'images/event-20260222-287-04.jpg', 'images/event-20260222-287-05.jpg', 'images/event-20260222-287-06.jpg', 'images/event-20260222-287-07.jpg', 'images/event-20260222-287-08.jpg', 'images/event-20260222-287-09.jpg', 'images/event-20260222-287-10.jpg', 'images/event-20260222-287-11.jpg', 'images/event-20260222-287-12.jpg', 'images/event-20260222-287-13.jpg'] },
+    { cap: '재의 의식', date: '2026.02.22', images: ['images/event-20260222-286-01.jpg', 'images/event-20260222-286-02.jpg', 'images/event-20260222-286-03.jpg', 'images/event-20260222-286-04.jpg', 'images/event-20260222-286-05.jpg', 'images/event-20260222-286-06.jpg', 'images/event-20260222-286-07.jpg', 'images/event-20260222-286-08.jpg', 'images/event-20260222-286-09.jpg', 'images/event-20260222-286-10.jpg', 'images/event-20260222-286-11.jpg', 'images/event-20260222-286-12.jpg', 'images/event-20260222-286-13.jpg'] },
+    { cap: '초 봉헌의식', date: '2026.02.02', images: ['images/event-20260202-285-01.jpg', 'images/event-20260202-285-02.jpg', 'images/event-20260202-285-03.jpg', 'images/event-20260202-285-04.jpg', 'images/event-20260202-285-05.jpg', 'images/event-20260202-285-06.jpg', 'images/event-20260202-285-07.jpg', 'images/event-20260202-285-08.jpg', 'images/event-20260202-285-09.jpg', 'images/event-20260202-285-10.jpg', 'images/event-20260202-285-11.jpg', 'images/event-20260202-285-12.jpg', 'images/event-20260202-285-13.jpg', 'images/event-20260202-285-14.jpg', 'images/event-20260202-285-15.jpg'] },
+    { cap: '박정자 아가다 수녀님 영명축일', date: '2026.02.01', images: ['images/event-20260201-284-01.jpg', 'images/event-20260201-284-02.jpg', 'images/event-20260201-284-03.jpg', 'images/event-20260201-284-04.jpg', 'images/event-20260201-284-05.jpg', 'images/event-20260201-284-06.jpg', 'images/event-20260201-284-07.jpg', 'images/event-20260201-284-08.jpg', 'images/event-20260201-284-09.jpg', 'images/event-20260201-284-10.jpg', 'images/event-20260201-284-11.jpg', 'images/event-20260201-284-12.jpg', 'images/event-20260201-284-13.jpg', 'images/event-20260201-284-14.jpg', 'images/event-20260201-284-15.jpg', 'images/event-20260201-284-16.jpg', 'images/event-20260201-284-17.jpg', 'images/event-20260201-284-18.jpg', 'images/event-20260201-284-19.jpg', 'images/event-20260201-284-20.jpg'] },
+    { cap: '김학덕 사무장님 송별식', date: '2025.12.28', images: ['images/event-20251228-283.jpg'] },
+    { cap: '권완성 신부님 영명 축일 행사', date: '2025.12.25', images: ['images/event-20251225-282.jpg'] },
+    { cap: '성탄 미사 입당', date: '2025.12.25', images: ['images/event-20251225-281.jpg'] },
+    { cap: '성탄 전야 미사', date: '2025.12.24', images: ['images/event-20251224-280.jpg'] },
+    { cap: '성탄 예술제 / 주일학교 공연', date: '2025.12.24', images: ['images/event-20251224-279.jpg'] },
+    { cap: '성탄 예술제 / 5구역 공연', date: '2025.12.24', images: ['images/event-20251224-278.jpg'] },
+    { cap: '성탄 예술제 / 하모니카 연주단', date: '2025.12.24', images: ['images/event-20251224-277.jpg'] },
+    { cap: '성탄 예술제 / 신비로운그릇 공연 사진', date: '2025.12.24', images: ['images/event-20251224-276.jpg'] },
+    { cap: '성탄 예술제 / 신비로운그릇', date: '2025.12.24', images: ['images/event-20251224-275.jpg'] },
+    { cap: '성탄 예술제 / 3.4구역 공연 사진', date: '2025.12.24', images: ['images/event-20251224-274.jpg'] },
+    { cap: '성탄예술제 사진 / 3.4 구역', date: '2025.12.24', images: ['images/event-20251224-273.jpg'] },
+    { cap: '성탄예술제 사진 / 은총의 샘 난타 공연', date: '2025.12.24', images: ['images/event-20251224-272.jpg'] },
+    { cap: '성탄예술제 사진 / 은총의 샘', date: '2025.12.24', images: ['images/event-20251224-271.jpg'] },
+    { cap: '이금재 마르코 신부님 대림특강', date: '2025.12.09', images: ['images/event-20251209-270.jpg'] },
+    { cap: '용머리성당 20대 사목회 취임식', date: '2025.10.12', images: ['images/event-20251012-269.jpg'] },
+    { cap: '용머리성당 20대 사목회 취임식', date: '2025.10.12', images: ['images/event-20251012-268.jpg'] },
+    { cap: '용머리성당 20대 사목회 취임식', date: '2025.10.12', images: ['images/event-20251012-267.jpg'] },
+    { cap: '용머리성당 20대 사목회 취임식', date: '2025.10.12', images: ['images/event-20251012-266.jpg'] },
+    { cap: '신리성지의 순교 미술관', date: '2025.10.12', images: ['images/event-20251012-265.jpg'] },
+    { cap: '신리성지 순례 사진', date: '2025.10.12', images: ['images/event-20251012-264.jpg'] },
+    { cap: '주님만찬 성목요일, 세족례 / 2025. 4월 17일 오후 8시', date: '2025.04.21', images: ['images/event-20250421-262.jpg'] },
+    { cap: '성목요일 수난감실로 성체 이동', date: '2025.04.17', images: ['images/event-20250417-263.jpg'] },
+    { cap: '주님 수난 성지 주일', date: '2025.04.13', images: ['images/event-20250413-261.jpg'] },
+    { cap: '아치에스 행사', date: '2025.03.23', images: ['images/event-20250323-260.jpg'] },
+    { cap: '아치에스 행사', date: '2025.03.23', images: ['images/event-20250323-259.jpg'] },
+    { cap: '\'재의 수요일\' 예식 사진(2)', date: '2025.03.05', images: ['images/event-20250305-258.jpg'] },
+    { cap: '\'재의 수요일\' 예식 사진(1)', date: '2025.03.05', images: ['images/event-20250305-257.jpg'] },
+    { cap: '견진성사 개인 사진(7)', date: '2025.03.02', images: ['images/event-20250302-256.jpg'] },
+    { cap: '견진성사 개인 사진(6)', date: '2025.03.02', images: ['images/event-20250302-255.jpg'] },
+    { cap: '견진성사 개인 사진(5)', date: '2025.03.02', images: ['images/event-20250302-254.jpg'] },
+    { cap: '견진성사 개인 사진(4)', date: '2025.03.02', images: ['images/event-20250302-253.jpg'] },
+    { cap: '견진성사 개인 사진(3)', date: '2025.03.02', images: ['images/event-20250302-252.jpg'] },
+    { cap: '견진성사 개인 사진(2)', date: '2025.03.02', images: ['images/event-20250302-251.jpg'] },
+    { cap: '견진성사 개인 사진(1)', date: '2025.03.02', images: ['images/event-20250302-250.jpg'] },
+    { cap: '성령 묵상회 사진 / ~27', date: '2025.02.24', images: ['images/event-20250224-249.jpg'] },
+    { cap: '박정자 아가다 수녀님 취임식', date: '2025.02.23', images: ['images/event-20250223-248.jpg'] },
+    { cap: '나지윤 엘리사벳 수녀님 송별식', date: '2025.02.16', images: ['images/event-20250216-246.jpg'] },
+    { cap: '용머리 성당 성탄 예술제 / 이모저모', date: '2024.12.24', images: ['images/event-20241224-245.jpg'] },
+    { cap: '용머리 성당 성탄 예술제 / 수녀님', date: '2024.12.24', images: ['images/event-20241224-244.jpg'] },
+    { cap: '용머리 성당 성탄 예술제 / 주일 학교', date: '2024.12.24', images: ['images/event-20241224-243.jpg'] },
+    { cap: '용머리 성당 성탄 예술제 / 은총의 샘', date: '2024.12.24', images: ['images/event-20241224-242.jpg'] },
+    { cap: '용머리 성당 성탄 예술제 / 3.4구역', date: '2024.12.24', images: ['images/event-20241224-241.jpg'] },
+    { cap: '용머리 성당 성탄 예술제 / 5구역', date: '2024.12.24', images: ['images/event-20241224-240.jpg'] },
+    { cap: '용머리 성당 성탄 예술제 / 8구역', date: '2024.12.24', images: ['images/event-20241224-239.jpg'] },
+    { cap: '용머리 성당 성탄 예술제 / 7구역', date: '2024.12.24', images: ['images/event-20241224-238.jpg'] },
+    { cap: '용머리 성당 성탄 예술제 / 바다의 별', date: '2024.12.24', images: ['images/event-20241224-237.jpg'] },
+    { cap: '용머리 성당 성탄 예술제 / 10구역', date: '2024.12.24', images: ['images/event-20241224-236.jpg'] },
+    { cap: '용머리 성당 성탄 예술제 /신비로운 그릇', date: '2024.12.24', images: ['images/event-20241224-235.jpg'] },
+    { cap: '레지오 마리애 연차 총친목회 모습 / 신비로운 그릇', date: '2024.12.08', images: ['images/event-20241208-234.jpg'] },
+    { cap: '레지오 마리애 연차 총친목회 모습 / 은총의 샘', date: '2024.12.08', images: ['images/event-20241208-233.jpg'] },
+    { cap: '레지오 마리애 연차 총친목회 모습(1)', date: '2024.12.08', images: ['images/event-20241208-232.jpg'] },
+    { cap: '공주 황새바위 성지 순례 (3)', date: '2024.10.09', images: ['images/event-20241009-231.jpg'] },
+    { cap: '공주 황새바위 성지 순례 (2)', date: '2024.10.09', images: ['images/event-20241009-230.jpg'] },
+    { cap: '공주 황새바위 성지 순례 (1)', date: '2024.10.09', images: ['images/event-20241009-229.jpg'] },
+    { cap: '나지윤(엘리사벳) 수녀님 환영식', date: '2023.02.27', images: ['images/event-20230227-228.jpg'] },
+    { cap: '나지윤(엘리사벳) 수녀님 부임', date: '2023.02.27', images: ['images/event-20230227-227.jpg'] },
+    { cap: '최혜란 유스티나 수녀님 송별식', date: '2023.02.27', images: ['images/event-20230227-226.jpg'] },
+    { cap: '성탄대축일 밤미사(2022)', date: '2023.01.03', images: ['images/event-20230103-225.jpg'] },
+    { cap: '성탄예술제(2022)', date: '2023.01.03', images: ['images/event-20230103-224.jpg'] },
+    { cap: '신원철 안토니오 신부님 은경축 미사(2)', date: '2022.06.13', images: ['images/event-20220613-218.jpg'] },
+    { cap: '신원철 안토니오 신부님 은경축 미사(1)', date: '2022.06.13', images: ['images/event-20220613-217.jpg'] },
+    { cap: '부활대축일미사(4월4일)', date: '2021.04.08', images: ['images/event-20210408-216.jpg'] },
+    { cap: '부활성야미사(4월3일)', date: '2021.04.08', images: ['images/event-20210408-215.jpg'] },
+    { cap: '십자가의 길(4월2일)', date: '2021.04.08', images: ['images/event-20210408-214.jpg'] },
+    { cap: '주님수난예식(4월2일)', date: '2021.04.08', images: ['images/event-20210408-213.jpg'] },
+    { cap: '주님만찬미사(4월1일)', date: '2021.04.08', images: ['images/event-20210408-212.jpg'] },
+    { cap: '성지주일(3월28일)', date: '2021.04.08', images: ['images/event-20210408-209.jpg'] },
+    { cap: '사목회임원임명(3월28일)', date: '2021.04.08', images: ['images/event-20210408-208.jpg'] },
+    { cap: '성당대청소(3월27일)', date: '2021.04.08', images: ['images/event-20210408-207.jpg'] },
+    { cap: '16대사목회장 노병섭 선물 수여', date: '2021.04.08', images: ['images/event-20210408-206.jpg'] },
+    { cap: '강수현 대건안드레아 선물', date: '2021.04.08', images: ['images/event-20210408-205.jpg'] },
+    { cap: '신입교리교사학교 수료증 수여(유예림 아녜스)', date: '2021.04.08', images: ['images/event-20210408-204.jpg'] },
+    { cap: '주일학교교리교사인사', date: '2021.04.08', images: ['images/event-20210408-203.jpg'] },
+    { cap: '최혜란(유스티나)수녀님 부임', date: '2021.02.23', images: ['images/event-20210223-202.jpg'] },
+    { cap: '백승은 레아 수녀님 환영식', date: '2020.05.07', images: ['images/event-20200507-201.jpg'] },
+    { cap: '주님성탄대축일 밤미사(3)', date: '2019.12.26', images: ['images/event-20191226-200.jpg'] },
+    { cap: '주님성탄대축일 밤미사(2)', date: '2019.12.26', images: ['images/event-20191226-199.jpg'] },
+    { cap: '주님성탄대축일 밤미사(1)', date: '2019.12.26', images: ['images/event-20191226-198.jpg'] },
+    { cap: '연풍성지순례사진(9)단체사진', date: '2019.10.24', images: ['images/event-20191024-197.jpg'] },
+    { cap: '연풍성지순례사진(8)단체사진', date: '2019.10.24', images: ['images/event-20191024-196.jpg'] },
+    { cap: '연풍성지순례사진(7)', date: '2019.10.24', images: ['images/event-20191024-195.jpg'] },
+    { cap: '연풍성지순례사진(6)', date: '2019.10.24', images: ['images/event-20191024-194.jpg'] },
+    { cap: '연풍성지순례사진(5)', date: '2019.10.24', images: ['images/event-20191024-193.jpg'] },
+    { cap: '연풍성지순례사진(4)', date: '2019.10.24', images: ['images/event-20191024-192.jpg'] },
+    { cap: '연풍성지순례사진(3)', date: '2019.10.24', images: ['images/event-20191024-191.jpg'] },
+    { cap: '연풍성지순례사진(2)', date: '2019.10.24', images: ['images/event-20191024-190.jpg'] },
+    { cap: '연풍성지순례사진(1)', date: '2019.10.24', images: ['images/event-20191024-189.jpg'] },
+    { cap: '용머리성당의 연풍성지순례사진 동영상으로보기', date: '2019.10.22', images: ['images/event-20191022-188.jpg'] },
+    { cap: '부활성야미사 성수 축성(2019년 4월 20일)', date: '2019.04.23', images: ['images/event-20190423-187.jpg'] },
+    { cap: '부활성야미사(2019년 4월 20일)2', date: '2019.04.23', images: ['images/event-20190423-186.jpg'] },
+    { cap: '부활성야미사(2019년 4월 20일)', date: '2019.04.23', images: ['images/event-20190423-185.jpg'] },
+    { cap: '용머리성당 갈매못 성지순례사진 동영상으로 보기', date: '2018.10.22', images: ['images/event-20181022-180.jpg'] },
+    { cap: '갈매못 순교성지순례 사진으로 보기', date: '2018.10.16', images: ['images/event-20181016-179.jpg'] },
+    { cap: '성모의 밤 행사 사진입니다( 밤 7시 30분 ~ 9시 50분)', date: '2018.05.31', images: ['images/event-20180531-178.jpg'] },
+    { cap: '주님 부활 대축일 전신자 나눔잔치 사진입니다', date: '2018.04.01', images: ['images/event-20180401-177.jpg'] },
+    { cap: '부활 대 축일반 세례식 파스카 성야 미사중 사진입니다', date: '2018.03.31', images: ['images/event-20180331-176.jpg'] },
+    { cap: '아치에스행사사진입니다', date: '2018.03.25', images: ['images/event-20180325-175.jpg'] },
+    { cap: '성탄 예술제(5)', date: '2017.12.27', images: ['images/event-20171227-170.jpg'] },
+    { cap: '성탄 예술제(4)', date: '2017.12.27', images: ['images/event-20171227-169.jpg'] },
+    { cap: '성탄 예술제(3)', date: '2017.12.27', images: ['images/event-20171227-168.jpg'] },
+    { cap: '성탄 예술제(2)', date: '2017.12.27', images: ['images/event-20171227-167.jpg'] },
+    { cap: '성탄 예술제(1)', date: '2017.12.27', images: ['images/event-20171227-166.jpg'] },
+    { cap: '\'17. 용머리성당 성탄축제사진', date: '2017.12.25', images: ['images/event-20171225-165.jpg'] },
+    { cap: '주님 성탄 대축일밤 미사 ( 밤 9시) 사진입니다', date: '2017.12.24', images: ['images/event-20171224-174.jpg'] },
+    { cap: '2017년도 성탄예술제 및나눔행사( 밤) 사진입니다', date: '2017.12.24', images: ['images/event-20171224-173.jpg'] },
+    { cap: '2017년도 성탄예술제 및 나눔행사( 밤) 사진입니다', date: '2017.12.24', images: ['images/event-20171224-172.jpg'] },
+    { cap: '예수성탄 대축일 세례식( 주일미사중)사진입니다', date: '2017.12.24', images: ['images/event-20171224-171.jpg'] },
+    { cap: '용머리성당 레지오 마리애 연차총친목회( 주일 14:00~17:00)', date: '2017.12.10', images: ['images/event-20171210-164.jpg'] },
+    { cap: '은빛신앙대학11기 2학기 개강(9월7일)', date: '2017.09.26', images: ['images/event-20170926-163.jpg'] },
+    { cap: '신입복사입단식(9월2일)', date: '2017.09.26', images: ['images/event-20170926-162.jpg'] },
+    { cap: '성인복사단 교육(9월2일)', date: '2017.09.26', images: ['images/event-20170926-161.jpg'] },
+    { cap: '9월 24일(주일) 예비자 입교식', date: '2017.09.26', images: ['images/event-20170926-160.jpg'] },
+    { cap: '8월 13일 세례자 환영식 사진입니다', date: '2017.08.28', images: ['images/event-20170828-159.jpg'] },
+    { cap: '김선태(사도요한)주교님 견진자 성유바름 영성체사진입니다(사진관것 2)', date: '2017.07.02', images: ['images/event-20170702-158.jpg'] },
+    { cap: '김선태(사도요한)주교님 견진자 성유바름 영성체사진입니다(사진관것)', date: '2017.07.02', images: ['images/event-20170702-157.jpg'] },
+    { cap: '김선태(사도요한)주교님 견진미사사진입니다(사진관)', date: '2017.07.02', images: ['images/event-20170702-156.jpg'] },
+    { cap: '김선태(사도요한 )주교님 견진미사9 주일) 사진입니다', date: '2017.07.02', images: ['images/event-20170702-155.jpg'] },
+    { cap: '김선태(사도요한 )주교님 견진미사9 주일) 사진입니다', date: '2017.07.02', images: ['images/event-20170702-154.jpg'] },
+    { cap: '김선태(사도요한 )주교님 견진미사9 주일) 사진입니다', date: '2017.07.02', images: ['images/event-20170702-153.jpg'] },
+    { cap: '김선태 주교님 견진미사후 나눔잔치( 주일)사진입니다', date: '2017.07.02', images: ['images/event-20170702-152.jpg'] },
+    { cap: '용머리성당 어르신 봄 나들이( 목)사진입니다', date: '2017.05.11', images: ['images/event-20170511-151.jpg'] },
+    { cap: '용머리성당 7구역(금호청솔) 형제회,자매님들 성지순례)토)', date: '2017.04.29', images: ['images/event-20170429-150.jpg'] },
+    { cap: '부활대축일 미사와 전신자 나눔잔치 사진입니다( 주일)', date: '2017.04.16', images: ['images/event-20170416-149.jpg'] },
+    { cap: '성삼일(주님만찬미사,주님수난예식, 부활성야미사)미사 사진입니다(,목~15,토)', date: '2017.04.13', images: ['images/event-20170413-148.jpg'] },
+    { cap: '예수성탄 재 축일 낮 미사 사진입니다', date: '2016.12.25', images: ['images/event-20161225-147.jpg'] },
+    { cap: '예수 성탄 예술제및 성탄 미사그리고 성가대 사진입니다(~25)', date: '2016.12.24', images: ['images/event-20161224-146.jpg'] },
+    { cap: '예수성탄 대 축일반 세례식 사진 입니다 2부 ( 주일미사)', date: '2016.12.18', images: ['images/event-20161218-145.jpg'] },
+    { cap: '예수성탄대축일반 세례식 사진입니다. 17명', date: '2016.12.18', images: ['images/event-20161218-144.jpg'] },
+    { cap: '성모님의 밤 - 성모님께 드리는 봉헌 예절과 찬미 찬양 사진 및 동영상입니다', date: '2016.05.31', images: ['images/event-20160531-143.jpg'] },
+    { cap: '손현주 마리아 막달레나 수녀님 송별식(162.21)사진입니다', date: '2016.03.31', images: ['images/event-20160331-135.jpg'] },
+    { cap: '부활성야 미사 (2016년 3월 26일)3', date: '2016.03.29', images: ['images/event-20160329-133.jpg'] },
+    { cap: '부활성야 미사 (2016년 3월 26일)2', date: '2016.03.29', images: ['images/event-20160329-132.jpg'] },
+    { cap: '부활성야 미사 (2016년 3월 26일)', date: '2016.03.29', images: ['images/event-20160329-131.jpg'] },
+    { cap: '부활대축일미사() 와 나눔잔치 동영상 그리고 사진입니다', date: '2016.03.27', images: ['images/event-20160327-142.jpg'] },
+    { cap: '부활절 그라시아성가대', date: '2016.03.27', images: ['images/event-20160327-130.jpg'] },
+    { cap: '부활성야 미사( 밤) 사진과 동영상입니다', date: '2016.03.26', images: ['images/event-20160326-141.jpg'] },
+    { cap: '성금요일() 주님수난 예식. 그라시아 성가대, 동영상과 사진입니다', date: '2016.03.25', images: ['images/event-20160325-140.jpg'] },
+    { cap: '성목요일() 성유축성.주님만찬미사,발씻김예식, 수난 감실성체조배 사진입니다', date: '2016.03.24', images: ['images/event-20160324-139.jpg'] },
+    { cap: '주님 수난주일()미사 입니다', date: '2016.03.20', images: ['images/event-20160320-138.jpg'] },
+    { cap: '부활맞이 대청소()중입니다', date: '2016.03.19', images: ['images/event-20160319-137.jpg'] },
+    { cap: '이경민 델피나 수녀님 환영식()사진입니다', date: '2016.02.28', images: ['images/event-20160228-136.jpg'] },
+    { cap: '정양현베드로신부님 환영식( 교중미사중)사진입니다', date: '2016.01.31', images: ['images/event-20160131-134.jpg'] },
+    { cap: '이금재(마르코)주임신부님 미사와 송별식 사진 입니다( 주일 )', date: '2016.01.24', images: ['images/event-20160124-129.jpg'] },
+    { cap: '성탄예술제( 밤) 구역. 단체별, 특별출연 장기자랑 사진입니다(박일규 베드로 촬영)', date: '2015.12.24', images: ['images/event-20151224-128.jpg'] },
+    { cap: '성탄예술제( 밤) 구역. 단체별, 특별출연 장기자랑 사진입니다(신재철스테파노 촬영)', date: '2015.12.24', images: ['images/event-20151224-127.jpg'] },
+    { cap: '2015년 자비의 특별희년 맞이 전주교구 성음악제() 사진입니다', date: '2015.11.20', images: ['images/event-20151120-126.jpg'] },
+    { cap: '솔뫼성지 순례 사진입니다', date: '2015.10.25', images: ['images/event-20151025-125.jpg'] },
+    { cap: '혼인갱신식 후 오찬 행사 사진입니다()', date: '2015.05.10', images: ['images/event-20150510-124.jpg'] },
+    { cap: '이금재 신부님 영명축일(3) - 사진 : 김갑중(요아킴)', date: '2015.04.29', images: ['images/event-20150429-123.jpg'] },
+    { cap: '이금재 신부님 영명축일(2) - 사진 : 김갑중(요아킴)', date: '2015.04.29', images: ['images/event-20150429-122.jpg'] },
+    { cap: '이금재 신부님 영명축일(1) - 사진 : 김갑중(요아킴)', date: '2015.04.29', images: ['images/event-20150429-121.jpg'] },
+    { cap: '부활대축일 미사-사진:신재철(스테파노)', date: '2015.04.08', images: ['images/event-20150408-119.jpg'] },
+    { cap: '부활대축일 (잔치)-사진:신재철(스테파노)', date: '2015.04.08', images: ['images/event-20150408-118.jpg'] },
+    { cap: '부활대축일 (음식준비4)-사진:신재철(스테파노)', date: '2015.04.08', images: ['images/event-20150408-117.jpg'] },
+    { cap: '부활나눔잔치 준비 및 나눔잔치', date: '2015.04.06', images: ['images/event-20150406-116.jpg'] },
+    { cap: '성체강복', date: '2015.03.10', images: ['images/event-20150310-115.jpg'] },
+    { cap: '초등부 졸업사진', date: '2015.02.15', images: ['images/event-20150215-114.jpg'] },
+    { cap: '중,고등부 주일학교 졸업미사', date: '2015.02.15', images: ['images/event-20150215-113.jpg'] },
+    { cap: '예비신자 입교식', date: '2015.02.01', images: ['images/event-20150201-112.jpg'] },
+    { cap: '외짝교우 초대의 밤', date: '2015.01.23', images: ['images/event-20150123-110.jpg'] },
+    { cap: '가톨릭 신학원 수료식', date: '2015.01.20', images: ['images/event-20150120-109.jpg'] },
+    { cap: '주일학교 복사단 및 즈가리야 복사단 입단식', date: '2015.01.18', images: ['images/event-20150118-111.jpg'] },
+    { cap: '복사단 입단', date: '2015.01.18', images: ['images/event-20150118-107.jpg'] },
+    { cap: '성시간 및 성체강복-사진:조용배(스테파노)', date: '2015.01.13', images: ['images/event-20150113-106.jpg'] },
+    { cap: '새신자교육', date: '2015.01.08', images: ['images/event-20150108-108.jpg'] },
+    { cap: '예수 성탄 대축일 전야 미사 및 성탄예술제()사진입니다', date: '2014.12.24', images: ['images/event-20141224-105.jpg'] },
+    { cap: '은빛신앙대학 수료식(사진:신재철 스테파노)', date: '2014.12.18', images: ['images/event-20141218-104.jpg'] },
+    { cap: '은빛 신앙대학 (왜관 성베네딕도 수도회) 피정', date: '2014.10.24', images: ['images/event-20141024-103.jpg'] },
+    { cap: '용머리성당 애마 1호 봉고차 축성식', date: '2014.08.31', images: ['images/event-20140831-101.jpg'] },
+    { cap: '농민주일 주교님 기념미사 및 행사(용머리성당 주일)', date: '2014.07.20', images: ['images/event-20140720-99.jpg'] },
+    { cap: '2014 초등 은총시장에서 시끌 벅쩍 장터 용머리성당 야곱의 우물', date: '2014.07.19', images: ['images/event-20140719-98.jpg'] },
+    { cap: '함게하는 여정 - 성서통독반, 100주간, 성경통독반 1일 피정( 영성관)', date: '2014.07.06', images: ['images/event-20140706-97.jpg'] },
+    { cap: '성모님의 밤 행사 입니다 ( 토)', date: '2014.05.30', images: ['images/event-20140530-96.jpg'] },
+    { cap: '부활대축일 미사입니다 일', date: '2014.04.20', images: ['images/event-20140420-95.jpg'] },
+    { cap: '이금재마르코 신부님 영명축일, 김환철스테파노신부님 축하. 일', date: '2014.04.20', images: ['images/event-20140420-94.jpg'] },
+    { cap: '부활성야 미사 사진입니다. 토', date: '2014.04.19', images: ['images/event-20140419-93.jpg'] },
+    { cap: '주님 수난예식 미사입니다 금', date: '2014.04.18', images: ['images/event-20140418-92.jpg'] },
+    { cap: '주님만찬미사 사진입니다. 목', date: '2014.04.17', images: ['images/event-20140417-91.jpg'] },
+    { cap: '주님 수난 성지주일 주님의 예루살렘 입성 기념미사', date: '2014.04.13', images: ['images/event-20140413-90.jpg'] },
+    { cap: '예비신자입교식 사진입니다', date: '2014.04.13', images: ['images/event-20140413-89.jpg'] },
+    { cap: '부활 맞이(2014년) 대청소: 본당이 반짝 반짝빛납니다', date: '2014.04.12', images: ['images/event-20140412-88.jpg'] },
+    { cap: '용머리성당 사목회 제단체 임원 워크샵이 천호피정에서', date: '2014.03.30', images: ['images/event-20140330-87.jpg'] },
+    { cap: '이금재(마르코) 신부님 용머리 성당에 오시는 날', date: '2014.02.03', images: ['images/event-20140203-85.jpg'] },
+    { cap: '환영합니다 ! 이금재마르코 신부님 환영미사( 일)입니다', date: '2014.02.02', images: ['images/event-20140202-86.jpg'] },
+    { cap: '김형수신부님 떠나시는 날()', date: '2014.01.29', images: ['images/event-20140129-84.jpg'] },
+    { cap: '김형수신부님 송별미사()입니다', date: '2014.01.26', images: ['images/event-20140126-83.jpg'] },
+    { cap: '2014. 사제 부제 서품식 -성소후원회', date: '2014.01.21', images: ['images/event-20140121-82.jpg'] },
+    { cap: '성탄 예술제 장기자랑 - 우리팀이 최고', date: '2013.12.28', images: ['images/event-20131228-80.jpg'] },
+    { cap: '성탄 전야 미사 사진입니다', date: '2013.12.28', images: ['images/event-20131228-79.jpg'] },
+    { cap: '성탄 전야 어묵 나눔 잔치', date: '2013.12.28', images: ['images/event-20131228-78.jpg'] },
+    { cap: '용머리성당 레지오마리애 친교를 위한 연차총친목회 사진 50컷', date: '2013.12.02', images: ['images/event-20131202-77.jpg'] },
+    { cap: '본당성지순례(충북 제천 배론성지) 사진입니다', date: '2013.10.06', images: ['images/event-20131006-75.jpg'] },
+    { cap: '본당 성지순례(충북제천 베론성지) 사진입니다', date: '2013.10.06', images: ['images/event-20131006-74.jpg'] },
+    { cap: '충북 제천 배론 성지에서 담아온 사진(3)', date: '2013.10.03', images: ['images/event-20131003-73.jpg'] },
+    { cap: '충북 제천 배론 성지에서 담아온 사진(2)', date: '2013.10.03', images: ['images/event-20131003-72.jpg'] },
+    { cap: '충북 제천 배론 성지에서 담아온 사진(1)', date: '2013.10.03', images: ['images/event-20131003-71.jpg'] },
+    { cap: '제대회 씨튼 수녀원과 황새바위 성지에 다녀오다', date: '2013.06.08', images: ['images/event-20130608-70.jpg'] },
+    { cap: '성모님의 밤- 사랑하올 어머니', date: '2013.06.01', images: ['images/event-20130601-69.jpg'] },
+    { cap: '용머리성당 어르신 봄 나들이 다녀왔어요', date: '2013.05.18', images: ['images/event-20130518-68.jpg'] },
+    { cap: '사진- 부활대축일 준비사진(모든분께 감사)', date: '2013.03.31', images: ['images/event-20130331-67.jpg'] },
+    { cap: '주교님 용머리성당 방문 교중미사 집전 사진입니다', date: '2013.01.21', images: ['images/event-20130121-66.jpg'] },
+    { cap: '성탄 대축일 예술제와 미사 사진(홍보부)', date: '2012.12.24', images: ['images/event-20121224-65.jpg'] },
+    { cap: '제13대 사목회임원 임명식', date: '2012.12.08', images: ['images/event-20121208-60.jpg'] },
+    { cap: '해미성지를 다녀와서', date: '2012.12.08', images: ['images/event-20121208-59.jpg'] },
+    { cap: '소공동체 야유회(구역 반장)', date: '2012.11.08', images: ['images/event-20121108-58.jpg'] },
+    { cap: '제5기 은빛신앙대학 수료식', date: '2012.08.08', images: ['images/event-20120808-55.jpg'] },
+    { cap: '김형수(바오로)신부님 영명축일 행사(6.29)', date: '2012.08.08', images: ['images/event-20120808-52.jpg'] },
+    { cap: '본당어르신들 나들이- 충남예산 수덕사', date: '2012.05.17', images: ['images/event-20120517-51.jpg'] },
+    { cap: '배은정(요안나) 수녀님 영명축일 행사', date: '2012.05.06', images: ['images/event-20120506-53.jpg'] },
+    { cap: '최은진(마리아)수녀님 송별식', date: '2012.02.19', images: ['images/event-20120219-56.jpg'] },
+    { cap: '거동불편하신 어르신들 가을 나들이', date: '2011.11.02', images: ['images/event-20111102-39.jpg'] },
+    { cap: '은빛신앙대학 가을 소풍', date: '2011.11.02', images: ['images/event-20111102-38.jpg'] },
+    { cap: '성지순례 - 성거산성지(9.25)', date: '2011.10.21', images: ['images/event-20111021-36.jpg'] },
+    { cap: '은빛 신앙대학 4기 수료식', date: '2011.08.04', images: ['images/event-20110804-34.jpg'] },
+    { cap: '본당 어르신들 점심대접(대건회)', date: '2011.08.04', images: ['images/event-20110804-33.jpg'] },
+    { cap: '야외미사(2)', date: '2011.07.05', images: ['images/event-20110705-32.jpg'] },
+    { cap: '야외미사(1)', date: '2011.07.05', images: ['images/event-20110705-31.jpg'] },
+    { cap: '첫영성체 가족 성경수여식 및 성경통독', date: '2011.06.02', images: ['images/event-20110602-30.jpg'] },
+    { cap: '소공동체 봉사자 야유회(장성 편백나무 숲)', date: '2011.06.02', images: ['images/event-20110602-29.jpg'] },
+    { cap: '어린이날 행사(5.7)', date: '2011.06.02', images: ['images/event-20110602-28.jpg'] },
+    { cap: '은빛 신앙 대학 소풍', date: '2011.06.02', images: ['images/event-20110602-27.jpg'] },
+    { cap: '2011 성모의 밤', date: '2011.06.01', images: ['images/event-20110601-26.jpg'] },
+    { cap: '2011 성모의 밤 행사', date: '2011.06.01', images: ['images/event-20110601-25.jpg'] },
+    { cap: '2011년 용머리성당 부활 맞이 대청소', date: '2011.04.17', images: ['images/event-20110417-23.jpg'] },
+    { cap: '견진성사 주교님집전 미사입니다', date: '2011.03.27', images: ['images/event-20110327-22.jpg'] },
+    { cap: '용머리 선교우수상 수상', date: '2011.02.12', images: ['images/event-20110212-16.jpg'] },
+    { cap: '선교활동 사진', date: '2011.02.12', images: ['images/event-20110212-15.jpg'] },
+    { cap: '사목임원 피정(수류성당)', date: '2011.02.12', images: ['images/event-20110212-14.jpg'] },
+    { cap: '제1회 성경암송 대회(1,29)', date: '2011.02.12', images: ['images/event-20110212-12.jpg'] },
+    { cap: '2011 복사단 야외행사(모악랜드)', date: '2011.02.12', images: ['images/event-20110212-11.jpg'] },
+    { cap: '교리교육과 파견사진', date: '2011.02.12', images: ['images/event-20110212-10.jpg'] },
+    { cap: '한정현(아우구스티노)신부님 파견미사(돈암동)', date: '2011.01.11', images: ['images/event-20110111-9.jpg'] },
+    { cap: '한정현(아우구스티노)신부님 파견미사 (중앙성당)', date: '2011.01.11', images: ['images/event-20110111-8.jpg'] },
+    { cap: '2010 용머리 공동체 야외미사(2)', date: '2011.01.11', images: ['images/event-20110111-7.jpg'] },
+    { cap: '2010 용머리 공동체 야외미사', date: '2011.01.11', images: ['images/event-20110111-6.jpg'] },
+    { cap: '초등부 은총시장', date: '2010.12.25', images: ['images/event-20101225-13.jpg'] },
+    { cap: '성탄전야 행사 및 미사 - (구역별, 가족별, 단체별 ,장기자랑, 예수성탄 대축일 밤미사)', date: '2010.12.24', images: ['images/event-20101224-18.jpg'] },
+    { cap: '용머리성당 성탄전야 행사 및 미사 사진', date: '2010.12.24', images: ['images/event-20101224-3.jpg'] },
+    { cap: '용머리성당 성인세례식 장면 사진 입니다', date: '2010.12.19', images: ['images/event-20101219-17.jpg'] },
+    { cap: '성지순례-사진제공(신재철형제님)', date: '2010.12.08', images: ['images/event-20101208-1.jpg'] },
+  ];
+
+  const grid = document.getElementById('galleryGrid');
+  const pagination = document.getElementById('galleryPagination');
+  const yearTabsEl = document.getElementById('galleryYearTabs');
+  const GALLERY_PAGE_SIZE = 8;
+  const GALLERY_DECADES = [
+    { key: '2020', label: '2020년대' },
+    { key: '2010', label: '2010년대' },
+    { key: '2000', label: '2000년대' },
+    { key: '1990', label: '1990년대' },
+    { key: '1980', label: '1980년대' },
+  ];
+  function decadeKeyOf(dateStr){ return dateStr.slice(0, 3) + '0'; }
+  const galleryDecadesAvailable = new Set(galleryData.map(item => decadeKeyOf(item.date)));
+  let galleryDecade = GALLERY_DECADES.find(d => galleryDecadesAvailable.has(d.key))?.key || GALLERY_DECADES[0].key;
+  let galleryPage = 1;
+
+  function renderGalleryYearTabs(){
+    yearTabsEl.innerHTML = '';
+    GALLERY_DECADES.forEach((decade) => {
+      const has = galleryDecadesAvailable.has(decade.key);
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'year-tab';
+      b.textContent = decade.label;
+      if (decade.key === galleryDecade) b.classList.add('active');
+      if (!has) {
+        b.disabled = true;
+        b.title = '준비 중입니다';
+      } else {
+        b.addEventListener('click', () => {
+          galleryDecade = decade.key;
+          renderGalleryYearTabs();
+          renderGallery(1);
+        });
+      }
+      yearTabsEl.appendChild(b);
+    });
+  }
+
+  function renderGallery(page){
+    const filtered = galleryData.filter(item => decadeKeyOf(item.date) === galleryDecade);
+    const totalPages = Math.max(1, Math.ceil(filtered.length / GALLERY_PAGE_SIZE));
+    galleryPage = Math.min(Math.max(1, page), totalPages);
+    grid.innerHTML = '';
+    const start = (galleryPage - 1) * GALLERY_PAGE_SIZE;
+    filtered.slice(start, start + GALLERY_PAGE_SIZE).forEach((item) => {
+      const btn = document.createElement('button');
+      btn.className = 'gallery-item';
+      const countBadge = item.images.length > 1 ? `<span class="gallery-count">+${item.images.length - 1}</span>` : '';
+      const parenMatch = item.cap.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+      const titleMain = parenMatch ? parenMatch[1] : item.cap;
+      const titleExtra = parenMatch ? `<span class="gallery-cap-extra">(${parenMatch[2]})</span>` : '';
+      btn.innerHTML = `<div class="gallery-thumb"><img src="${item.images[0]}" alt="${item.cap}" loading="lazy">${countBadge}</div><div class="gallery-cap"><span class="gallery-cap-date">${item.date}</span><span class="gallery-cap-title">${titleMain}</span>${titleExtra}</div>`;
+      btn.addEventListener('click', () => openLightbox(item));
+      grid.appendChild(btn);
+    });
+    renderGalleryPagination(totalPages);
+  }
+
+  function renderGalleryPagination(totalPages){
+    pagination.innerHTML = '';
+    if (totalPages <= 1) return;
+    const addBtn = (label, page, opts = {}) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = label;
+      if (opts.active) b.classList.add('active');
+      if (opts.disabled) b.disabled = true;
+      else b.addEventListener('click', () => goToGalleryPage(page));
+      pagination.appendChild(b);
+    };
+    const addEllipsis = () => {
+      const span = document.createElement('span');
+      span.className = 'ellipsis';
+      span.textContent = '…';
+      pagination.appendChild(span);
+    };
+
+    addBtn('처음', 1, { disabled: galleryPage === 1 });
+    addBtn('이전', galleryPage - 1, { disabled: galleryPage === 1 });
+
+    const WINDOW = 2;
+    const pagesToShow = new Set([1, totalPages]);
+    for (let p = galleryPage - WINDOW; p <= galleryPage + WINDOW; p++) {
+      if (p >= 1 && p <= totalPages) pagesToShow.add(p);
+    }
+    let prev = 0;
+    [...pagesToShow].sort((a, b) => a - b).forEach(p => {
+      if (p - prev > 1) addEllipsis();
+      addBtn(String(p), p, { active: p === galleryPage });
+      prev = p;
+    });
+
+    addBtn('다음', galleryPage + 1, { disabled: galleryPage === totalPages });
+    addBtn('마지막', totalPages, { disabled: galleryPage === totalPages });
+  }
+
+  function goToGalleryPage(page){
+    renderGallery(page);
+    document.getElementById('gallery').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  renderGalleryYearTabs();
+  renderGallery(1);
+
+  const lightbox = document.getElementById('lightbox');
+  const lightboxInner = document.getElementById('lightboxInner');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxCap = document.getElementById('lightboxCap');
+  const lightboxPrev = document.getElementById('lightboxPrev');
+  const lightboxNext = document.getElementById('lightboxNext');
+  let lbImages = [];
+  let lbIndex = 0;
+  let lbLabel = '';
+  function renderLbFrame(){
+    lightboxImg.querySelectorAll('img').forEach(el => el.remove());
+    const img = document.createElement('img');
+    img.src = lbImages[lbIndex];
+    img.alt = lbLabel;
+    lightboxImg.appendChild(img);
+    lightboxCap.textContent = lbImages.length > 1 ? `${lbLabel} (${lbIndex + 1}/${lbImages.length})` : lbLabel;
+  }
+  function openLightbox(item){
+    lbImages = item.images;
+    lbIndex = 0;
+    lbLabel = `${item.date} · ${item.cap}`;
+    lightboxInner.classList.toggle('has-nav', lbImages.length > 1);
+    lightboxInner.classList.add('is-photo');
+    renderLbFrame();
+    lightbox.classList.add('open');
+  }
+  lightboxPrev.addEventListener('click', () => { lbIndex = (lbIndex - 1 + lbImages.length) % lbImages.length; renderLbFrame(); });
+  lightboxNext.addEventListener('click', () => { lbIndex = (lbIndex + 1) % lbImages.length; renderLbFrame(); });
+  document.addEventListener('keydown', e => {
+    if (!lightbox.classList.contains('open') || !lightboxInner.classList.contains('has-nav')) return;
+    if (e.key === 'ArrowLeft') lightboxPrev.click();
+    if (e.key === 'ArrowRight') lightboxNext.click();
+  });
+  document.getElementById('lightboxClose').addEventListener('click', () => lightbox.classList.remove('open'));
+  lightbox.addEventListener('click', e => { if(e.target === lightbox) lightbox.classList.remove('open'); });
+
+  // Bulletin (주보) archive
+  const bulletinData = {
+    "2024": [
+      {d:"2024.01.07",t:"주님 공현 대축일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/43c59bbae8f3c616d111e14435ddf60eeca8e82c","https://t1.daumcdn.net/cafeattach/1MHpU/bde445ff2f3768fac87eea38e54bde3648e84528"]},
+      {d:"2024.01.14",t:"연중 제2주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/80f87485b64bdfafcdcfb4e2fe3dbee14cf792ef","https://t1.daumcdn.net/cafeattach/1MHpU/d406ebb2c8fad69db92c68c1dd4b1dcdb9820f05"]},
+      {d:"2024.01.21",t:"연중 제3주일 ＜하느님의 말씀 주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/438ca447bd604bcfb83b1d2b37fc63e99a485d99","https://t1.daumcdn.net/cafeattach/1MHpU/a76fb84730794ba9fb8e40daf561d6b5fb03a12d"]},
+      {d:"2024.01.28",t:"연중 제4주일 ＜해외 원조 주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/5a0c00bd7338421f8535394c5059a2fa3a0809c9","https://t1.daumcdn.net/cafeattach/1MHpU/b1a6a5541499cbbd27be08d56d9ae4b980bd4d99"]},
+      {d:"2024.02.04",t:"연중 제5주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/9b141a95e270d052d4ab60b9c13095d13fcdbb63","https://t1.daumcdn.net/cafeattach/1MHpU/d1fa7d2bfd93ced772d421a5796b0a79d6f516fb"]},
+      {d:"2024.02.11",t:"연중 제6주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/9fcfa73637e2bcbd206fd88ed76ed62b706d2fb2","https://t1.daumcdn.net/cafeattach/1MHpU/c176b4a998d720a891e8b8b8d15ab49c63572aff"]},
+      {d:"2024.02.18",t:"사순 제1주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/5262fcecdb25a2dfc262fcc7cd1f96819f5c68a9","https://t1.daumcdn.net/cafeattach/1MHpU/bf4a8093b8a4e55a3317a2dc132e021f5f0c59a8"]},
+      {d:"2024.02.25",t:"사순 제2주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/2d08938dd5051aa6d965f2a9a14ae5447f943abb","https://t1.daumcdn.net/cafeattach/1MHpU/8c4fb8b7a7c4c809e61b1436cea04e042601aaaa"]},
+      {d:"2024.03.03",t:"사순 제3주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/76d3612b29ad9baa9cc7b41eb7995f12f72aeb9e","https://t1.daumcdn.net/cafeattach/1MHpU/9d1f5a79969175e85952937dd140d522e01b3e0a"]},
+      {d:"2024.03.10",t:"사순 제4주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/3ef85b16c6c1f984a4a24dc408cbef5aba2ab860","https://t1.daumcdn.net/cafeattach/1MHpU/7b979bcc7abcd6be2e8af45b4f9b8e43dd6722b3"]},
+      {d:"2024.03.17",t:"사순 제5주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/297ee23845ff248c4e0ba4458cc3d996d1f0e21d","https://t1.daumcdn.net/cafeattach/1MHpU/7d59e8f2170b8f37929f0ba4ea35802f0ee496f9"]},
+      {d:"2024.03.24",t:"주님 수난 성지 주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/9679ee6730942c24e0312d267d99eda621663b17","https://t1.daumcdn.net/cafeattach/1MHpU/b78231e3193854524279ca97d5b9ffc0e06b00e7"]},
+      {d:"2024.03.31",t:"주님 부활 대축일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/68b1a56cdf4065491db62aed844ceeb0a91377d1","https://t1.daumcdn.net/cafeattach/1MHpU/eb2221e30b928d075b729933bccb227aa315436e"]},
+      {d:"2024.04.07",t:"부활 제2주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/2515a67fa6ccf10ac4dd7c182d52743de5d2e178","https://t1.daumcdn.net/cafeattach/1MHpU/9ee128130ba0a41e7fc8f64f0a06aad32f07330a"]},
+      {d:"2024.04.14",t:"부활 제3주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/00aad5b2e519f8877ef6d7d0f6d30700efad3bb0","https://t1.daumcdn.net/cafeattach/1MHpU/ba007ec6dc41f83011d63359ae1c4e89c61d3bcc"]},
+      {d:"2024.04.21",t:"부활 제4주일＜성소 주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/2f2b6aaf7438438ba060797f1a8af4965f411b12","https://t1.daumcdn.net/cafeattach/1MHpU/3cafe9b2a0d77d19d91d74f89d048ec637f8f71f"]},
+      {d:"2024.04.28",t:"부활 제5주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/2b7c0408ac4216c46037117e28b8155d560ce2f4","https://t1.daumcdn.net/cafeattach/1MHpU/b83304f8e5e3bf2b30367b97e2c087a55a8f062d"]},
+      {d:"2024.05.05",t:"부활 제6주일＜생명 주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/0c02b733d9cf85a29fc2dffbcd3de1daadc59f4e","https://t1.daumcdn.net/cafeattach/1MHpU/4602ba232d5fec7eb0adcc3e25a5ee68ffb16538"]},
+      {d:"2024.05.12",t:"주님 승천 대축일＜홍보 주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/17f1a4b3f5393cd86a9debe6d1625abf4f86e041","https://t1.daumcdn.net/cafeattach/1MHpU/f596ad8a4e647e44baa41cb39429987ea683780d"]},
+      {d:"2024.05.19",t:"성령 강림 대축일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/2610c07595a0f7ac02895358bd13c593e23cfdfd","https://t1.daumcdn.net/cafeattach/1MHpU/8f17dd321f46f1f6476b73f35176f7e52b1934ef"]},
+      {d:"2024.05.26",t:"지극히 거룩하신 삼위일체 대축일＜청소년 주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/2f724b851bb02fd3efc8c27b6558831e4800d319","https://t1.daumcdn.net/cafeattach/1MHpU/a63bafeb880b204f0be2aa09c9cb63aa3d6fbf53"]},
+      {d:"2024.06.02",t:"지극히 거룩하신 그리스도의 성체 성혈 대축일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/e4d3246ec9f957b80b1cbad9701e0d4cecc804cb","https://t1.daumcdn.net/cafeattach/1MHpU/ef75442fd5f92c20c9e8c7d329beaef38e16c4f2"]},
+      {d:"2024.06.09",t:"연중 제10주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/66dc335476902b124ee7a390ea1e290c2e6984e8","https://t1.daumcdn.net/cafeattach/1MHpU/92d163fa6b21e68f9d8be6029167c93e05e15eef"]},
+      {d:"2024.06.16",t:"연중 제11주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/4e1e3431fb1029846ff5b59cae92075b65fb77b3","https://t1.daumcdn.net/cafeattach/1MHpU/c68fba9a9d8d958901e57eb57db0b4dd54867518"]},
+      {d:"2024.06.23",t:"연중 제12주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/a30819ef62e54687343f91df0520e1c7a4fded38","https://t1.daumcdn.net/cafeattach/1MHpU/d4cd82c2df7d23472bf24eb05dbe6af163f081ab"]},
+    ],
+    "2023": [
+      {d:"2023.01.01",t:"천주의 성모마리아 대축일(세계 평화의 날)",i:["https://t1.daumcdn.net/cafeattach/1MHpU/46b1619bfbca75b6344531d2f4df9d49bbc272a6","https://t1.daumcdn.net/cafeattach/1MHpU/f7c1ba60c3632df8ec916614cd9c6a525f08f816"]},
+      {d:"2023.01.08",t:"주님 공현 대축일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/e45a740976e6b910cd53e44a07145d4aad4f8323","https://t1.daumcdn.net/cafeattach/1MHpU/fb74311f3106531972fa7ed89b510ac6e99a9b23"]},
+      {d:"2023.01.15",t:"연중 제2주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/0f091214851b8222db9d57700ff0f50a7ad7c5d0","https://t1.daumcdn.net/cafeattach/1MHpU/41497fcf77b6ea2c2bb8c5edc1e6421d65e57b2b"]},
+      {d:"2023.01.22",t:"연중 제3주일＜하느님의 말씀 주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/b7bbd522be1139991cefb1b9e2e1a5dc2441fd91","https://t1.daumcdn.net/cafeattach/1MHpU/fdc8df070ae3dad9897dff87a8f5bd8f16f6aa3c"]},
+      {d:"2023.01.29",t:"연중 제4주일＜해외 원조 주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/a6db4847c6bccefb39468c2b21324f4a1623c201","https://t1.daumcdn.net/cafeattach/1MHpU/c0be603847a943e607ad504596eadbe131f8e137"]},
+      {d:"2023.02.05",t:"연중 제5주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/a2f779fdb8cfeb488fb06ac44560b1862d74a399","https://t1.daumcdn.net/cafeattach/1MHpU/a512ef0ff0df0623bacafa23dc16e2449ffd170c"]},
+      {d:"2023.02.12",t:"연중 제6주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/26f173e044ecff9bea2c41ff7cda6c39d81b5700","https://t1.daumcdn.net/cafeattach/1MHpU/8a5024e2a0a658d9de8b350bb3437d7f5b9b9be0"]},
+      {d:"2023.02.19",t:"연중 제7주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/1416565e08012e9a635b9ce76c4f8fbbcf6b51f1","https://t1.daumcdn.net/cafeattach/1MHpU/4053433d34a2959d3217a2fd42011315511d68b3"]},
+      {d:"2023.02.26",t:"사순 제1주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/b8f8b94fd4fabeb2d9dd93eff457234c51e65d82","https://t1.daumcdn.net/cafeattach/1MHpU/fc9b7b8d5b4a0fc2dea5501c9cfd118270c4ab5a"]},
+      {d:"2023.03.05",t:"사순 제2주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/4191b260228781b38956c6893429f79a8185fbbb","https://t1.daumcdn.net/cafeattach/1MHpU/a70b5b49fc598ae5a8539348537dd436559b3790"]},
+      {d:"2023.03.12",t:"사순 제3주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/22147c9babddd5bccd881c5e5f263ef2f9d9a73e","https://t1.daumcdn.net/cafeattach/1MHpU/4ee0738addd20995506b21cadf243c0088589ab5"]},
+      {d:"2023.03.19",t:"사순 제4주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/7a453f4a7d9df56495065e25d5e59bd4fc389de9","https://t1.daumcdn.net/cafeattach/1MHpU/83d6ce65d6f6e07df8b28f484b71d6c9ff469e7b"]},
+      {d:"2023.03.26",t:"사순 제5주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/1a1d779c25e7cde8981d09a958f3976c6e600de8","https://t1.daumcdn.net/cafeattach/1MHpU/ea83f94e8a15def398131c92265d70a1e91dc878"]},
+      {d:"2023.04.02",t:"주님 수난 성지 주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/5b2bb6ba905456c1b2ed7479257212dd83c45944","https://t1.daumcdn.net/cafeattach/1MHpU/935956ce712fd999acb464aa112d3fffd0fb7528"]},
+      {d:"2023.04.09",t:"주님 부활 대축일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/f494374c033bad8bef82c6cc8cc3baaa24450460","https://t1.daumcdn.net/cafeattach/1MHpU/fed7b245dd7cce461ef5d54ca4ffb21f1b1c625b"]},
+      {d:"2023.04.16",t:"부활 제2주일＜하느님의 자비 주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/d2f68fcf830f91c7b59bb905ee49b376327e212c","https://t1.daumcdn.net/cafeattach/1MHpU/fe5cddc202ae25e91085ea92a59809ce1fe06d99"]},
+      {d:"2023.04.23",t:"부활 제3주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/850b01b9e8b6a6c02cea8ec7b75585ea8cee09c8","https://t1.daumcdn.net/cafeattach/1MHpU/b885576c344e3f568cd3137e29645c8471d95306"]},
+      {d:"2023.04.30",t:"부활 제4주일＜성소 주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/4d4bbf4c7772b1e6bbc7c6289f1dc954153318c9","https://t1.daumcdn.net/cafeattach/1MHpU/f69ea1bb6ed22e034a725a3ad64f272b96a778ce"]},
+      {d:"2023.05.07",t:"부활 제5주일＜생명 주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/49b19717739587d4299186639bc86f257048a73d","https://t1.daumcdn.net/cafeattach/1MHpU/97f14c0f94c4f7ec7d7ce3779950e8e92b2c2f7e"]},
+      {d:"2023.05.14",t:"부활 제6주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/a46e02ae1b415d9b818fb6e13964ef61146fb97f","https://t1.daumcdn.net/cafeattach/1MHpU/aba6569704e4201aff1fc6e383a8cf77f7f98cf7"]},
+      {d:"2023.05.21",t:"주님 승천 대축일(홍보 주일)",i:["https://t1.daumcdn.net/cafeattach/1MHpU/d6770823666d914dc98aeb6b79e378784495fbff","https://t1.daumcdn.net/cafeattach/1MHpU/e861a78b4ab7c93acfa0ea2b6ce44fa6a0604415"]},
+      {d:"2023.05.28",t:"성령 강림 대축일(청소년 주일)",i:["https://t1.daumcdn.net/cafeattach/1MHpU/7ee6ef3dfbfdad76a0577e64b70b71c48f7b0619","https://t1.daumcdn.net/cafeattach/1MHpU/85a065ae979971066f1015de9cbf8715df42d895"]},
+      {d:"2023.06.04",t:"지극히 거룩하신 삼위일체 대축일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/b972472776819af0426ffe0b6aea194960843ed9","https://t1.daumcdn.net/cafeattach/1MHpU/fdc2ad257f1d5c38a0599e6ce0e3953c1510659f"]},
+      {d:"2023.06.11",t:"지극히 거룩하신 그리스도의 성체 성혈 대축일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/1a17c4455df74e5e2357ce8c80a2cdeed81b151e","https://t1.daumcdn.net/cafeattach/1MHpU/49d12b28f9cc74a7e6e39d59c361978231145c39"]},
+      {d:"2023.06.18",t:"연중 제11주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/0df7759e9ae5efca317060572a7cf709fb7d6f6b","https://t1.daumcdn.net/cafeattach/1MHpU/e570e8c55aed04aec94d2274e3662e485b7cba93"]},
+      {d:"2023.06.25",t:"민족의 화해와 일치를 위한 기도의 날",i:["https://t1.daumcdn.net/cafeattach/1MHpU/307deceeb63f3aca4b9b17009ab4f900fc87ee9f","https://t1.daumcdn.net/cafeattach/1MHpU/ef531df1c2c0c1c8f7333eb57ce408ae8bbfae25"]},
+      {d:"2023.07.02",t:"연중 제13주일(교황 주일)",i:["https://t1.daumcdn.net/cafeattach/1MHpU/054afd1536f136b229491a1f1c7586df3a0e0347","https://t1.daumcdn.net/cafeattach/1MHpU/0d09244c82145ac8ed41960eb708ea4fc900f88e"]},
+      {d:"2023.07.09",t:"연중 제14주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/4d6d7644dbe7db452cdb8f748a21273ab3b925d3","https://t1.daumcdn.net/cafeattach/1MHpU/55cca2d0847d56193cb3f34eada7b93a887d356c"]},
+      {d:"2023.07.16",t:"연중 제15주일＜농민주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/1dceac9599034bc9c69eae61420e7d8f57037db9","https://t1.daumcdn.net/cafeattach/1MHpU/32fa471f609187f4f5f41395b8281cba44857ddb"]},
+      {d:"2023.07.23",t:"연중 제16주일＜세계 조부모와 노인의 날＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/2ce992e8fc0b279113a1966dc9cb25ec6a697a85","https://t1.daumcdn.net/cafeattach/1MHpU/b311987385373b74b62ded3b897201b3d32abe58"]},
+      {d:"2023.07.30",t:"연중 제17주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/aa0d7ab4139df51b83014e956646c73010866df2","https://t1.daumcdn.net/cafeattach/1MHpU/eced6e397da0b9b0622a671bebd96e8b4868dd05"]},
+      {d:"2023.08.06",t:"연중 제18주일 ＜주님의 거룩한 변모 축일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/6a4fdef540c7918df4db2bc881067f258b3b528e","https://t1.daumcdn.net/cafeattach/1MHpU/8c3686b6a0c81617999d3c8674b4f1e4b380f374"]},
+      {d:"2023.08.13",t:"연중 제19주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/7bc9e557199d809ef8298cc298c327b63b6f7919","https://t1.daumcdn.net/cafeattach/1MHpU/d22197fda651a0c474b9b0afacf0c4cc31dc8a3c"]},
+      {d:"2023.08.20",t:"연중 제20주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/69e535fef6456d83190a6ab500d7781867e229d4","https://t1.daumcdn.net/cafeattach/1MHpU/81e1a3a23f61ff880c8128805f73a141ba6dab14"]},
+      {d:"2023.08.27",t:"연중 제21주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/03d38fc421f4d809d72e1d93b0107d832b6d035c","https://t1.daumcdn.net/cafeattach/1MHpU/55346ff1c4a170d2998385146443a644b1ab7eb5"]},
+      {d:"2023.09.03",t:"연중 제22주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/a138591546bf13ddfe7e47901c669fff48f6a02f","https://t1.daumcdn.net/cafeattach/1MHpU/ab4c8727e36d63aa7dd53b931ce254626f3646e4"]},
+      {d:"2023.09.10",t:"연중 제23주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/287b0ebdecedd3e09f6cedc4aa4c6bc33f774634","https://t1.daumcdn.net/cafeattach/1MHpU/fda1165daeb53c41aab6570650de3a64c8737d82"]},
+      {d:"2023.09.17",t:"연중 제24주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/5430bbe7d117da162844c549150e117e827a47b5","https://t1.daumcdn.net/cafeattach/1MHpU/ee212ef8189da5e7d5ce452f414266e4d4c2c08f"]},
+      {d:"2023.09.24",t:"연중 제25주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/3471a519859418fdbeb547223a8eefeb7f599710","https://t1.daumcdn.net/cafeattach/1MHpU/60d00d68dde76dbd6ee95b8c729d8f4f2c670a8d"]},
+      {d:"2023.10.01",t:"연중 제26주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/877b9a65946d193d5c7900e390b42ddc3ac27b34","https://t1.daumcdn.net/cafeattach/1MHpU/cc12cb96dae5f6155c3df2f4d5480cd298c2a1ea"]},
+      {d:"2023.10.08",t:"연중 제27주일＜군인 주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/6241352129977533d032b0d5da29e3f51cab3b15","https://t1.daumcdn.net/cafeattach/1MHpU/dfa9719c62a9528d0095dcf26888efc73db9315e"]},
+      {d:"2023.10.15",t:"연중 제28주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/a8505a09534c91f6bcb89037fcf936490153a1d8","https://t1.daumcdn.net/cafeattach/1MHpU/b8784f6e50fe9ce4b6e93811163437f617093f26"]},
+      {d:"2023.10.22",t:"연중 제29주일＜전교주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/b4941cda065aaa6245084da4340e99513aa2526f","https://t1.daumcdn.net/cafeattach/1MHpU/cff32818a4c6fe3621e335aa4504b9aa844cb3ff"]},
+      {d:"2023.10.29",t:"연중 제30주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/56eba621c0458548c5c34cd2aadaea9de5082695","https://t1.daumcdn.net/cafeattach/1MHpU/a36ed817b4e49196ce90d46b9ca872c17889b0bf"]},
+      {d:"2023.11.05",t:"연중 제31주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/975a03a281b5e7e099f6539a11a571961671de6f","https://t1.daumcdn.net/cafeattach/1MHpU/c517bb5b79910205ac0db9c37de956ddf4124842"]},
+      {d:"2023.11.12",t:"연중 제32주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/b8cbaec885c34f9859ba3123902207955fcbab47","https://t1.daumcdn.net/cafeattach/1MHpU/eb4143814ba88db5ffb0581bc42b87a5a8738837"]},
+      {d:"2023.11.19",t:"연중 제33주일＜세계 가난한 이의 날＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/1028a0aae819d4b9bc6172e23e09d4263456036e","https://t1.daumcdn.net/cafeattach/1MHpU/d705f88887ecfef8bd55bd7b2b296d97fe79b199"]},
+      {d:"2023.11.26",t:"온 누리의 임금이신 우리 주 예수 그리스도왕 대축일＜성서주간＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/1c339f1b90f3f56ee1187dcd86a18087eb705b46","https://t1.daumcdn.net/cafeattach/1MHpU/8316ae0a1718c32ff262c64e3cd69955b0f8f30f"]},
+      {d:"2023.12.03",t:"대림 제1주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/48d49fdb9f47152874ff7c3f029db894f25cfc39","https://t1.daumcdn.net/cafeattach/1MHpU/d947526a76f90315c6c66be896954c40f37507cc"]},
+      {d:"2023.12.10",t:"대림 제2주일＜인권주일. 사회교리주간＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/8678f58cdfa55137c9fe2f2c36aa797c4d51b249","https://t1.daumcdn.net/cafeattach/1MHpU/f2d755dd354bab42b90bf6446a7b7dc7b4094dcb"]},
+      {d:"2023.12.17",t:"대림 제3주일＜자선주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/52e46955ca578ad176ba9893b40103c7c75eee9d","https://t1.daumcdn.net/cafeattach/1MHpU/e46338ce721d92a217feed43e379f19417c6c528"]},
+      {d:"2023.12.24",t:"대림 제4주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/788f591081caed7085c2d2efa62bc870e1d36ba5","https://t1.daumcdn.net/cafeattach/1MHpU/cd3c5e5dc97d41b70ac267f8523fb93bdb03a261"]},
+      {d:"2023.12.31",t:"예수, 마리아, 요셉의 성가정 축일＜가정 성화 주간＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/913853dedb9cbdcccb69e94904db40cd5ab710ee","https://t1.daumcdn.net/cafeattach/1MHpU/dda5c04819673565cc425cc9a50394f70861e0a0"]},
+    ],
+    "2022": [
+      {d:"2022.05.15",t:"부활 제5주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/080cfab3a91329f28644194349a7e28dbb65e65b","https://t1.daumcdn.net/cafeattach/1MHpU/bbacedfcbacf21b2e6353fd0654e07b7498a3f99"]},
+      {d:"2022.05.22",t:"부활 제6주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/da30dbd0c5e1327b8a7377e3ba5b5d320ab5b1cd","https://t1.daumcdn.net/cafeattach/1MHpU/ef9c0cdb1b9fa06428e93c50f969cddf387dcced"]},
+      {d:"2022.05.29",t:"주님 승천 대축일＜홍보 주일, 청소년 주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/68beab5a4614448f583613aa297a5f8be341c63c","https://t1.daumcdn.net/cafeattach/1MHpU/fe7a7c0f7b084d0a323f1c1b13ac4885455ea581"]},
+      {d:"2022.06.05",t:"성령 강림 대축일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/5b5a142f8a90d5256bc15015a3a7927dc0392087","https://t1.daumcdn.net/cafeattach/1MHpU/5db7361cac52ac01113f6ea83ff1c30b9fb0e86c"]},
+      {d:"2022.06.12",t:"지극히 거룩하신 삼위일체 대축일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/2fe738ab4196a900b618fe50354f26f28e4b5ef9","https://t1.daumcdn.net/cafeattach/1MHpU/a22b30db7b3b2987111a1e2b2b8b11d9c476bc6a"]},
+      {d:"2022.06.19",t:"지극히 거룩하신 그리스도의 성체 성혈 대축일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/846c0b09e4a7d16732adf40d761b432d6824e102","https://t1.daumcdn.net/cafeattach/1MHpU/9aceb15a76032d32d96fef6333e6f434fcf370ec"]},
+      {d:"2022.06.26",t:"연중 제3주일＜교황주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/457b46b1a16820f4f711366b3512904d32b5b107","https://t1.daumcdn.net/cafeattach/1MHpU/9afbe7bf687136bf0b7b2d79b911a093d022a037"]},
+      {d:"2022.07.03",t:"연중 제14주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/48c61315881753c0a904948866ba113e92d7553f","https://t1.daumcdn.net/cafeattach/1MHpU/71fdebb541a763679aa7cbe621ff436e0f9db120"]},
+      {d:"2022.07.10",t:"연중 제15주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/a0e130af931b4dae891f8ac67b1676253881c8e7","https://t1.daumcdn.net/cafeattach/1MHpU/f47a72832237fe3efbb7a568fc78ca75f99dd0ac"]},
+      {d:"2022.07.17",t:"연중 제16주일＜농민주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/1efd183ab502aa5a0e85298e11311dbc0ff55ff9","https://t1.daumcdn.net/cafeattach/1MHpU/f9fffc34c1e438c75528788da7cd00b7ea3709e5"]},
+      {d:"2022.07.24",t:"연중 제17주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/596a2a1789eda81b4bd25e0866041a4f24e6c06a","https://t1.daumcdn.net/cafeattach/1MHpU/e93dc3e136beb86ceab2ce237b06e6ad6618d6b0"]},
+      {d:"2022.07.31",t:"연중 제18주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/0b8559808b1d1ef14a53abcfe7b5d19ca62c782e","https://t1.daumcdn.net/cafeattach/1MHpU/b1507dbc3e956c8f43f87fd3da43ce93345ebbca"]},
+      {d:"2022.08.07",t:"연중 제19주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/535854d239cb4c17d7b2916f4fe90f9279ebf448","https://t1.daumcdn.net/cafeattach/1MHpU/df7ac8e5dc0f25f2a7a26d22dec35148974f5553"]},
+      {d:"2022.08.14",t:"연중 제20주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/245d43a30a750df5c208b16affc2b346adfabb1e","https://t1.daumcdn.net/cafeattach/1MHpU/9cd52e7caefc55f5ef42191075dba01a6c07fd66"]},
+      {d:"2022.08.21",t:"연중 제21주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/3c1055cb284b28daab6ee934b4c026dea60f3904","https://t1.daumcdn.net/cafeattach/1MHpU/829486c60cd6cbd1b389c0ba1b7113086b19d9d9"]},
+      {d:"2022.08.28",t:"연중 제22주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/08b37a40195c5580ad478f8fa40ad6bd0cd7210e","https://t1.daumcdn.net/cafeattach/1MHpU/d4bd3d23f8e4e86bd261d51a5f195478eedcb24e"]},
+      {d:"2022.09.04",t:"연중 제23주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/be0a548ee5e31b2f24c95acb03f833861d6e5201","https://t1.daumcdn.net/cafeattach/1MHpU/c633060b7b5fd73709840007c0aa0fb23f882a19"]},
+      {d:"2022.09.11",t:"연중 제24주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/6e7cbeec0a68ffbd61c3941a36835d770c102c58","https://t1.daumcdn.net/cafeattach/1MHpU/c1de9d9c538c781e3e7daa16b2e73c0a1730c5c8"]},
+      {d:"2022.09.18",t:"연중 제25주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/2ea163048b7df566ebc9972a92476dc51b64bd37","https://t1.daumcdn.net/cafeattach/1MHpU/397f79fa0d26bc8124b7dcf5e591c3df32f952c0"]},
+      {d:"2022.09.25",t:"연중 제26주일 ＜세계 이주민과 난민의 날＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/0660ae5bb7438589d623f6fcd3697f1cfe9c8271","https://t1.daumcdn.net/cafeattach/1MHpU/f448593b497a52e2a1231d3f22da857f0a1574da"]},
+      {d:"2022.10.02",t:"연중 제27주일 ＜군인주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/a6126d7380487e7d3927f6cc5f48f812f7360d3c","https://t1.daumcdn.net/cafeattach/1MHpU/c2708f6094e07f9c48bd9a646437886fb7b45eff"]},
+      {d:"2022.10.09",t:"연중 제28주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/4b2b2fe8df65eddbddfef542a01ba0e2db10b0a1","https://t1.daumcdn.net/cafeattach/1MHpU/97059c0be12e361de71eaf4ce4a6ee03a1b55771"]},
+      {d:"2022.10.16",t:"연중 제29주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/89c161351826b7008a4dc44631d49d0f3ac0c980","https://t1.daumcdn.net/cafeattach/1MHpU/d308b257a85953167e2cee1a71df8ccb2310f2a2"]},
+      {d:"2022.10.23",t:"연중 제30주일＜전교주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/a67e85d27b5255b216b9b4d61208c4a8dea214a9","https://t1.daumcdn.net/cafeattach/1MHpU/f3d8e4864c9d8db3f442d42e79744b52f358117f"]},
+      {d:"2022.10.30",t:"연중 제31주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/2f191837a15687754f0f047224702f3d4912d284","https://t1.daumcdn.net/cafeattach/1MHpU/624fa1dd0db5810dbafc7cc538ba831e124d8c04"]},
+      {d:"2022.11.06",t:"제32주일 ＜평신도주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/1fd1d2169eb443b79864db4d5472280e764875a3","https://t1.daumcdn.net/cafeattach/1MHpU/ad057c1dbb5c6a4cf783d0933b8f57542b77eb29"]},
+      {d:"2022.11.13",t:"연중 제33주일 ＜세계 가난한 이의 날＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/997261430f63a1cc091148f47ba54bdc217e1500","https://t1.daumcdn.net/cafeattach/1MHpU/a6dea73be27937cf5918bc24e885e39b88a5a9f7"]},
+      {d:"2022.11.20",t:"온 누리의 임금이신 우리 주 예수 그리스도왕 대축일＜성서주간＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/061fad0017c75edf261ce8d104424f3a5d5afdda","https://t1.daumcdn.net/cafeattach/1MHpU/d8c63811dbafe1f67aedeb1ccb32dd1befa5ffbd"]},
+      {d:"2022.11.27",t:"대림 제1주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/d1a7aac3ecb5906da1bda5bbaf3397d734b7e48e","https://t1.daumcdn.net/cafeattach/1MHpU/d968a8f5647f8ca4f618cc0e61dd6f597cd620ab"]},
+      {d:"2022.12.04",t:"대림 제2주일＜인권주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/166dd1cbab82002e7ac0ce78c3d830da2a92fa7e","https://t1.daumcdn.net/cafeattach/1MHpU/4683a873e62ff318ff039b3a7abac7e6a8534f1a"]},
+      {d:"2022.12.11",t:"대림 제3주일＜자선주일＞",i:["https://t1.daumcdn.net/cafeattach/1MHpU/45902158af0de0ef01fc9a494a8a63f643cb5bd2","https://t1.daumcdn.net/cafeattach/1MHpU/49c7bb439a12306e56381238ae6d1bba6b428d4c"]},
+      {d:"2022.12.18",t:"대림 제4주일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/36b1844039c6d45571ef5d6e18b65e602df0c52a","https://t1.daumcdn.net/cafeattach/1MHpU/723987cc214ebb1657f44450ceebac4b80c510aa"]},
+      {d:"2022.12.25",t:"주님 성탄 대축일",i:["https://t1.daumcdn.net/cafeattach/1MHpU/42391622257459d3e10e367fc38837b638d84214","https://t1.daumcdn.net/cafeattach/1MHpU/bef8f5beb9a0a7f9d8b87b1c687f297876ebd62b"]},
+    ],
+  };
+
+  const bulletinAllYears = ['2024','2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010'];
+  let currentBulletinYear = null;
+
+  function renderBulletinLatest(){
+    const list = bulletinData[currentBulletinYear] || [];
+    const latest = Object.values(bulletinData).flat().reduce((a,b) => a.d > b.d ? a : b);
+    const el = document.getElementById('bulletinLatest');
+    el.innerHTML = `
+      <div>
+        <p class="eyebrow" style="margin-bottom:6px;">최근 게시된 주보 (${latest.d})</p>
+        <h3>${latest.t}</h3>
+        <p class="warn">⚠ 다음카페 주보 게시판은 2024년 6월 이후 갱신되지 않았습니다. 이번 주 실제 주보는 사무실(063-287-0441)로 문의해 주세요.</p>
+      </div>
+      <button class="btn btn-primary" id="bulletinLatestBtn" type="button">주보 보기</button>
+    `;
+    document.getElementById('bulletinLatestBtn').addEventListener('click', () => openBulletin(latest));
+  }
+
+  function renderBulletinYearTabs(){
+    const wrap = document.getElementById('bulletinYearTabs');
+    wrap.innerHTML = '';
+    bulletinAllYears.forEach(y => {
+      const has = !!bulletinData[y];
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'year-tab' + (y === currentBulletinYear ? ' active' : '');
+      btn.textContent = y + '년';
+      if (has) {
+        btn.addEventListener('click', () => { currentBulletinYear = (currentBulletinYear === y) ? null : y; renderBulletinYearTabs(); renderBulletinWeekList(); });
+      } else {
+        btn.disabled = true;
+        btn.title = '자료 준비 중';
+      }
+      wrap.appendChild(btn);
+    });
+  }
+
+  function renderBulletinWeekList(){
+    const listEl = document.getElementById('bulletinWeekList');
+    listEl.innerHTML = '';
+    if (!currentBulletinYear) {
+      listEl.innerHTML = '<li class="bulletin-empty-note">연도를 선택하면 주보 목록이 표시됩니다.</li>';
+      return;
+    }
+    const items = bulletinData[currentBulletinYear];
+    if (!items || !items.length) {
+      listEl.innerHTML = '<li class="bulletin-empty-note">아직 등록된 주보가 없습니다. 자료가 확보되는 대로 추가하겠습니다.</li>';
+      return;
+    }
+    items.slice().reverse().forEach(item => {
+      const li = document.createElement('li');
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'bulletin-week-row';
+      btn.innerHTML = `<span class="wdate">${item.d}</span><span class="wtitle">${item.t}</span>`;
+      btn.addEventListener('click', () => openBulletin(item));
+      li.appendChild(btn);
+      listEl.appendChild(li);
+    });
+  }
+
+  function openBulletin(item){
+    lightboxInner.classList.remove('has-nav', 'is-photo');
+    lightboxImg.innerHTML = item.i.map(src => `<img src="${src}" alt="${item.d} 주보">`).join('');
+    lightboxCap.textContent = `${item.d} · ${item.t}`;
+    lightbox.classList.add('open');
+  }
+
+  renderBulletinLatest();
+  renderBulletinYearTabs();
+  renderBulletinWeekList();
+
+  // Schedule (본당 일정): scheduleData keyed by 'YYYY-MM-DD', each an array of { t: 제목, time: 일시, place: 장소 }
+  const scheduleData = {};
+
+  const calMonthLabel = document.getElementById('calMonthLabel');
+  const calBody = document.getElementById('calBody');
+  const calDetail = document.getElementById('calDetail');
+  const today = new Date();
+  let calYear = today.getFullYear();
+  let calMonth = today.getMonth() + 1;
+  let calSelected = null;
+
+  function pad2(n){ return String(n).padStart(2, '0'); }
+  function dateKey(y, m, d){ return `${y}-${pad2(m)}-${pad2(d)}`; }
+
+  function renderCalendar(){
+    calMonthLabel.textContent = `${calYear}년 ${calMonth}월`;
+    calBody.innerHTML = '';
+
+    const firstDay = new Date(calYear, calMonth - 1, 1).getDay();
+    const daysInMonth = new Date(calYear, calMonth, 0).getDate();
+    const prevMonthDays = new Date(calYear, calMonth - 1, 0).getDate();
+
+    const cells = [];
+    for (let i = firstDay - 1; i >= 0; i--) cells.push({ day: prevMonthDays - i, outside: true });
+    for (let d = 1; d <= daysInMonth; d++) cells.push({ day: d, outside: false });
+    while (cells.length % 7 !== 0) cells.push({ day: cells.length, outside: true });
+
+    const isCurrentRealMonth = calYear === today.getFullYear() && calMonth === today.getMonth() + 1;
+
+    for (let row = 0; row < cells.length / 7; row++) {
+      const tr = document.createElement('tr');
+      for (let col = 0; col < 7; col++) {
+        const cell = cells[row * 7 + col];
+        const td = document.createElement('td');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'cal-day';
+        btn.textContent = cell.day;
+        if (cell.outside) {
+          btn.classList.add('outside');
+          btn.disabled = true;
+        } else {
+          const key = dateKey(calYear, calMonth, cell.day);
+          if (scheduleData[key] && scheduleData[key].length) btn.classList.add('has-event');
+          if (isCurrentRealMonth && cell.day === today.getDate()) btn.classList.add('today');
+          if (key === calSelected) btn.classList.add('selected');
+          btn.addEventListener('click', () => { calSelected = key; renderCalendar(); renderCalDetail(); });
+        }
+        td.appendChild(btn);
+        tr.appendChild(td);
+      }
+      calBody.appendChild(tr);
+    }
+  }
+
+  function renderCalDetail(){
+    if (!calSelected) {
+      calDetail.innerHTML = '<div class="cal-detail-empty">날짜를 선택하면 그날의 일정을 확인할 수 있습니다.</div>';
+      return;
+    }
+    const [y, m, d] = calSelected.split('-').map(Number);
+    const items = scheduleData[calSelected] || [];
+    let html = `<div class="cal-detail-date">${y}년 ${m}월 ${d}일</div>`;
+    if (!items.length) {
+      html += '<div class="cal-detail-empty">등록된 일정이 없습니다.</div>';
+    } else {
+      html += items.map(item => `
+        <div class="cal-detail-item">
+          <div class="cal-item-title">${item.t}</div>
+          <div class="cal-item-meta">${item.time ? '일시 · ' + item.time : ''}${item.time && item.place ? '<br>' : ''}${item.place ? '장소 · ' + item.place : ''}</div>
+        </div>
+      `).join('');
+    }
+    calDetail.innerHTML = html;
+  }
+
+  document.getElementById('calPrev').addEventListener('click', () => {
+    calMonth--;
+    if (calMonth < 1) { calMonth = 12; calYear--; }
+    renderCalendar();
+  });
+  document.getElementById('calNext').addEventListener('click', () => {
+    calMonth++;
+    if (calMonth > 12) { calMonth = 1; calYear++; }
+    renderCalendar();
+  });
+
+  renderCalendar();
+  renderCalDetail();
+
+  // Location map (MapLibre GL + OpenFreeMap Liberty, POI icons stripped, only our own parish markers)
+  const parishHome = { name: '용머리성당', lat: 35.8030668, lon: 127.1343234 };
+  const nearbyParishes = [
+    { name: '효자동성당', lat: 35.8044826, lon: 127.1265808, m: 716 },
+    { name: '우림성당',   lat: 35.7982948, lon: 127.1273939, m: 820 },
+    { name: '화산동성당', lat: 35.8146373, lon: 127.1278409, m: 1413 },
+    { name: '중앙주교좌성당', lat: 35.8068860, lon: 127.1496205, m: 1443 },
+    { name: '우전성당',   lat: 35.7995303, lon: 127.1168289, m: 1626 },
+  ];
+
+  const glMap = new maplibregl.Map({
+    container: 'locMap',
+    style: 'https://tiles.openfreemap.org/styles/liberty',
+    center: [parishHome.lon, parishHome.lat],
+    zoom: 14,
+    attributionControl: { compact: true },
+  });
+  glMap.scrollZoom.disable();
+  const locMapHint = document.getElementById('locMapHint');
+  locMapHint.addEventListener('click', () => {
+    glMap.scrollZoom.enable();
+    locMapHint.classList.add('hide');
+  });
+
+  glMap.on('load', () => {
+    // Keep the map's own POI icons/labels (shops, landmarks, etc.) for context —
+    // only filter out hospital/clinic icons, which were competing visually with our markers.
+    ['poi_r20', 'poi_r7', 'poi_r1'].forEach(id => {
+      if (!glMap.getLayer(id)) return;
+      const existing = glMap.getFilter(id);
+      glMap.setFilter(id, ['all', existing, ['!', ['in', ['get', 'class'], ['literal', ['hospital', 'clinic']]]]]);
+    });
+
+    const homeEl = document.createElement('div');
+    homeEl.className = 'map-pin-main';
+    homeEl.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15"><rect x="10" y="1" width="4" height="22" fill="#fff"/><rect x="3" y="6" width="18" height="4" fill="#fff"/></svg>';
+    new maplibregl.Marker({ element: homeEl, anchor: 'center' })
+      .setLngLat([parishHome.lon, parishHome.lat])
+      .setPopup(new maplibregl.Popup({ offset: 28 }).setHTML('<div class="map-popup"><strong>용머리성당</strong>전북 전주시 완산구 안행9길 5-8</div>'))
+      .addTo(glMap)
+      .togglePopup();
+
+    const bounds = new maplibregl.LngLatBounds([parishHome.lon, parishHome.lat], [parishHome.lon, parishHome.lat]);
+
+    nearbyParishes.forEach(p => {
+      const el = document.createElement('div');
+      el.className = 'map-pin-nearby';
+      el.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13"><rect x="10" y="1" width="4" height="22" fill="#fff"/><rect x="3" y="6" width="18" height="4" fill="#fff"/></svg>';
+      new maplibregl.Marker({ element: el, anchor: 'center' })
+        .setLngLat([p.lon, p.lat])
+        .setPopup(new maplibregl.Popup({ offset: 18 }).setHTML(`<div class="map-popup"><strong>${p.name}</strong>용머리성당에서 약 ${p.m >= 1000 ? (p.m/1000).toFixed(1)+'km' : p.m+'m'}</div>`))
+        .addTo(glMap);
+      bounds.extend([p.lon, p.lat]);
+    });
+
+    glMap.fitBounds(bounds, { padding: 60, maxZoom: 16, duration: 0 });
+  });
+
+  // Scroll-reveal animations
+  const revealTargets = document.querySelectorAll('.reveal, .reveal-stagger');
+  if ('IntersectionObserver' in window) {
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+    revealTargets.forEach(el => revealObserver.observe(el));
+  } else {
+    revealTargets.forEach(el => el.classList.add('in-view'));
+  }
+
+  // Header shadow on scroll
+  const siteHeader = document.querySelector('.site-header');
+  const onScrollHeader = () => siteHeader.classList.toggle('scrolled', window.scrollY > 10);
+  window.addEventListener('scroll', onScrollHeader, { passive: true });
+  onScrollHeader();
+
+  // Back-to-top button
+  const backToTop = document.createElement('button');
+  backToTop.className = 'back-to-top';
+  backToTop.type = 'button';
+  backToTop.setAttribute('aria-label', '맨 위로');
+  backToTop.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(backToTop);
+  window.addEventListener('scroll', () => backToTop.classList.toggle('show', window.scrollY > 500), { passive: true });
+  backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  // Match the intro photo's height to the right-column text block, so the two column bottoms align exactly
+  const introPhoto = document.getElementById('introPhoto');
+  const introText = document.getElementById('introText');
+  function syncIntroPhotoHeight(){
+    if (window.innerWidth <= 860) { introPhoto.style.height = ''; return; }
+    const textBottom = introText.getBoundingClientRect().bottom;
+    const photoTop = introPhoto.getBoundingClientRect().top;
+    const targetHeight = textBottom - photoTop;
+    if (targetHeight > 0) introPhoto.style.height = targetHeight + 'px';
+  }
+  syncIntroPhotoHeight();
+  window.addEventListener('load', syncIntroPhotoHeight);
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(syncIntroPhotoHeight); }
+  let introResizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(introResizeTimer);
+    introResizeTimer = setTimeout(syncIntroPhotoHeight, 150);
+  });
+</script>
+
+</body>
+</html>
