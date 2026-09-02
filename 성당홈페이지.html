@@ -1608,7 +1608,8 @@
     const cells = [];
     for (let i = firstDay - 1; i >= 0; i--) cells.push({ day: prevMonthDays - i, outside: true });
     for (let d = 1; d <= daysInMonth; d++) cells.push({ day: d, outside: false });
-    while (cells.length % 7 !== 0) cells.push({ day: cells.length, outside: true });
+    let nextMonthDay = 1;
+    while (cells.length % 7 !== 0) cells.push({ day: nextMonthDay++, outside: true });
 
     const isCurrentRealMonth = calYear === today.getFullYear() && calMonth === today.getMonth() + 1;
 
