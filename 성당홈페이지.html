@@ -97,16 +97,7 @@
     padding:7px 14px; font-size:12.5px; font-weight:600; border-bottom:1px solid var(--line);
   }
   .main-nav .cafe-btn:hover{border-bottom-color:var(--wine);}
-  .main-nav .cafe-btn.cpbc-radio-btn-active{border-bottom-color:var(--wine);}
   .main-nav .cafe-btn::before{display:none;}
-  .cpbc-radio-wrap{position:relative;}
-  .cpbc-radio-btn-active{color:var(--wine); border-color:var(--wine); background:var(--paper-2);}
-  /* Invisible: exists just so the embedded page keeps playing audio; never shown to the visitor. */
-  .cpbc-radio-panel{
-    position:absolute; top:0; right:0; width:1px; height:1px;
-    overflow:hidden; opacity:0; pointer-events:none;
-  }
-  .cpbc-radio-panel iframe{display:block; width:1px; height:1px; border:none;}
   .nav-toggle{
     display:none; background:none; border:none; cursor:pointer; padding:6px;
   }
@@ -128,7 +119,6 @@
       display:flex; padding:12px 4px; border:none; border-radius:0;
       border-bottom:1px solid var(--line); background:none;
     }
-    .main-nav .cafe-btn.cpbc-radio-btn-active{border-bottom-color:var(--wine);}
     .nav-toggle{display:block;}
   }
 
@@ -602,15 +592,10 @@
           <img src="images/goodnews-icon.png" alt="" class="goodnews-icon">
           <span>굿뉴스</span>
         </a>
-        <div class="cpbc-radio-wrap">
-          <button type="button" class="cafe-btn" id="cpbcRadioBtn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="2.3"/><path d="M7.8 16.2a6 6 0 0 1 0-8.4"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4"/><path d="M4.9 19.1a10 10 0 0 1 0-14.2"/><path d="M19.1 4.9a10 10 0 0 1 0 14.2"/></svg>
-            <span>cpbc 평화방송</span>
-          </button>
-          <div class="cpbc-radio-panel" id="cpbcRadioPanel" hidden>
-            <iframe id="cpbcRadioFrame" title="cpbc 평화방송 라디오" allow="autoplay"></iframe>
-          </div>
-        </div>
+        <a href="https://www.cpbc.co.kr/onair.html?channel=radio" target="_blank" rel="noopener" class="cafe-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="2.3"/><path d="M7.8 16.2a6 6 0 0 1 0-8.4"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4"/><path d="M4.9 19.1a10 10 0 0 1 0-14.2"/><path d="M19.1 4.9a10 10 0 0 1 0 14.2"/></svg>
+          <span>cpbc 평화방송</span>
+        </a>
       </div>
     </nav>
     <button class="nav-toggle" id="navToggle" aria-label="메뉴 열기">
@@ -939,26 +924,6 @@
   const mainNav = document.getElementById('mainNav');
   navToggle.addEventListener('click', () => mainNav.classList.toggle('open'));
   mainNav.querySelectorAll('a, button').forEach(a => a.addEventListener('click', () => mainNav.classList.remove('open')));
-
-  // cpbc 평화방송 라디오: 버튼은 순수 켜기/끄기 스위치 — 화면에 아무 창도 보이지 않고 소리만 재생됨
-  (function(){
-    const btn = document.getElementById('cpbcRadioBtn');
-    const panel = document.getElementById('cpbcRadioPanel');
-    const frame = document.getElementById('cpbcRadioFrame');
-    let on = false;
-    btn.addEventListener('click', () => {
-      on = !on;
-      if (on) {
-        frame.src = 'https://www.cpbc.co.kr/onair.html?channel=radio';
-        panel.hidden = false;
-        btn.classList.add('cpbc-radio-btn-active');
-      } else {
-        frame.src = '';
-        panel.hidden = true;
-        btn.classList.remove('cpbc-radio-btn-active');
-      }
-    });
-  })();
 
   // Hero quick-info popups: show mass times / directions instantly instead of jump-scrolling
   document.getElementById('massModalBody').innerHTML =
@@ -1721,7 +1686,7 @@
   kakao.maps.load(() => {
     const map = new kakao.maps.Map(document.getElementById('locMap'), {
       center: new kakao.maps.LatLng(parishHome.lat, parishHome.lon),
-      level: 5,
+      level: 4,
     });
     map.setZoomable(false);
 
@@ -1760,10 +1725,8 @@
       return pos;
     }
 
-    const bounds = new kakao.maps.LatLngBounds();
-    bounds.extend(addPin(parishHome, true));
-    nearbyParishes.forEach(p => bounds.extend(addPin(p, false)));
-    map.setBounds(bounds, 60, 60, 60, 60);
+    addPin(parishHome, true);
+    nearbyParishes.forEach(p => addPin(p, false));
   });
 
   // Scroll-reveal animations
