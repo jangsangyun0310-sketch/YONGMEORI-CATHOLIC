@@ -12,7 +12,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=Black+Han+Sans&family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.24.0/maplibre-gl.min.css">
 <style>
   :root{
     --paper:#F6F1E4;
@@ -473,8 +472,6 @@
     font-size:13px; color:var(--ink-soft); text-align:center;
   }
   .loc-map-caption .directions-link{margin-left:8px; color:var(--wine); text-decoration:underline; font-weight:600;}
-  .loc-map .maplibregl-map{font-family:'Work Sans', sans-serif; background:#F4F1EA;}
-  .loc-map .maplibregl-ctrl-attrib{font-size:10.5px;}
   .map-pin-main{
     width:32px; height:32px; border-radius:50%; background:#D7263D; border:3px solid #fff;
     box-shadow:0 3px 8px rgba(30,20,15,.45); cursor:pointer;
@@ -484,7 +481,11 @@
     width:26px; height:26px; border-radius:50%; background:#2563EB; border:3px solid #fff;
     box-shadow:0 2px 8px rgba(30,20,15,.45); display:flex; align-items:center; justify-content:center; cursor:pointer;
   }
-  .map-popup{font-family:'Work Sans', sans-serif; font-size:13.5px;}
+  .map-popup{
+    font-family:'Work Sans', sans-serif; font-size:13.5px; background:#fff; color:var(--ink-soft);
+    padding:10px 14px; border-radius:6px; box-shadow:0 6px 18px -6px rgba(30,20,15,.45);
+    white-space:nowrap; margin-bottom:14px;
+  }
   .map-popup strong{font-family:'Fraunces',serif; font-size:15.5px; display:block; margin-bottom:2px; color:var(--ink);}
   .map-legend{display:flex; gap:22px; margin-top:14px; font-size:13px; color:var(--ink-soft); flex-wrap:wrap;}
   .map-legend span{display:inline-flex; align-items:center; gap:7px;}
@@ -907,7 +908,7 @@
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.24.0/maplibre-gl.min.js"></script>
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=feec359623871cf5566b0baa3bd80497&autoload=false"></script>
 <script>
   // Always open on the top of the page (ignore remembered scroll position / URL hash)
   if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
@@ -1679,7 +1680,7 @@
   renderCalendar();
   renderCalDetail();
 
-  // Location map (MapLibre GL + OpenFreeMap Positron, a clean low-clutter basemap, with our own parish markers)
+  // Location map (Kakao Maps, with our own parish markers)
   const parishHome = { name: '용머리성당', lat: 35.8030668, lon: 127.1343234 };
   const nearbyParishes = [
     { name: '효자동성당', lat: 35.8044826, lon: 127.1265808, m: 716 },
@@ -1689,44 +1690,52 @@
     { name: '우전성당',   lat: 35.7995303, lon: 127.1168289, m: 1626 },
   ];
 
-  const glMap = new maplibregl.Map({
-    container: 'locMap',
-    style: 'https://tiles.openfreemap.org/styles/positron',
-    center: [parishHome.lon, parishHome.lat],
-    zoom: 14,
-    attributionControl: { compact: true },
-  });
-  glMap.scrollZoom.disable();
-  const locMapHint = document.getElementById('locMapHint');
-  locMapHint.addEventListener('click', () => {
-    glMap.scrollZoom.enable();
-    locMapHint.classList.add('hide');
-  });
+  kakao.maps.load(() => {
+    const map = new kakao.maps.Map(document.getElementById('locMap'), {
+      center: new kakao.maps.LatLng(parishHome.lat, parishHome.lon),
+      level: 5,
+    });
+    map.setZoomable(false);
 
-  glMap.on('load', () => {
-    const homeEl = document.createElement('div');
-    homeEl.className = 'map-pin-main';
-    homeEl.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15"><rect x="10" y="1" width="4" height="22" fill="#fff"/><rect x="3" y="6" width="18" height="4" fill="#fff"/></svg>';
-    new maplibregl.Marker({ element: homeEl, anchor: 'center' })
-      .setLngLat([parishHome.lon, parishHome.lat])
-      .setPopup(new maplibregl.Popup({ offset: 28 }).setHTML('<div class="map-popup"><strong>용머리성당</strong>전북 전주시 완산구 안행9길 5-8</div>'))
-      .addTo(glMap)
-      .togglePopup();
-
-    const bounds = new maplibregl.LngLatBounds([parishHome.lon, parishHome.lat], [parishHome.lon, parishHome.lat]);
-
-    nearbyParishes.forEach(p => {
-      const el = document.createElement('div');
-      el.className = 'map-pin-nearby';
-      el.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13"><rect x="10" y="1" width="4" height="22" fill="#fff"/><rect x="3" y="6" width="18" height="4" fill="#fff"/></svg>';
-      new maplibregl.Marker({ element: el, anchor: 'center' })
-        .setLngLat([p.lon, p.lat])
-        .setPopup(new maplibregl.Popup({ offset: 18 }).setHTML(`<div class="map-popup"><strong>${p.name}</strong>용머리성당에서 약 ${p.m >= 1000 ? (p.m/1000).toFixed(1)+'km' : p.m+'m'}</div>`))
-        .addTo(glMap);
-      bounds.extend([p.lon, p.lat]);
+    const locMapHint = document.getElementById('locMapHint');
+    locMapHint.addEventListener('click', () => {
+      map.setZoomable(true);
+      locMapHint.classList.add('hide');
     });
 
-    glMap.fitBounds(bounds, { padding: 60, maxZoom: 16, duration: 0 });
+    const openPopups = [];
+    function addPin(p, isHome) {
+      const pos = new kakao.maps.LatLng(p.lat, p.lon);
+
+      const pinEl = document.createElement('div');
+      pinEl.className = isHome ? 'map-pin-main' : 'map-pin-nearby';
+      pinEl.innerHTML = isHome
+        ? '<svg viewBox="0 0 24 24" width="15" height="15"><rect x="10" y="1" width="4" height="22" fill="#fff"/><rect x="3" y="6" width="18" height="4" fill="#fff"/></svg>'
+        : '<svg viewBox="0 0 24 24" width="13" height="13"><rect x="10" y="1" width="4" height="22" fill="#fff"/><rect x="3" y="6" width="18" height="4" fill="#fff"/></svg>';
+      new kakao.maps.CustomOverlay({ map, position: pos, content: pinEl, yAnchor: 0.5, xAnchor: 0.5, zIndex: isHome ? 20 : 10 });
+
+      const popupEl = document.createElement('div');
+      popupEl.className = 'map-popup';
+      popupEl.innerHTML = isHome
+        ? '<strong>용머리성당</strong>전북 전주시 완산구 안행9길 5-8'
+        : `<strong>${p.name}</strong>용머리성당에서 약 ${p.m >= 1000 ? (p.m / 1000).toFixed(1) + 'km' : p.m + 'm'}`;
+      const popup = new kakao.maps.CustomOverlay({ position: pos, content: popupEl, yAnchor: 1.5, xAnchor: 0.5, zIndex: 30 });
+
+      pinEl.addEventListener('click', () => {
+        const isOpen = popup.getMap();
+        openPopups.forEach(p2 => p2.setMap(null));
+        popup.setMap(isOpen ? null : map);
+      });
+      openPopups.push(popup);
+
+      if (isHome) popup.setMap(map);
+      return pos;
+    }
+
+    const bounds = new kakao.maps.LatLngBounds();
+    bounds.extend(addPin(parishHome, true));
+    nearbyParishes.forEach(p => bounds.extend(addPin(p, false)));
+    map.setBounds(bounds, 60, 60, 60, 60);
   });
 
   // Scroll-reveal animations
