@@ -177,10 +177,15 @@
   }
   .todayword-ym{font-size:10.5px; color:var(--ink-soft); letter-spacing:.03em;}
   .todayword-day{font-family:'Fraunces',serif; font-size:20px; font-weight:700; color:var(--wine);}
-  .todayword-icon{
-    flex:none; width:34px; height:34px; border-radius:50%; border:1px solid var(--gold);
-    color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:15px;
+  .todayword-color{
+    flex:none; width:34px; height:34px; border-radius:50%; border:1.5px solid var(--gold);
+    color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700;
   }
+  .todayword-color[data-color="백"]{border-color:var(--gold); color:var(--gold);}
+  .todayword-color[data-color="홍"]{border-color:var(--wine); color:var(--wine);}
+  .todayword-color[data-color="녹"]{border-color:#3F6B4A; color:#3F6B4A;}
+  .todayword-color[data-color="자"]{border-color:#5B3A6E; color:#5B3A6E;}
+  .todayword-color[data-color="흑"]{border-color:var(--ink); color:var(--ink);}
   .todayword-text{flex:1; min-width:0; display:flex; flex-direction:column; gap:2px;}
   .todayword-text strong{font-size:13.5px; color:var(--ink);}
   .todayword-text span{font-size:12px; color:var(--ink-soft);}
@@ -725,20 +730,22 @@
   </div>
 </header>
 
+<!-- TODAYWORD:AUTO-UPDATED daily at 00:00 KST — edit only the text inside the id="tw*" tags below -->
 <a href="https://maria.catholic.or.kr/mi_pr/missa/missa.asp" target="_blank" rel="noopener" class="todayword-bar">
   <div class="wrap todayword-inner">
     <div class="todayword-date">
-      <span class="todayword-ym" id="twYm"></span>
-      <span class="todayword-day" id="twDay"></span>
+      <span class="todayword-ym" id="twYm">2026.09</span>
+      <span class="todayword-day" id="twDay">03</span>
     </div>
-    <span class="todayword-icon">✟</span>
+    <div class="todayword-color" id="twColor" data-color="백">백</div>
     <div class="todayword-text">
-      <strong>오늘의 말씀</strong>
-      <span>가톨릭굿뉴스에서 오늘의 미사 독서와 복음 말씀을 확인하세요</span>
+      <strong id="twFeast">성 대 그레고리오 교황 학자 기념일</strong>
+      <span id="twVerse">그들은 모든 것을 버리고 예수님을 따랐다. (✝ 루카 5,1-11)</span>
     </div>
-    <span class="todayword-arrow">확인하기 →</span>
+    <span class="todayword-arrow">더보기 →</span>
   </div>
 </a>
+<!-- /TODAYWORD -->
 
 <section class="hero">
   <div class="wrap hero-inner">
@@ -1039,13 +1046,6 @@
   window.addEventListener('load', () => { scrollLockUntil = Date.now() + 800; scrollLockLoop(); });
 
   document.getElementById('year').textContent = new Date().getFullYear();
-
-  // Today's Word bar: date always reflects the visitor's current date
-  (function(){
-    const now = new Date();
-    document.getElementById('twYm').textContent = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}`;
-    document.getElementById('twDay').textContent = String(now.getDate()).padStart(2, '0');
-  })();
 
   // Hero slideshow: cross-fade through the front-page photos
   (function(){
