@@ -166,9 +166,7 @@
   /* ---------- Today's Word bar ---------- */
   .todayword-bar{
     display:block; background:var(--paper-2); border-bottom:1px solid var(--line);
-    transition:background .15s ease;
   }
-  .todayword-bar:hover{background:var(--white);}
   .todayword-inner{
     display:flex; align-items:center; gap:18px; padding:12px 28px;
   }
@@ -191,9 +189,6 @@
   }
   .todayword-text strong{font-size:15.5px; color:var(--ink); font-weight:700;}
   .todayword-text span{font-size:14px; color:var(--ink-soft); margin-left:10px;}
-  .todayword-arrow{
-    flex:none; font-size:12.5px; font-weight:600; color:var(--wine); white-space:nowrap;
-  }
   @media (max-width:640px){
     .todayword-text span{display:none;}
     .todayword-inner{padding:10px 20px; gap:12px;}
@@ -733,7 +728,7 @@
 </header>
 
 <!-- TODAYWORD:AUTO-UPDATED daily at 00:00 KST — edit only the text inside the id="tw*" tags below -->
-<a href="https://maria.catholic.or.kr/mi_pr/missa/missa.asp" target="_blank" rel="noopener" class="todayword-bar">
+<div class="todayword-bar">
   <div class="wrap todayword-inner">
     <div class="todayword-date">
       <span class="todayword-ym" id="twYm">2026.09</span>
@@ -744,9 +739,8 @@
       <strong id="twFeast">성 대 그레고리오 교황 학자 기념일</strong>
       <span id="twVerse">그들은 모든 것을 버리고 예수님을 따랐다. (루카 5,1-11)</span>
     </div>
-    <span class="todayword-arrow">더보기 →</span>
   </div>
-</a>
+</div>
 <!-- /TODAYWORD -->
 
 <section class="hero">
