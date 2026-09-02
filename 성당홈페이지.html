@@ -29,7 +29,8 @@
     --maxw: 1120px;
   }
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth; --sticky-offset:0px;}
+  section[id], #bulletin{scroll-margin-top:var(--sticky-offset);}
   body{
     margin:0;
     background:var(--paper);
@@ -739,7 +740,7 @@
     <div class="notice-head">
       <div>
         <p class="eyebrow">공지사항 · 주보</p>
-        <h2 style="font-size:30px;">본당 소식</h2>
+        <h2 style="font-size:30px;">"기쁜 소식을 전하는 이들의 발이 얼마나 아름다운가!" (로마서 10,15)</h2>
       </div>
     </div>
 
@@ -1751,6 +1752,15 @@
   const onScrollHeader = () => siteHeader.classList.toggle('scrolled', window.scrollY > 10);
   window.addEventListener('scroll', onScrollHeader, { passive: true });
   onScrollHeader();
+
+  // Keep #anchor jump targets clear of the sticky header + today's-word bar
+  const stickyTopEl = document.querySelector('.sticky-top');
+  const updateStickyOffset = () => {
+    document.documentElement.style.setProperty('--sticky-offset', stickyTopEl.offsetHeight + 'px');
+  };
+  updateStickyOffset();
+  window.addEventListener('load', updateStickyOffset);
+  window.addEventListener('resize', updateStickyOffset);
 
   // Back-to-top button
   const backToTop = document.createElement('button');
