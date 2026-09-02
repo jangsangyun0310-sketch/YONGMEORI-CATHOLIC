@@ -29,7 +29,7 @@
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth; --sticky-offset:0px;}
-  section[id], #bulletin{scroll-margin-top:var(--sticky-offset);}
+  section[id], #bulletin{scroll-margin-top:calc(var(--sticky-offset) - 64px);}
   body{
     margin:0;
     background:var(--paper);
@@ -274,6 +274,17 @@
   }
   .notice-item.open .notice-body{max-height:220px;}
   .notice-body-inner{padding:0 4px 24px; font-size:14px; color:var(--ink-soft); max-width:70ch;}
+  @media (max-width:640px){
+    .notice-row{
+      display:grid; grid-template-columns:1fr auto;
+      grid-template-areas:"tag plus" "title title" "date date";
+      gap:8px 12px; align-items:center;
+    }
+    .notice-tag{grid-area:tag; justify-self:start;}
+    .notice-plus{grid-area:plus; justify-self:end;}
+    .notice-title{grid-area:title;}
+    .notice-date{grid-area:date;}
+  }
 
   /* ---------- Gallery ---------- */
   .gallery-grid{
@@ -502,6 +513,7 @@
     .intro-photo{height:220px;}
     .mass-grid{grid-template-columns:1fr; gap:36px;}
     section{padding:64px 0;}
+    section[id], #bulletin{scroll-margin-top:calc(var(--sticky-offset) - 56px);}
     .hero h1{font-size:38px;}
     .brand-mark{height:64px;}
   }
@@ -824,7 +836,7 @@
     <p class="loc-map-caption">전북특별자치도 전주시 완산구 안행9길 5-8 (55105) · 용머리성당<a class="directions-link" href="https://m.map.kakao.com/scheme/route?sp=&ep=35.8030668,127.1343234&by=CAR" target="_blank" rel="noopener">길찾기</a></p>
     <div class="map-legend">
       <span><i style="background:#D7263D;"></i> 용머리성당</span>
-      <span><i style="background:#2563EB;"></i> 전주시 내 다른 성당</span>
+      <span><i style="background:#2563EB;"></i> 전주시 內 다른 성당</span>
     </div>
 
     <ul class="contact-list contact-list--row reveal-stagger">
@@ -1545,7 +1557,7 @@
 
   function openBulletin(item){
     lightboxInner.classList.remove('has-nav', 'is-photo');
-    lightboxImg.innerHTML = item.i.map(src => `<img src="${src}" alt="${item.d} 주보">`).join('');
+    lightboxImg.innerHTML = item.i.map(src => `<img src="${src}" alt="${item.d} 주보" referrerpolicy="no-referrer">`).join('');
     lightboxCap.textContent = `${item.d} · ${item.t}`;
     lightbox.classList.add('open');
   }
@@ -1689,10 +1701,12 @@
       level: 4,
     });
     map.setZoomable(false);
+    map.setDraggable(false);
 
     const locMapHint = document.getElementById('locMapHint');
     locMapHint.addEventListener('click', () => {
       map.setZoomable(true);
+      map.setDraggable(true);
       locMapHint.classList.add('hide');
     });
 
