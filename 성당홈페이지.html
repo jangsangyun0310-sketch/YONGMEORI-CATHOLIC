@@ -96,6 +96,14 @@
   }
   .main-nav .cafe-btn:hover{border-bottom-color:var(--wine);}
   .main-nav .cafe-btn::before{display:none;}
+  .cpbc-radio-wrap{position:relative;}
+  .cpbc-radio-btn-active{color:var(--wine); border-color:var(--wine); background:var(--paper-2);}
+  .cpbc-radio-panel{
+    position:absolute; top:calc(100% + 10px); right:0; z-index:60;
+    width:340px; background:var(--paper); border:1px solid var(--line); border-radius:10px;
+    box-shadow:0 20px 44px -18px rgba(30,20,15,.35); overflow:hidden;
+  }
+  .cpbc-radio-panel iframe{display:block; width:100%; height:280px; border:none;}
   .nav-dropdown{position:relative;}
   .nav-dropdown > summary{list-style:none; cursor:pointer;}
   .nav-dropdown > summary::-webkit-details-marker{display:none;}
@@ -148,6 +156,7 @@
     .main-nav ul{flex-direction:column; gap:4px;}
     .main-nav a{display:block; padding:12px 4px; border-bottom:1px solid var(--line);}
     .nav-sites-row{flex-direction:column; align-items:stretch; gap:0;}
+    .cpbc-radio-panel{position:static; width:100%; margin-top:8px; border-radius:6px;}
     .main-nav .cafe-btn{
       display:flex; padding:12px 4px; border:none; border-radius:0;
       border-bottom:1px solid var(--line); background:none;
@@ -632,10 +641,15 @@
           <img src="images/daumcafe-icon.png" alt="" width="16" height="16">
           <span>다음카페</span>
         </a>
-        <button type="button" class="cafe-btn" id="cpbcRadioBtn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="2.3"/><path d="M7.8 16.2a6 6 0 0 1 0-8.4"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4"/><path d="M4.9 19.1a10 10 0 0 1 0-14.2"/><path d="M19.1 4.9a10 10 0 0 1 0 14.2"/></svg>
-          <span>cpbc 평화방송</span>
-        </button>
+        <div class="cpbc-radio-wrap">
+          <button type="button" class="cafe-btn" id="cpbcRadioBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="2.3"/><path d="M7.8 16.2a6 6 0 0 1 0-8.4"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4"/><path d="M4.9 19.1a10 10 0 0 1 0-14.2"/><path d="M19.1 4.9a10 10 0 0 1 0 14.2"/></svg>
+            <span>cpbc 평화방송</span>
+          </button>
+          <div class="cpbc-radio-panel" id="cpbcRadioPanel" hidden>
+            <iframe id="cpbcRadioFrame" title="cpbc 평화방송 라디오" allow="autoplay"></iframe>
+          </div>
+        </div>
         <details class="nav-dropdown" id="navSitesDropdown">
           <summary class="nav-sites-btn">
             가톨릭 관련 사이트
@@ -1066,17 +1080,33 @@
   navToggle.addEventListener('click', () => mainNav.classList.toggle('open'));
   mainNav.querySelectorAll('a, button').forEach(a => a.addEventListener('click', () => mainNav.classList.remove('open')));
 
-  // cpbc 평화방송 라디오: 페이지 이동 없이 작은 창으로 라디오만 재생
-  document.getElementById('cpbcRadioBtn').addEventListener('click', () => {
-    const w = 380, h = 260;
-    const left = (window.screen.width - w) / 2;
-    const top = (window.screen.height - h) / 2;
-    window.open(
-      'https://www.cpbc.co.kr/onair.html?channel=radio',
-      'cpbcRadioPlayer',
-      `width=${w},height=${h},left=${left},top=${top},noopener,noreferrer`
-    );
-  });
+  // cpbc 평화방송 라디오: 버튼을 누르면 그 자리에서 켜지고, 다시 누르면 꺼짐 (창/새탭 없음)
+  (function(){
+    const btn = document.getElementById('cpbcRadioBtn');
+    const panel = document.getElementById('cpbcRadioPanel');
+    const frame = document.getElementById('cpbcRadioFrame');
+    let on = false;
+    btn.addEventListener('click', () => {
+      on = !on;
+      if (on) {
+        frame.src = 'https://www.cpbc.co.kr/onair.html?channel=radio';
+        panel.hidden = false;
+        btn.classList.add('cpbc-radio-btn-active');
+      } else {
+        frame.src = '';
+        panel.hidden = true;
+        btn.classList.remove('cpbc-radio-btn-active');
+      }
+    });
+    document.addEventListener('click', (e) => {
+      if (on && !e.target.closest('.cpbc-radio-wrap')) {
+        on = false;
+        frame.src = '';
+        panel.hidden = true;
+        btn.classList.remove('cpbc-radio-btn-active');
+      }
+    });
+  })();
 
   // Hero quick-info popups: show mass times / directions instantly instead of jump-scrolling
   document.getElementById('massModalBody').innerHTML =
