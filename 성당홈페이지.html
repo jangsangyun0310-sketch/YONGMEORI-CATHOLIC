@@ -157,8 +157,10 @@
   .todayword-text strong{font-size:15.5px; color:var(--ink); font-weight:700;}
   .todayword-text span{font-size:14px; color:var(--ink-soft); margin-left:10px;}
   @media (max-width:640px){
-    .todayword-text span{display:none;}
-    .todayword-inner{padding:10px 20px; gap:12px;}
+    .todayword-inner{padding:10px 20px; gap:12px; align-items:flex-start;}
+    .todayword-text{white-space:normal;}
+    .todayword-text strong{display:block; font-size:14px;}
+    .todayword-text span{display:block; margin-left:0; margin-top:3px; font-size:12.5px; line-height:1.4;}
   }
 
   /* ---------- Hero ---------- */
