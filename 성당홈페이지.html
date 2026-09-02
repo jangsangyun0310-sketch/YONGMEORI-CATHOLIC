@@ -98,12 +98,12 @@
   .main-nav .cafe-btn::before{display:none;}
   .cpbc-radio-wrap{position:relative;}
   .cpbc-radio-btn-active{color:var(--wine); border-color:var(--wine); background:var(--paper-2);}
+  /* Invisible: exists just so the embedded page keeps playing audio; never shown to the visitor. */
   .cpbc-radio-panel{
-    position:absolute; top:calc(100% + 10px); right:0; z-index:60;
-    width:520px; background:var(--paper); border:1px solid var(--line); border-radius:10px;
-    box-shadow:0 20px 44px -18px rgba(30,20,15,.35); overflow:hidden;
+    position:absolute; top:0; right:0; width:1px; height:1px;
+    overflow:hidden; opacity:0; pointer-events:none;
   }
-  .cpbc-radio-panel iframe{display:block; width:100%; height:640px; border:none;}
+  .cpbc-radio-panel iframe{display:block; width:1px; height:1px; border:none;}
   .nav-dropdown{position:relative;}
   .nav-dropdown > summary{list-style:none; cursor:pointer;}
   .nav-dropdown > summary::-webkit-details-marker{display:none;}
@@ -156,7 +156,6 @@
     .main-nav ul{flex-direction:column; gap:4px;}
     .main-nav a{display:block; padding:12px 4px; border-bottom:1px solid var(--line);}
     .nav-sites-row{flex-direction:column; align-items:stretch; gap:0;}
-    .cpbc-radio-panel{position:static; width:100%; margin-top:8px; border-radius:6px;}
     .main-nav .cafe-btn{
       display:flex; padding:12px 4px; border:none; border-radius:0;
       border-bottom:1px solid var(--line); background:none;
@@ -1080,7 +1079,7 @@
   navToggle.addEventListener('click', () => mainNav.classList.toggle('open'));
   mainNav.querySelectorAll('a, button').forEach(a => a.addEventListener('click', () => mainNav.classList.remove('open')));
 
-  // cpbc 평화방송 라디오: 버튼을 누르면 그 자리에서 켜지고, 다시 누르면 꺼짐 (창/새탭 없음)
+  // cpbc 평화방송 라디오: 버튼은 순수 켜기/끄기 스위치 — 화면에 아무 창도 보이지 않고 소리만 재생됨
   (function(){
     const btn = document.getElementById('cpbcRadioBtn');
     const panel = document.getElementById('cpbcRadioPanel');
@@ -1093,14 +1092,6 @@
         panel.hidden = false;
         btn.classList.add('cpbc-radio-btn-active');
       } else {
-        frame.src = '';
-        panel.hidden = true;
-        btn.classList.remove('cpbc-radio-btn-active');
-      }
-    });
-    document.addEventListener('click', (e) => {
-      if (on && !e.target.closest('.cpbc-radio-wrap')) {
-        on = false;
         frame.src = '';
         panel.hidden = true;
         btn.classList.remove('cpbc-radio-btn-active');
