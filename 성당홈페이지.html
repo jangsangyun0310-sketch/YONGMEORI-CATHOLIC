@@ -231,6 +231,9 @@
     display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:22px;
     border-top:1px solid var(--ink); padding-top:24px; margin-top:16px;
   }
+  @media (max-width:640px){
+    .pastor-list{grid-template-columns:repeat(2,1fr); gap:14px;}
+  }
   .pastor-list li{display:flex; flex-direction:column; align-items:center; gap:8px; min-width:0; text-align:center;}
   .pastor-photo{
     aspect-ratio:3/4; border-radius:6px; overflow:hidden; background:var(--paper-2);
@@ -721,7 +724,7 @@
 
   <div class="wrap" style="margin-top:56px;">
     <p class="eyebrow" style="margin-bottom:16px;">본당 출신 신부님</p>
-    <ul class="pastor-list reveal-stagger" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));">
+    <ul class="pastor-list reveal-stagger">
       <li><div class="pastor-photo"><img src="images/alumni-01-hwang.jpg" alt="황의현 바오로 신부"></div><span class="gen">서품 2001</span><span class="pname">황의현 바오로 신부</span><span class="pdate">서학동성당 주임</span></li>
       <li><div class="pastor-photo"><img src="images/alumni-02-park.jpg" alt="박성환 요셉 신부"></div><span class="gen">서품 2006</span><span class="pname">박성환 요셉 신부</span><span class="pdate">우림성당 주임</span></li>
       <li><div class="pastor-photo"><img src="images/alumni-03-lee.jpg" alt="이치선 시몬 신부"></div><span class="gen">서품 2019</span><span class="pname">이치선 시몬 신부</span><span class="pdate">주현동성당 주임</span></li>
