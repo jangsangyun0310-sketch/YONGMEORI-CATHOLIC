@@ -186,6 +186,10 @@
   @media (max-width:400px){
     .hero p.hero-motto{font-size:17px;}
   }
+  @media (max-width:640px){
+    .hero p.lead .lead-break-mobile{display:block;}
+    .hero p.lead br.lead-break-mobile-hide{display:none;}
+  }
   .btn-row{display:flex; gap:14px; flex-wrap:wrap;}
   .btn{
     display:inline-block; padding:13px 26px; font-size:14.5px; font-weight:600;
@@ -679,7 +683,7 @@
       <p class="eyebrow">천주교 전주교구</p>
       <h1>용머리성당</h1>
       <p class="hero-motto">"순교의 피가 스며든 용머리<br><span style="visibility:hidden">"</span>성 조윤호 요셉의 신앙을 이어갑니다"</p>
-      <p class="lead">1866년 병인박해 때 신앙을 지키다 전주 서천교에서 순교한 성 조윤호 요셉.<br>그의 시신은 순교 후 서천교 너머 용머리고개에 묻혔다고 전해집니다.<br>오늘날 용머리성당은 이 지역과 깊은 인연을 지닌<br>성 조윤호 요셉을 수호성인으로 모시며,<br>젊은 순교자가 남긴 굳건한 믿음과 순교 신앙을 이어가고 있습니다.</p>
+      <p class="lead">1866년 병인박해 때 신앙을 지키다 전주 서천교에서 순교한 성 조윤호 요셉.<br>그의 시신은 순교 후 서천교 너머 용머리고개에 묻혔다고 전해집니다.<br>오늘날 용머리성당은<span class="lead-break-mobile"> 이 지역과 깊은 인연을 지닌</span><br class="lead-break-mobile-hide">성 조윤호 요셉을 수호성인으로 모시며,<br>젊은 순교자가 남긴 굳건한 믿음과<span class="lead-break-mobile"> 순교 신앙을 이어가고 있습니다.</span></p>
       <div class="btn-row">
         <a href="#mass" class="btn btn-primary" id="heroMassBtn">미사시간 안내</a>
         <a href="#location" class="btn btn-ghost" id="heroLocationBtn">연락처 안내</a>
