@@ -187,8 +187,9 @@
     .hero p.hero-motto{font-size:17px;}
   }
   @media (max-width:640px){
-    .hero p.lead .lead-break-mobile{display:block;}
-    .hero p.lead br.lead-break-mobile-hide{display:none;}
+    .lead-break-mobile{display:block;}
+    br.lead-break-mobile-hide{display:none;}
+    .fact-sub-dot{display:none;}
   }
   .btn-row{display:flex; gap:14px; flex-wrap:wrap;}
   .btn{
@@ -708,13 +709,13 @@
       </figure>
     </div>
     <div id="introText">
-      <p>용머리성당은 1989년 효자동본당에서 분리 설립되어,<br>효자3동성당이라는 이름으로 시작해 이후 용머리성당으로 개칭하였습니다.<br>현재의 성전은 1997년 12월 6일에 봉헌되었습니다.</p>
-      <p>"모이면 기도, 흩어지면 선교"라는 표어 아래,<br>굳건한 믿음과 순교 정신을 기억하며, 기도와 사랑으로 복음을 살아가는 공동체<br>용머리성당입니다.</p>
+      <p>용머리성당은 1989년 효자동본당에서 분리<span class="lead-break-mobile"> 설립되어,<br class="lead-break-mobile-hide"> 효자3동성당이라는 이름으로 시작해</span><span class="lead-break-mobile"> 이후 용머리성당으로 개칭하였습니다.</span><br>현재의 성전은 1997년 12월 6일에<span class="lead-break-mobile"> 봉헌되었습니다.</span></p>
+      <p>"모이면 기도, 흩어지면 선교"라는 표어 아래,<br>굳건한 믿음과 순교 정신을 기억하며,<span class="lead-break-mobile"> 기도와 사랑으로 복음을 살아가는 공동체</span><br class="lead-break-mobile-hide">용머리성당입니다.</p>
       <ul class="fact-list">
         <li><span>설립</span><span>1989년 1월 27일</span></li>
         <li class="fact-saint">
           <div class="fact-row"><span>주보성인</span><span>성 조윤호 요셉</span></div>
-          <div class="fact-sub">축일: 9월 20일 · 순교일: 1866년 12월 23일 · 순교지: 전주 서천교</div>
+          <div class="fact-sub">축일: 9월 20일<span class="fact-sub-dot"> · </span><span class="lead-break-mobile">순교일: 1866년 12월 23일</span><span class="fact-sub-dot"> · </span><span class="lead-break-mobile">순교지: 전주 서천교</span></div>
         </li>
         <li><span>주임신부</span><span>권완성 사도요한 신부</span></li>
         <li><span>신자 수</span><span>757세대 1,809명</span></li>
