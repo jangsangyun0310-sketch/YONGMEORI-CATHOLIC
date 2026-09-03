@@ -1625,17 +1625,28 @@
     '09-20': [{ t: '성 조윤호 요셉 주보성인 축일' }],
   };
 
-  // 매년 같은 날짜인 법정 공휴일 (음력 공휴일인 설날·추석은 해마다 날짜가 달라 별도 확인이 필요합니다)
-  const fixedHolidays = new Set([
-    '01-01', // 신정
-    '03-01', // 삼일절
-    '05-05', // 어린이날
-    '06-06', // 현충일
-    '08-15', // 광복절
-    '10-03', // 개천절
-    '10-09', // 한글날
-    '12-25', // 성탄절
-  ]);
+  // 매년 같은 날짜인 법정 공휴일: fixedHolidayNames keyed by 'MM-DD'
+  const fixedHolidayNames = {
+    '01-01': '신정',
+    '03-01': '삼일절',
+    '05-05': '어린이날',
+    '06-06': '현충일',
+    '08-15': '광복절',
+    '10-03': '개천절',
+    '10-09': '한글날',
+    '12-25': '성탄절',
+  };
+
+  // 설날·추석은 음력 기준이라 해마다 양력 날짜가 달라, 정부 발표 공휴일표를 그대로 옮겨 매년 직접 채워둡니다.
+  // (자동 계산이 아니라 미리 채워둔 값이라, 표에 없는 연도는 공휴일 발표 후 이 목록에 추가해야 합니다.)
+  const lunarHolidayNames = {
+    '2025-01-28': '설날 연휴', '2025-01-29': '설날', '2025-01-30': '설날 연휴',
+    '2025-10-05': '추석 연휴', '2025-10-06': '추석', '2025-10-07': '추석 연휴',
+    '2026-02-16': '설날 연휴', '2026-02-17': '설날', '2026-02-18': '설날 연휴',
+    '2026-09-24': '추석 연휴', '2026-09-25': '추석', '2026-09-26': '추석 연휴',
+    '2027-02-06': '설날 연휴', '2027-02-07': '설날', '2027-02-08': '설날 연휴',
+    '2027-09-14': '추석 연휴', '2027-09-15': '추석', '2027-09-16': '추석 연휴',
+  };
 
   const calMonthLabel = document.getElementById('calMonthLabel');
   const calBody = document.getElementById('calBody');
@@ -1648,8 +1659,14 @@
   function pad2(n){ return String(n).padStart(2, '0'); }
   function dateKey(y, m, d){ return `${y}-${pad2(m)}-${pad2(d)}`; }
   function monthDayKey(m, d){ return `${pad2(m)}-${pad2(d)}`; }
+  function isHoliday(y, m, d){
+    return !!(fixedHolidayNames[monthDayKey(m, d)] || lunarHolidayNames[dateKey(y, m, d)]);
+  }
   function getEvents(y, m, d){
-    return (recurringSchedule[monthDayKey(m, d)] || []).concat(scheduleData[dateKey(y, m, d)] || []);
+    const holidayName = fixedHolidayNames[monthDayKey(m, d)] || lunarHolidayNames[dateKey(y, m, d)];
+    return (holidayName ? [{ t: holidayName }] : [])
+      .concat(recurringSchedule[monthDayKey(m, d)] || [])
+      .concat(scheduleData[dateKey(y, m, d)] || []);
   }
 
   function renderCalendar(){
@@ -1684,7 +1701,7 @@
           const key = dateKey(calYear, calMonth, cell.day);
           if (col === 0) btn.classList.add('sun');
           else if (col === 6) btn.classList.add('sat');
-          if (fixedHolidays.has(monthDayKey(calMonth, cell.day))) btn.classList.add('holiday');
+          if (isHoliday(calYear, calMonth, cell.day)) btn.classList.add('holiday');
           if (getEvents(calYear, calMonth, cell.day).length) btn.classList.add('has-event');
           if (isCurrentRealMonth && cell.day === today.getDate()) btn.classList.add('today');
           if (key === calSelected) btn.classList.add('selected');
