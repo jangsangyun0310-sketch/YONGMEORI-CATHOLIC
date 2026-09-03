@@ -1618,6 +1618,11 @@
   // Schedule (본당 일정): scheduleData keyed by 'YYYY-MM-DD', each an array of { t: 제목, time: 일시, place: 장소 }
   const scheduleData = {};
 
+  // 매년 돌아오는 축일 등 고정 일정: recurringSchedule keyed by 'MM-DD'
+  const recurringSchedule = {
+    '09-20': [{ t: '성 조윤호 요셉 주보성인 축일' }],
+  };
+
   const calMonthLabel = document.getElementById('calMonthLabel');
   const calBody = document.getElementById('calBody');
   const calDetail = document.getElementById('calDetail');
@@ -1628,6 +1633,10 @@
 
   function pad2(n){ return String(n).padStart(2, '0'); }
   function dateKey(y, m, d){ return `${y}-${pad2(m)}-${pad2(d)}`; }
+  function monthDayKey(m, d){ return `${pad2(m)}-${pad2(d)}`; }
+  function getEvents(y, m, d){
+    return (recurringSchedule[monthDayKey(m, d)] || []).concat(scheduleData[dateKey(y, m, d)] || []);
+  }
 
   function renderCalendar(){
     calMonthLabel.textContent = `${calYear}년 ${calMonth}월`;
@@ -1659,7 +1668,7 @@
           btn.disabled = true;
         } else {
           const key = dateKey(calYear, calMonth, cell.day);
-          if (scheduleData[key] && scheduleData[key].length) btn.classList.add('has-event');
+          if (getEvents(calYear, calMonth, cell.day).length) btn.classList.add('has-event');
           if (isCurrentRealMonth && cell.day === today.getDate()) btn.classList.add('today');
           if (key === calSelected) btn.classList.add('selected');
           btn.addEventListener('click', () => { calSelected = key; renderCalendar(); renderCalDetail(); });
@@ -1677,7 +1686,7 @@
       return;
     }
     const [y, m, d] = calSelected.split('-').map(Number);
-    const items = scheduleData[calSelected] || [];
+    const items = getEvents(y, m, d);
     let html = `<div class="cal-detail-date">${y}년 ${m}월 ${d}일</div>`;
     if (!items.length) {
       html += '<div class="cal-detail-empty">등록된 일정이 없습니다.</div>';
