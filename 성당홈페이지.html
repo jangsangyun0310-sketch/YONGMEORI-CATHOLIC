@@ -450,9 +450,11 @@
     border-radius:50%; font-size:14px; color:var(--ink); cursor:pointer; border:1px solid transparent;
     transition:border-color .15s ease, background .15s ease, color .15s ease;
   }
+  .cal-day.sun,.cal-day.holiday{color:var(--wine);}
+  .cal-day.sat{color:var(--navy);}
   .cal-day.outside{color:var(--line); cursor:default;}
   .cal-day.has-event{border-color:var(--gold); font-weight:600;}
-  .cal-day.today{background:var(--paper-2); font-weight:700;}
+  .cal-day.today{border:2px solid var(--wine); font-weight:700;}
   .cal-day:not(.outside):hover{background:var(--paper-2);}
   .cal-day.selected{background:var(--wine); border-color:var(--wine); color:var(--white);}
   .cal-detail{
@@ -1623,6 +1625,18 @@
     '09-20': [{ t: '성 조윤호 요셉 주보성인 축일' }],
   };
 
+  // 매년 같은 날짜인 법정 공휴일 (음력 공휴일인 설날·추석은 해마다 날짜가 달라 별도 확인이 필요합니다)
+  const fixedHolidays = new Set([
+    '01-01', // 신정
+    '03-01', // 삼일절
+    '05-05', // 어린이날
+    '06-06', // 현충일
+    '08-15', // 광복절
+    '10-03', // 개천절
+    '10-09', // 한글날
+    '12-25', // 성탄절
+  ]);
+
   const calMonthLabel = document.getElementById('calMonthLabel');
   const calBody = document.getElementById('calBody');
   const calDetail = document.getElementById('calDetail');
@@ -1668,6 +1682,9 @@
           btn.disabled = true;
         } else {
           const key = dateKey(calYear, calMonth, cell.day);
+          if (col === 0) btn.classList.add('sun');
+          else if (col === 6) btn.classList.add('sat');
+          if (fixedHolidays.has(monthDayKey(calMonth, cell.day))) btn.classList.add('holiday');
           if (getEvents(calYear, calMonth, cell.day).length) btn.classList.add('has-event');
           if (isCurrentRealMonth && cell.day === today.getDate()) btn.classList.add('today');
           if (key === calSelected) btn.classList.add('selected');
