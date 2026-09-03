@@ -172,16 +172,19 @@
   /* ---------- Hero ---------- */
   .hero{padding:64px 0 96px; border-top:none;}
   .hero-inner{
-    display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center;
+    display:grid; grid-template-columns:1.6fr 1fr; gap:40px; align-items:center;
   }
   .hero h1{font-family:'Black Han Sans', sans-serif; font-weight:400; font-size:52px; line-height:1.1; margin-bottom:14px; letter-spacing:.04em;}
   .hero p.hero-motto{
     font-family:'Nanum Myeongjo', serif; font-weight:800; font-size:26px; color:var(--wine);
     margin-bottom:20px;
   }
-  .hero p.lead{font-size:17px; color:var(--ink-soft); max-width:44ch; margin-bottom:36px;}
+  .hero p.lead{font-size:17px; color:var(--ink-soft); max-width:none; margin-bottom:36px;}
   @media (max-width:640px){
     .hero p.hero-motto{font-size:20px;}
+  }
+  @media (max-width:400px){
+    .hero p.hero-motto{font-size:17px;}
   }
   .btn-row{display:flex; gap:14px; flex-wrap:wrap;}
   .btn{
@@ -226,6 +229,9 @@
   }
   .fact-list span:first-child{color:var(--ink-soft);}
   .fact-list span:last-child{font-weight:600; text-align:right;}
+  .fact-list li.fact-saint{display:block;}
+  .fact-list li.fact-saint .fact-row{display:flex; justify-content:space-between; gap:20px;}
+  .fact-list li.fact-saint .fact-sub{margin-top:6px; font-size:12.5px; font-weight:400; color:var(--ink-soft); text-align:right;}
 
   .pastor-list{
     display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:22px;
@@ -530,9 +536,13 @@
   footer{background:var(--navy); color:#C7CCD6; padding:26px 0;}
   .footer-bottom{font-size:12.5px; color:#8B93A3; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
 
-  @media (max-width:860px){
+  @media (max-width:1080px){
     .hero-inner{grid-template-columns:1fr;}
-    .hero-inner .arch-frame{order:-1; max-width:320px; margin:0 auto;}
+    .hero-inner .arch-frame{order:-1; max-width:560px; margin:0 auto;}
+  }
+
+  @media (max-width:860px){
+    .hero-inner .arch-frame{max-width:320px;}
     .intro-grid{grid-template-columns:1fr;}
     .loc-map{height:360px;}
     .contact-list--row{grid-template-columns:1fr 1fr;}
@@ -668,8 +678,8 @@
     <div>
       <p class="eyebrow">천주교 전주교구</p>
       <h1>용머리성당</h1>
-      <p class="hero-motto">"모이면 기도, 흩어지면 선교"</p>
-      <p class="lead">하느님의 은총 안에서 신앙의 뿌리를 내리고,<br>사랑과 희망의 빛을 세상으로 전하는 전주 용머리성당입니다.<br>처음 오시는 걸음도 낯설지 않도록, 문은 늘 열려 있습니다.</p>
+      <p class="hero-motto">"순교의 피가 스며든 용머리<br><span style="visibility:hidden">"</span>성 조윤호 요셉의 신앙을 이어갑니다"</p>
+      <p class="lead">1866년 병인박해 때 신앙을 지키다 전주 서천교에서 순교한 성 조윤호 요셉.<br>그의 시신은 순교 후 서천교 너머 용머리고개에 묻혔다고 전해집니다.<br>오늘날 용머리성당은 이 지역과 깊은 인연을 지닌<br>성 조윤호 요셉을 수호성인으로 모시며,<br>젊은 순교자가 남긴 굳건한 믿음과 순교 신앙을 이어가고 있습니다.</p>
       <div class="btn-row">
         <a href="#mass" class="btn btn-primary" id="heroMassBtn">미사시간 안내</a>
         <a href="#location" class="btn btn-ghost" id="heroLocationBtn">연락처 안내</a>
@@ -695,10 +705,13 @@
     </div>
     <div id="introText">
       <p>용머리성당은 1989년 효자동본당에서 분리 설립되어,<br>효자3동성당이라는 이름으로 시작해 이후 용머리성당으로 개칭하였습니다.<br>현재의 성전은 1997년 12월 6일에 봉헌되었습니다.</p>
-      <p>"모이면 기도, 흩어지면 선교"라는 표어 아래,<br>미사와 성사, 예비신자 교리, 각 단체 활동을 통해<br>신자들이 신앙 안에서 서로 연결될 수 있도록 돕고 있습니다.<br>처음 오시는 분도 편안하게 머무실 수 있습니다.</p>
+      <p>"모이면 기도, 흩어지면 선교"라는 표어 아래,<br>굳건한 믿음과 순교 정신을 기억하며, 기도와 사랑으로 복음을 살아가는 공동체<br>용머리성당입니다.</p>
       <ul class="fact-list">
         <li><span>설립</span><span>1989년 1월 27일</span></li>
-        <li><span>주보성인</span><span>성 조윤호 요셉</span></li>
+        <li class="fact-saint">
+          <div class="fact-row"><span>주보성인</span><span>성 조윤호 요셉</span></div>
+          <div class="fact-sub">축일: 9월 20일 · 순교일: 1866년 12월 23일 · 순교지: 전주 서천교</div>
+        </li>
         <li><span>주임신부</span><span>권완성 사도요한 신부</span></li>
         <li><span>신자 수</span><span>757세대 1,809명</span></li>
       </ul>
