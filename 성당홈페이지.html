@@ -1021,11 +1021,12 @@
         </ol>
       </div>
       <div id="installGuideInApp" hidden>
-        <p class="install-guide-lead">카카오톡이나 다른 앱 안에서 열어서 그런 거예요.</p>
+        <p class="install-guide-lead">카카오톡 화면 안에서는 설치가 안 돼요. 이렇게 해보세요.</p>
         <ol class="install-steps">
-          <li><span class="install-step-num">1</span><span>화면 오른쪽 아래(또는 위)에 있는 <strong>"⋯" 더보기 버튼</strong>을 눌러주세요.</span></li>
-          <li><span class="install-step-num">2</span><span><strong>"다른 브라우저로 열기"</strong>(또는 "Chrome으로 열기")를 눌러주세요.</span></li>
-          <li><span class="install-step-num">3</span><span>새로 열린 인터넷 브라우저에서 이 버튼을 다시 한 번 눌러주세요.</span></li>
+          <li><span class="install-step-num">1</span><span><strong>뒤로 가기</strong>를 눌러 대화방(채팅방)으로 돌아가주세요.</span></li>
+          <li><span class="install-step-num">2</span><span>이 링크(주소)를 손가락으로 <strong>길게(꾹) 눌러주세요</strong>.</span></li>
+          <li><span class="install-step-num">3</span><span>나오는 메뉴에서 <strong>"다른 브라우저로 열기"</strong>(또는 "Chrome으로 열기")를 눌러주세요.</span></li>
+          <li><span class="install-step-num">4</span><span>새로 열린 화면에서 이 버튼을 다시 한 번 눌러주세요.</span></li>
         </ol>
       </div>
       <div id="installGuideGeneric" hidden>
@@ -1120,6 +1121,14 @@
     // "홈 화면에 추가"가 아예 없거나 다른 곳에 있는 경우가 많음
     const isInApp = /kakaotalk|naver\(|instagram|fban|fbav|everytimeapp|band\//i.test(ua);
 
+    function showInstallGuide(){
+      document.getElementById('installGuideIOS').hidden = !(isIOS && !isInApp);
+      document.getElementById('installGuideAndroid').hidden = !(isAndroid && !isInApp);
+      document.getElementById('installGuideInApp').hidden = !isInApp;
+      document.getElementById('installGuideGeneric').hidden = isInApp || isIOS || isAndroid;
+      openInfoModal('installModal');
+    }
+
     installBtn.addEventListener('click', async () => {
       if (deferredPrompt) {
         deferredPrompt.prompt();
@@ -1127,11 +1136,19 @@
         deferredPrompt = null;
         return;
       }
-      document.getElementById('installGuideIOS').hidden = !(isIOS && !isInApp);
-      document.getElementById('installGuideAndroid').hidden = !(isAndroid && !isInApp);
-      document.getElementById('installGuideInApp').hidden = !isInApp;
-      document.getElementById('installGuideGeneric').hidden = isInApp || isIOS || isAndroid;
-      openInfoModal('installModal');
+      // 카카오톡 등 인앱 브라우저는 "홈 화면에 추가" 기능이 없어서,
+      // 안드로이드에서는 intent 스킴으로 실제 브라우저(크롬/삼성인터넷)로 먼저 튕겨나가도록 시도한다.
+      // 카카오톡이 이 스킴을 처리하지 못하면 화면 전환이 없으므로, 잠시 뒤 수동 안내로 대체한다.
+      if (isInApp && isAndroid) {
+        const bareUrl = location.href.replace(/^https?:\/\//, '');
+        const fallbackTimer = setTimeout(showInstallGuide, 1200);
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) clearTimeout(fallbackTimer);
+        }, { once: true });
+        location.href = 'intent://' + bareUrl + '#Intent;scheme=https;end';
+        return;
+      }
+      showInstallGuide();
     });
   })();
 
