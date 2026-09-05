@@ -164,11 +164,19 @@
   }
   .todayword-text strong{font-size:15.5px; color:var(--ink); font-weight:700;}
   .todayword-text span{font-size:14px; color:var(--ink-soft); margin-left:10px;}
+  .todayword-mass-btn{
+    flex:none; display:flex; align-items:center; gap:5px; white-space:nowrap;
+    font-size:13px; font-weight:600; color:var(--wine); border:1px solid var(--wine);
+    border-radius:20px; padding:6px 14px; transition:background .15s, color .15s;
+  }
+  .todayword-mass-btn:hover{background:var(--wine); color:var(--paper);}
+  .todayword-mass-btn svg{width:12px; height:12px; flex:none;}
   @media (max-width:640px){
     .todayword-inner{padding:10px 20px; gap:12px; align-items:flex-start;}
     .todayword-text{white-space:normal;}
     .todayword-text strong{display:block; font-size:14px;}
     .todayword-text span{display:block; margin-left:0; margin-top:3px; font-size:12.5px; line-height:1.4;}
+    .todayword-mass-btn{align-self:center; font-size:12px; padding:5px 11px;}
   }
 
   /* ---------- Hero ---------- */
@@ -679,6 +687,10 @@
       <strong id="twFeast">연중 제22주간 토요일</strong>
       <span id="twVerse">당신들은 어째서 안식일에 해서는 안 되는 일을 하오? (루카 6,1-5)</span>
     </div>
+    <a href="https://maria.catholic.or.kr/mobile/missa/missa_view.asp?today=on" target="_blank" rel="noopener" class="todayword-mass-btn">
+      오늘의 미사
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </a>
   </div>
 </div>
 <!-- /TODAYWORD -->
@@ -1788,7 +1800,7 @@
     { name: '여의동성당', lat: 35.8691683138392, lon: 127.078329564891, m: 8927 },
   ];
 
-  kakao.maps.load(() => {
+  if (window.kakao && kakao.maps) kakao.maps.load(() => {
     const map = new kakao.maps.Map(document.getElementById('locMap'), {
       center: new kakao.maps.LatLng(parishHome.lat, parishHome.lon),
       level: 4,
