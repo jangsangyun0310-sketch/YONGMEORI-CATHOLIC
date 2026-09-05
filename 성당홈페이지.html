@@ -15,6 +15,18 @@
 <meta property="og:description" content="하느님의 은총 안에서 신앙의 뿌리를 내리고, 사랑과 희망의 빛을 세상으로 전하는 전주 용머리성당입니다. 미사시간, 공지사항, 본당 일정, 갤러리, 오시는 길을 안내해 드립니다.">
 <meta property="og:image" content="https://jangsangyun0310-sketch.github.io/YONGMEORI-CATHOLIC/images/og-image.png">
 <meta property="og:url" content="https://jangsangyun0310-sketch.github.io/YONGMEORI-CATHOLIC/%EC%84%B1%EB%8B%B9%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80.html">
+
+<!-- 홈 화면에 추가(PWA) -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#6E1E2C">
+<link rel="icon" type="image/png" sizes="32x32" href="images/icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/icons/icon-16.png">
+<link rel="apple-touch-icon" href="images/icons/icon-180.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="용머리성당">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=Black+Han+Sans&family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
@@ -210,6 +222,18 @@
   .btn-primary:hover{background:var(--wine-deep);}
   .btn-ghost{border:1px solid var(--ink); color:var(--ink);}
   .btn-ghost:hover{background:var(--ink); color:var(--paper);}
+  button.btn{font-family:inherit; background:none; cursor:pointer; -webkit-appearance:none; appearance:none;}
+  .btn-icon{display:inline-flex; align-items:center; gap:8px;}
+  .btn-icon svg{width:16px; height:16px; flex:none;}
+
+  .install-guide-lead{font-size:15.5px; font-weight:600; margin:0 0 16px;}
+  .install-steps{list-style:none; margin:0 0 18px; padding:0; display:flex; flex-direction:column; gap:14px;}
+  .install-steps li{display:flex; align-items:flex-start; gap:12px; font-size:15px; line-height:1.55;}
+  .install-step-num{
+    flex:none; width:26px; height:26px; border-radius:50%; background:var(--wine); color:var(--white);
+    font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:1px;
+  }
+  .install-guide-note{font-size:13.5px; color:var(--ink-soft); border-top:1px solid var(--line); padding-top:14px; margin:0;}
 
   .arch-frame{
     position:relative; width:100%; aspect-ratio:4/3;
@@ -706,6 +730,10 @@
       <div class="btn-row">
         <a href="#mass" class="btn btn-primary" id="heroMassBtn">미사시간 안내</a>
         <a href="#location" class="btn btn-ghost" id="heroLocationBtn">연락처 안내</a>
+        <button type="button" class="btn btn-ghost btn-icon" id="installAppBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+          홈 화면에 추가
+        </button>
       </div>
     </div>
     <div class="arch-frame" id="heroSlideshow">
@@ -955,6 +983,37 @@
   </div>
 </div>
 
+<div class="info-modal" id="installModal">
+  <div class="info-modal-inner">
+    <div class="info-modal-head">
+      <h3>홈 화면에 추가하기</h3>
+      <button class="info-modal-close" data-close="installModal" aria-label="닫기">✕</button>
+    </div>
+    <div class="info-modal-body">
+      <div id="installGuideIOS" hidden>
+        <p class="install-guide-lead">아이폰(사파리)에서는 이렇게 해보세요.</p>
+        <ol class="install-steps">
+          <li><span class="install-step-num">1</span><span>화면 아래쪽의 <strong>공유 버튼</strong>(네모에서 위로 화살표 나가는 모양)을 눌러주세요.</span></li>
+          <li><span class="install-step-num">2</span><span>아래로 내려서 <strong>"홈 화면에 추가"</strong>를 찾아 눌러주세요.</span></li>
+          <li><span class="install-step-num">3</span><span>오른쪽 위 <strong>"추가"</strong>를 누르면 끝이에요.</span></li>
+        </ol>
+      </div>
+      <div id="installGuideAndroid" hidden>
+        <p class="install-guide-lead">안드로이드(크롬)에서는 이렇게 해보세요.</p>
+        <ol class="install-steps">
+          <li><span class="install-step-num">1</span><span>화면 오른쪽 위 <strong>점 3개(⋮) 메뉴</strong>를 눌러주세요.</span></li>
+          <li><span class="install-step-num">2</span><span><strong>"홈 화면에 추가"</strong> 또는 <strong>"앱 설치"</strong>를 눌러주세요.</span></li>
+          <li><span class="install-step-num">3</span><span><strong>"추가"</strong>를 누르면 끝이에요.</span></li>
+        </ol>
+      </div>
+      <div id="installGuideGeneric" hidden>
+        <p class="install-guide-lead">사용 중인 브라우저의 메뉴를 열어 <strong>"홈 화면에 추가"</strong>를 눌러주세요.</p>
+      </div>
+      <p class="install-guide-note">한 번만 추가해두면, 다음부터는 휴대폰 화면의 아이콘을 눌러 앱처럼 바로 들어올 수 있어요.</p>
+    </div>
+  </div>
+</div>
+
 <div class="lightbox" id="lightbox">
   <div class="lightbox-inner" id="lightboxInner">
     <div class="lightbox-img-wrap">
@@ -1017,6 +1076,38 @@
   });
   document.getElementById('heroMassBtn').addEventListener('click', e => { e.preventDefault(); openInfoModal('massModal'); });
   document.getElementById('heroLocationBtn').addEventListener('click', e => { e.preventDefault(); openInfoModal('locationModal'); });
+
+  // "홈 화면에 추가" — 어르신들도 한 번에 앱처럼 설치해서 쓸 수 있도록 안내
+  (function(){
+    const installBtn = document.getElementById('installAppBtn');
+    if (!installBtn) return;
+
+    const alreadyInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (alreadyInstalled) { installBtn.remove(); return; }
+
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    const ua = navigator.userAgent;
+    const isIOS = /iphone|ipad|ipod/i.test(ua);
+    const isAndroid = /android/i.test(ua);
+
+    installBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        return;
+      }
+      document.getElementById('installGuideIOS').hidden = !isIOS;
+      document.getElementById('installGuideAndroid').hidden = !isAndroid;
+      document.getElementById('installGuideGeneric').hidden = isIOS || isAndroid;
+      openInfoModal('installModal');
+    });
+  })();
 
   // Notice accordion
   document.querySelectorAll('.notice-item').forEach(item => {
@@ -1907,6 +1998,15 @@
     clearTimeout(introResizeTimer);
     introResizeTimer = setTimeout(syncIntroPhotoHeight, 150);
   });
+</script>
+
+<script>
+  // 홈 화면에 추가한 뒤 앱처럼(standalone) 실행되도록 서비스 워커 등록
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js').catch(() => {});
+    });
+  }
 </script>
 
 </body>
