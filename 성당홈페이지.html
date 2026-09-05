@@ -222,9 +222,22 @@
   .btn-primary:hover{background:var(--wine-deep);}
   .btn-ghost{border:1px solid var(--ink); color:var(--ink);}
   .btn-ghost:hover{background:var(--ink); color:var(--paper);}
-  button.btn{font-family:inherit; background:none; cursor:pointer; -webkit-appearance:none; appearance:none;}
-  .btn-icon{display:inline-flex; align-items:center; gap:8px;}
-  .btn-icon svg{width:16px; height:16px; flex:none;}
+
+  .install-fab{
+    position:fixed; left:18px; bottom:22px; z-index:70;
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--wine); color:var(--white); border:none; border-radius:999px;
+    padding:13px 20px; font-family:inherit; font-size:14px; font-weight:700; line-height:1; cursor:pointer;
+    box-shadow:0 10px 24px -10px rgba(30,20,15,.55);
+    transition:background .2s ease, transform .15s ease;
+    -webkit-appearance:none; appearance:none;
+  }
+  .install-fab:hover{background:var(--wine-deep);}
+  .install-fab svg{width:17px; height:17px; flex:none;}
+  @media (max-width:480px){
+    .install-fab{left:12px; bottom:16px; padding:11px 16px; font-size:13px;}
+    .install-fab svg{width:15px; height:15px;}
+  }
 
   .install-guide-lead{font-size:15.5px; font-weight:600; margin:0 0 16px;}
   .install-steps{list-style:none; margin:0 0 18px; padding:0; display:flex; flex-direction:column; gap:14px;}
@@ -653,6 +666,11 @@
 </head>
 <body id="top">
 
+<button type="button" class="install-fab" id="installAppBtn">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+  홈 화면에 추가
+</button>
+
 <div class="sticky-top">
 <header class="site-header">
   <div class="header-inner">
@@ -730,10 +748,6 @@
       <div class="btn-row">
         <a href="#mass" class="btn btn-primary" id="heroMassBtn">미사시간 안내</a>
         <a href="#location" class="btn btn-ghost" id="heroLocationBtn">연락처 안내</a>
-        <button type="button" class="btn btn-ghost btn-icon" id="installAppBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
-          홈 화면에 추가
-        </button>
       </div>
     </div>
     <div class="arch-frame" id="heroSlideshow">
@@ -999,11 +1013,19 @@
         </ol>
       </div>
       <div id="installGuideAndroid" hidden>
-        <p class="install-guide-lead">안드로이드(크롬)에서는 이렇게 해보세요.</p>
+        <p class="install-guide-lead">안드로이드에서는 이렇게 해보세요.</p>
         <ol class="install-steps">
-          <li><span class="install-step-num">1</span><span>화면 오른쪽 위 <strong>점 3개(⋮) 메뉴</strong>를 눌러주세요.</span></li>
-          <li><span class="install-step-num">2</span><span><strong>"홈 화면에 추가"</strong> 또는 <strong>"앱 설치"</strong>를 눌러주세요.</span></li>
+          <li><span class="install-step-num">1</span><span>화면 위쪽이나 아래쪽에 있는 <strong>점 3개(⋮) 또는 줄 3개(≡) 메뉴 버튼</strong>을 찾아 눌러주세요.</span></li>
+          <li><span class="install-step-num">2</span><span>메뉴 목록에서 <strong>"홈 화면에 추가"</strong> 또는 <strong>"앱 설치"</strong>라고 쓰인 것을 찾아 눌러주세요.</span></li>
           <li><span class="install-step-num">3</span><span><strong>"추가"</strong>를 누르면 끝이에요.</span></li>
+        </ol>
+      </div>
+      <div id="installGuideInApp" hidden>
+        <p class="install-guide-lead">카카오톡이나 다른 앱 안에서 열어서 그런 거예요.</p>
+        <ol class="install-steps">
+          <li><span class="install-step-num">1</span><span>화면 오른쪽 아래(또는 위)에 있는 <strong>"⋯" 더보기 버튼</strong>을 눌러주세요.</span></li>
+          <li><span class="install-step-num">2</span><span><strong>"다른 브라우저로 열기"</strong>(또는 "Chrome으로 열기")를 눌러주세요.</span></li>
+          <li><span class="install-step-num">3</span><span>새로 열린 인터넷 브라우저에서 이 버튼을 다시 한 번 눌러주세요.</span></li>
         </ol>
       </div>
       <div id="installGuideGeneric" hidden>
@@ -1094,6 +1116,9 @@
     const ua = navigator.userAgent;
     const isIOS = /iphone|ipad|ipod/i.test(ua);
     const isAndroid = /android/i.test(ua);
+    // 카카오톡·네이버·인스타그램 등 앱 내장 브라우저는 자체 메뉴만 있어서
+    // "홈 화면에 추가"가 아예 없거나 다른 곳에 있는 경우가 많음
+    const isInApp = /kakaotalk|naver\(|instagram|fban|fbav|everytimeapp|band\//i.test(ua);
 
     installBtn.addEventListener('click', async () => {
       if (deferredPrompt) {
@@ -1102,9 +1127,10 @@
         deferredPrompt = null;
         return;
       }
-      document.getElementById('installGuideIOS').hidden = !isIOS;
-      document.getElementById('installGuideAndroid').hidden = !isAndroid;
-      document.getElementById('installGuideGeneric').hidden = isIOS || isAndroid;
+      document.getElementById('installGuideIOS').hidden = !(isIOS && !isInApp);
+      document.getElementById('installGuideAndroid').hidden = !(isAndroid && !isInApp);
+      document.getElementById('installGuideInApp').hidden = !isInApp;
+      document.getElementById('installGuideGeneric').hidden = isInApp || isIOS || isAndroid;
       openInfoModal('installModal');
     });
   })();
