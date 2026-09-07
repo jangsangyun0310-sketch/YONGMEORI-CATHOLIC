@@ -1765,7 +1765,9 @@
   renderBulletinWeekList();
 
   // Schedule (본당 일정): scheduleData keyed by 'YYYY-MM-DD', each an array of { t: 제목, time: 일시, place: 장소 }
-  const scheduleData = {};
+  const scheduleData = {
+    '2026-09-13': [{ t: '사무장 채용 접수 마감' }],
+  };
 
   // 매년 돌아오는 축일 등 고정 일정: recurringSchedule keyed by 'MM-DD'
   const recurringSchedule = {
