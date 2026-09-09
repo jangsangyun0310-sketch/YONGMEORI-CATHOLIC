@@ -1,0 +1,11 @@
+{
+  "name": "yongmeori-push-admin",
+  "private": true,
+  "description": "용머리성당 홈페이지 — 웹 푸시 알림 발송용 관리 스크립트 (사이트 자체는 정적 파일이라 별도 빌드가 필요 없습니다)",
+  "scripts": {
+    "send-push": "node scripts/send-push.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.6.0"
+  }
+}

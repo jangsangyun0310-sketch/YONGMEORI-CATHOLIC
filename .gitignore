@@ -1,2 +1,4 @@
 .claude/
 .github/scripts/auto-pull.log
+node_modules/
+scripts/serviceAccountKey.json

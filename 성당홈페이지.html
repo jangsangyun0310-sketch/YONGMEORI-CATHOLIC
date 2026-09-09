@@ -248,6 +248,55 @@
   }
   .install-guide-note{font-size:13.5px; color:var(--ink-soft); border-top:1px solid var(--line); padding-top:14px; margin:0;}
 
+  .push-fab{
+    position:fixed; right:18px; bottom:22px; z-index:70;
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--wine); color:var(--white); border:none; border-radius:999px;
+    padding:13px 20px; font-family:inherit; font-size:14px; font-weight:700; line-height:1; cursor:pointer;
+    box-shadow:0 10px 24px -10px rgba(30,20,15,.55);
+    transition:background .2s ease, transform .15s ease;
+    -webkit-appearance:none; appearance:none;
+  }
+  .push-fab:hover{background:var(--wine-deep);}
+  .push-fab svg{width:17px; height:17px; flex:none;}
+  .push-fab.is-subscribed{background:var(--ink);}
+  .push-fab.is-subscribed:hover{background:var(--ink); opacity:.9;}
+  @media (max-width:480px){
+    .push-fab{right:12px; bottom:16px; padding:11px 16px; font-size:13px;}
+    .push-fab svg{width:15px; height:15px;}
+  }
+
+  .notif-bell{
+    position:relative; flex:none; width:38px; height:38px;
+    border:1px solid var(--line); border-radius:8px; background:var(--white);
+    color:var(--wine-deep); display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .notif-bell svg{width:18px; height:18px;}
+  .notif-bell-badge{
+    position:absolute; top:2px; right:2px; min-width:16px; height:16px; padding:0 3px;
+    border-radius:999px; background:var(--cal-red); border:2px solid var(--white); color:#fff;
+    font-size:10px; font-weight:700; line-height:1; align-items:center; justify-content:center;
+  }
+  .notif-bell-badge:not([hidden]){display:flex;}
+  .notif-bell--mobile{display:none;}
+  @media (max-width:860px){
+    .notif-bell--desktop{display:none;}
+    .notif-bell--mobile{display:flex;}
+  }
+
+  .notif-list{list-style:none; margin:0 0 4px; padding:0; display:flex; flex-direction:column; gap:2px; max-height:55vh; overflow-y:auto;}
+  .notif-item{display:flex; align-items:flex-start; gap:10px; padding:14px 4px; border-bottom:1px solid var(--line);}
+  .notif-item:last-child{border-bottom:none;}
+  .notif-item-body{flex:1; min-width:0;}
+  .notif-item-title{display:block; font-size:15px; margin-bottom:4px;}
+  .notif-item-text{font-size:14px; line-height:1.55; color:var(--ink-soft); margin:0 0 6px; white-space:pre-line;}
+  .notif-item-date{font-size:12.5px; color:var(--ink-soft); opacity:.8;}
+  .notif-item-del{
+    flex-shrink:0; width:26px; height:26px; border-radius:999px; border:1px solid var(--line);
+    background:none; color:var(--ink-soft); cursor:pointer; font-size:12px;
+  }
+  .notif-item-del:hover{background:var(--paper-2);}
+
   .arch-frame{
     position:relative; width:100%; aspect-ratio:4/3;
     border-radius:32px;
@@ -671,6 +720,11 @@
   홈 화면에 추가
 </button>
 
+<button type="button" class="push-fab" id="pushAppBtn">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+  <span id="pushAppBtnLabel">알림 받기</span>
+</button>
+
 <div class="sticky-top">
 <header class="site-header">
   <div class="header-inner">
@@ -689,6 +743,10 @@
         <li><a href="#location">오시는 길</a></li>
       </ul>
       <div class="nav-sites-row">
+        <button type="button" class="notif-bell notif-bell--desktop" id="notifBellBtnDesktop" aria-label="알림함 열기">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-bell-badge" hidden></span>
+        </button>
         <a href="https://cafe.daum.net/yong-meo-ri" target="_blank" rel="noopener" class="cafe-btn">
           <img src="images/daumcafe-icon.png" alt="" width="13" height="13">
           <span>다음카페</span>
@@ -715,6 +773,10 @@
         </button>
       </div>
     </nav>
+    <button type="button" class="notif-bell notif-bell--mobile" id="notifBellBtnMobile" aria-label="알림함 열기">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="notif-bell-badge" hidden></span>
+    </button>
     <button class="nav-toggle" id="navToggle" aria-label="메뉴 열기">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
@@ -1041,6 +1103,50 @@
   </div>
 </div>
 
+<div class="info-modal" id="pushModal">
+  <div class="info-modal-inner">
+    <div class="info-modal-head">
+      <h3>성당 알림 받기</h3>
+      <button class="info-modal-close" data-close="pushModal" aria-label="닫기">✕</button>
+    </div>
+    <div class="info-modal-body">
+      <div id="pushGuideIOS" hidden>
+        <p class="install-guide-lead">아이폰에서는 먼저 홈 화면에 추가해야 알림을 받을 수 있어요.</p>
+        <ol class="install-steps">
+          <li><span class="install-step-num">1</span><span>이 창을 닫고 <strong>"홈 화면에 추가"</strong> 버튼을 먼저 눌러주세요.</span></li>
+          <li><span class="install-step-num">2</span><span>홈 화면에 추가된 아이콘으로 다시 들어와 <strong>"알림 받기"</strong>를 눌러주세요.</span></li>
+        </ol>
+      </div>
+      <div id="pushGuideDenied" hidden>
+        <p class="install-guide-lead">알림이 차단되어 있어요. 브라우저 설정에서 다시 켜주세요.</p>
+        <ol class="install-steps">
+          <li><span class="install-step-num">1</span><span>주소창 왼쪽의 <strong>자물쇠 아이콘</strong>(또는 브라우저 설정)을 눌러주세요.</span></li>
+          <li><span class="install-step-num">2</span><span><strong>"알림"</strong> 항목을 찾아 <strong>허용</strong>으로 바꿔주세요.</span></li>
+          <li><span class="install-step-num">3</span><span>이 페이지를 새로고침한 뒤 다시 눌러주세요.</span></li>
+        </ol>
+      </div>
+      <div id="pushGuideInApp" hidden>
+        <p class="install-guide-lead">카카오톡 화면 안에서는 알림을 켤 수 없어요.</p>
+        <p class="install-guide-note" style="border-top:none;padding-top:0;">화면 오른쪽 위 메뉴에서 <strong>"다른 브라우저로 열기"</strong>를 눌러 연 뒤, 그 화면에서 다시 눌러주세요.</p>
+      </div>
+      <p class="install-guide-note">전달사항이 있을 때만 성당에서 알림을 보내드려요. 언제든 이 버튼을 다시 눌러 끌 수 있어요.</p>
+    </div>
+  </div>
+</div>
+
+<div class="info-modal" id="notifPanel">
+  <div class="info-modal-inner">
+    <div class="info-modal-head">
+      <h3>알림함</h3>
+      <button class="info-modal-close" data-close="notifPanel" aria-label="닫기">✕</button>
+    </div>
+    <div class="info-modal-body">
+      <ul class="notif-list" id="notifList"></ul>
+      <p class="install-guide-note" id="notifEmpty">아직 온 알림이 없어요.</p>
+    </div>
+  </div>
+</div>
+
 <div class="lightbox" id="lightbox">
   <div class="lightbox-inner" id="lightboxInner">
     <div class="lightbox-img-wrap">
@@ -1055,6 +1161,10 @@
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="push-config.js"></script>
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=feec359623871cf5566b0baa3bd80497&autoload=false"></script>
 <script>
   // Always open on the top of the page (ignore remembered scroll position / URL hash)
@@ -1200,6 +1310,267 @@
       }
       showInstallGuide();
     });
+  })();
+
+  // ---------- 웹 푸시 알림 + 알림함 (Firebase Cloud Messaging) ----------
+  // 전달사항이 있을 때 신자분들 휴대폰으로 알림을 보내는 기능.
+  // Firebase 프로젝트를 만들고 push-config.js·service-worker.js의 REPLACE_ME 값을
+  // 실제 설정으로 채우기 전까지는 버튼들이 자동으로 숨겨져 기존 기능에 영향이 없다.
+  function getFirebaseApp(){
+    return firebase.apps.length ? firebase.apps[0] : firebase.initializeApp(window.FIREBASE_CONFIG);
+  }
+
+  (function(){
+    const btn = document.getElementById('pushAppBtn');
+    const label = document.getElementById('pushAppBtnLabel');
+    const modal = document.getElementById('pushModal');
+    if (!btn || !modal) return;
+
+    const STORAGE_KEY = 'yongmeori-push-subscribed';
+
+    const supported = 'Notification' in window && 'serviceWorker' in navigator && 'PushManager' in window
+      && window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey !== 'REPLACE_ME'
+      && window.FIREBASE_VAPID_KEY && window.FIREBASE_VAPID_KEY !== 'REPLACE_ME';
+    if (!supported) { btn.remove(); return; }
+
+    const ua = navigator.userAgent;
+    const isIOS = /iphone|ipad|ipod/i.test(ua);
+    const isInApp = /kakaotalk|naver\(|instagram|fban|fbav|everytimeapp|band\//i.test(ua);
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+    function openPushGuide(which){
+      ['pushGuideIOS', 'pushGuideDenied', 'pushGuideInApp'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.hidden = id !== which;
+      });
+      openInfoModal('pushModal');
+    }
+
+    const defaultLabel = label.textContent;
+    function setLabel(text, temporary){
+      label.textContent = text;
+      if (temporary) setTimeout(() => { label.textContent = subscribedNow() ? '알림 받는 중 ✓' : defaultLabel; }, 2200);
+    }
+    function subscribedNow(){ return localStorage.getItem(STORAGE_KEY) === '1'; }
+    function reflectState(){
+      btn.classList.toggle('is-subscribed', subscribedNow());
+      label.textContent = subscribedNow() ? '알림 받는 중 ✓' : defaultLabel;
+    }
+    reflectState();
+
+    // 탭이 열려 화면에 떠 있는 상태(포그라운드)에서 알림이 오면 서비스워커의 백그라운드
+    // 처리기가 아니라 이 리스너로 전달되므로, 여기서도 똑같이 실제 알림창을 띄워줘야 놓치지 않는다.
+    let listeningForMessages = false;
+    function listenForForegroundMessages(messaging){
+      if (listeningForMessages) return;
+      listeningForMessages = true;
+      messaging.onMessage((payload) => {
+        const title = (payload.notification && payload.notification.title) || '용머리성당';
+        const body = (payload.notification && payload.notification.body) || '';
+        const id = payload.data && payload.data.announcementId;
+        navigator.serviceWorker.getRegistration('service-worker.js').then((reg) => {
+          if (reg) reg.showNotification(title, { body, icon: 'images/icons/icon-192.png', tag: id, data: { id } });
+        });
+        setLabel(`🔔 ${title}`, true);
+      });
+    }
+
+    // 이미 구독 중인 상태로 페이지를 새로고침한 경우에도 포그라운드 알림을 받을 수 있도록 준비해두고,
+    // 서비스워커가 갱신되면서 예전 토큰이 만료되는 경우가 있어 매번 토큰을 다시 확인해 저장해둔다
+    if (subscribedNow() && Notification.permission === 'granted') {
+      navigator.serviceWorker.register('service-worker.js').then(async (reg) => {
+        getFirebaseApp();
+        const messaging = firebase.messaging();
+        listenForForegroundMessages(messaging);
+        try {
+          // getToken()은 기존 구독이 남아있으면 캐시된(어쩌면 이미 만료된) 토큰을 그대로 돌려주므로,
+          // 먼저 지워서 매번 진짜 새 토큰을 강제로 발급받는다
+          await messaging.deleteToken().catch(() => {});
+          const token = await messaging.getToken({ vapidKey: window.FIREBASE_VAPID_KEY, serviceWorkerRegistration: reg });
+          if (token) {
+            await firebase.firestore().collection('push_tokens').doc(token).set({
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+              ua: navigator.userAgent
+            });
+          }
+        } catch (err) {
+          console.error('토큰 갱신 실패', err);
+        }
+      }).catch(() => {});
+    }
+
+    async function subscribe(){
+      if (isInApp) { openPushGuide('pushGuideInApp'); return; }
+      if (isIOS && !isStandalone) { openPushGuide('pushGuideIOS'); return; }
+      if (Notification.permission === 'denied') { openPushGuide('pushGuideDenied'); return; }
+
+      setLabel('알림 켜는 중…');
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') { reflectState(); return; }
+
+        const reg = await navigator.serviceWorker.register('service-worker.js');
+        await navigator.serviceWorker.ready;
+
+        getFirebaseApp();
+        const messaging = firebase.messaging();
+        const token = await messaging.getToken({
+          vapidKey: window.FIREBASE_VAPID_KEY,
+          serviceWorkerRegistration: reg
+        });
+        if (!token) throw new Error('토큰 발급 실패');
+
+        await firebase.firestore().collection('push_tokens').doc(token).set({
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          ua: navigator.userAgent
+        });
+
+        localStorage.setItem(STORAGE_KEY, '1');
+        setLabel('알림 받는 중 ✓', true);
+        btn.classList.add('is-subscribed');
+
+        listenForForegroundMessages(messaging);
+      } catch (err) {
+        console.error(err);
+        setLabel('알림 켜기 실패, 다시 눌러주세요', true);
+      }
+    }
+
+    async function unsubscribe(){
+      try {
+        getFirebaseApp();
+        const messaging = firebase.messaging();
+        const reg = await navigator.serviceWorker.getRegistration('service-worker.js');
+        const token = await messaging.getToken({ vapidKey: window.FIREBASE_VAPID_KEY, serviceWorkerRegistration: reg }).catch(() => null);
+        if (token) {
+          await firebase.firestore().collection('push_tokens').doc(token).delete().catch(() => {});
+          await messaging.deleteToken().catch(() => {});
+        }
+      } finally {
+        localStorage.removeItem(STORAGE_KEY);
+        btn.classList.remove('is-subscribed');
+        setLabel('🔕 알림 꺼짐', true);
+      }
+    }
+
+    btn.addEventListener('click', () => {
+      if (subscribedNow()) unsubscribe();
+      else subscribe();
+    });
+  })();
+
+  // 알림함 — 성당에서 보낸 알림을 홈페이지 안에도 목록으로 남겨서,
+  // 푸시 알림을 못 받는 분(아이폰 등)도 볼 수 있고, 각자 필요 없는 건 지울 수 있게 한다.
+  (function(){
+    const bellBtns = document.querySelectorAll('.notif-bell');
+    const listEl = document.getElementById('notifList');
+    const emptyEl = document.getElementById('notifEmpty');
+    if (!bellBtns.length || !listEl) return;
+
+    const supported = window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey !== 'REPLACE_ME';
+    if (!supported) { bellBtns.forEach((b) => b.remove()); return; }
+
+    const DISMISSED_KEY = 'yongmeori-dismissed-notifs';
+
+    function getDismissed(){
+      try { return new Set(JSON.parse(localStorage.getItem(DISMISSED_KEY) || '[]')); }
+      catch (e) { return new Set(); }
+    }
+    function addDismissed(id){
+      const set = getDismissed();
+      set.add(id);
+      localStorage.setItem(DISMISSED_KEY, JSON.stringify([...set]));
+    }
+
+    function formatDate(date){
+      if (!date) return '';
+      return date.toLocaleString('ko-KR', { month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    }
+
+    let items = [];
+
+    function renderList(){
+      const dismissed = getDismissed();
+      const visible = items.filter((it) => !dismissed.has(it.id));
+      listEl.innerHTML = '';
+      emptyEl.hidden = visible.length > 0;
+      visible.forEach((it) => {
+        const li = document.createElement('li');
+        li.className = 'notif-item';
+        const body = document.createElement('div');
+        body.className = 'notif-item-body';
+        body.innerHTML = `<strong class="notif-item-title"></strong><p class="notif-item-text"></p><span class="notif-item-date"></span>`;
+        body.querySelector('.notif-item-title').textContent = it.title;
+        body.querySelector('.notif-item-text').textContent = it.body;
+        body.querySelector('.notif-item-date').textContent = formatDate(it.createdAt);
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'notif-item-del';
+        delBtn.setAttribute('aria-label', '이 알림 지우기');
+        delBtn.textContent = '✕';
+        delBtn.addEventListener('click', () => {
+          addDismissed(it.id);
+          renderList();
+          updateBadge();
+          // 홈페이지 알림함에서 지우면 휴대폰 알림함(시스템 알림)에 남아있는 실제 알림도 같이 닫아서,
+          // 홈 화면 아이콘 배지 숫자도 같이 줄어들게 한다
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistration('service-worker.js').then((reg) => {
+              if (reg && reg.active) reg.active.postMessage({ type: 'CLOSE_NOTIFICATION', id: it.id });
+            }).catch(() => {});
+          }
+        });
+        li.appendChild(body);
+        li.appendChild(delBtn);
+        listEl.appendChild(li);
+      });
+    }
+
+    // 배지 숫자 = 지우지 않고 알림함에 남아있는 알림 개수 (읽었는지 여부와 무관)
+    function updateBadge(){
+      const dismissed = getDismissed();
+      const remaining = items.filter((it) => !dismissed.has(it.id)).length;
+      bellBtns.forEach((b) => {
+        const badge = b.querySelector('.notif-bell-badge');
+        if (!badge) return;
+        badge.textContent = remaining > 9 ? '9+' : String(remaining);
+        badge.hidden = remaining === 0;
+      });
+      // 홈 화면에 추가한 경우, 앱 아이콘에도 카톡처럼 숫자 배지를 띄운다 (지원하는 브라우저에서만)
+      if (navigator.setAppBadge) {
+        try {
+          if (remaining > 0) navigator.setAppBadge(remaining);
+          else navigator.clearAppBadge();
+        } catch (e) { /* 지원 안 하는 환경은 조용히 무시 */ }
+      }
+    }
+
+    // 새로고침 안 하고 홈페이지를 보고 있는 중에도 새 알림이 오면 바로 배지에 반영되도록,
+    // 한 번만 읽어오는 get() 대신 실시간으로 계속 지켜보는 onSnapshot()을 쓴다
+    function watchAnnouncements(){
+      getFirebaseApp();
+      firebase.firestore().collection('announcements')
+        .orderBy('createdAt', 'desc')
+        .limit(30)
+        .onSnapshot((snap) => {
+          items = snap.docs.map((doc) => {
+            const d = doc.data();
+            return {
+              id: doc.id,
+              title: d.title || '용머리성당',
+              body: d.body || '',
+              createdAt: d.createdAt && d.createdAt.toDate ? d.createdAt.toDate() : null
+            };
+          });
+          updateBadge();
+          const panel = document.getElementById('notifPanel');
+          if (panel && panel.classList.contains('open')) renderList();
+        }, (err) => console.error('알림함 실시간 감지 실패', err));
+    }
+
+    bellBtns.forEach((b) => b.addEventListener('click', () => { renderList(); openInfoModal('notifPanel'); }));
+
+    watchAnnouncements();
   })();
 
   // Notice accordion
