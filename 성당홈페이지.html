@@ -486,6 +486,14 @@
     .info-modal-body .mass-grid{grid-template-columns:1fr;}
   }
 
+  .announce-modal-img{width:100%; border-radius:6px; margin-bottom:16px; display:block;}
+  .announce-modal-text{font-size:15px; line-height:1.7; color:var(--ink); white-space:pre-line; margin:0 0 20px;}
+  .announce-modal-hide{
+    display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--ink-soft);
+    border-top:1px solid var(--line); padding-top:16px; cursor:pointer;
+  }
+  .announce-modal-hide input{width:16px; height:16px; cursor:pointer;}
+
   .lightbox{
     position:fixed; inset:0; background:rgba(20,15,12,0.86); z-index:100;
     display:none; align-items:center; justify-content:center; padding:30px;
@@ -1150,6 +1158,25 @@
   </div>
 </div>
 
+<!-- 접속 시 뜨는 공지·행사 안내 팝업. 아래 제목/본문/이미지를 실제 내용으로 바꿔서 쓰면 됩니다.
+     내용이 없을 때(임시 문구 그대로일 때)는 팝업을 아예 띄우지 않도록 announceModalActive를 false로 둡니다. -->
+<div class="info-modal" id="announceModal">
+  <div class="info-modal-inner">
+    <div class="info-modal-head">
+      <h3 id="announceModalTitle">테스트 안내</h3>
+      <button class="info-modal-close" id="announceModalCloseBtn" data-close="announceModal" aria-label="닫기">✕</button>
+    </div>
+    <div class="info-modal-body">
+      <img src="images/announce-test.png" alt="" class="announce-modal-img" id="announceModalImg">
+      <p class="announce-modal-text" id="announceModalText" hidden></p>
+      <label class="announce-modal-hide">
+        <input type="checkbox" id="announceModalHideToday">
+        오늘 하루 보지 않기
+      </label>
+    </div>
+  </div>
+</div>
+
 <div class="lightbox" id="lightbox">
   <div class="lightbox-inner" id="lightboxInner">
     <div class="lightbox-img-wrap">
@@ -1262,6 +1289,27 @@
   });
   document.getElementById('heroMassBtn').addEventListener('click', e => { e.preventDefault(); openInfoModal('massModal'); });
   document.getElementById('heroLocationBtn').addEventListener('click', e => { e.preventDefault(); openInfoModal('locationModal'); });
+
+  // 접속 시 뜨는 공지·행사 안내 팝업.
+  // 실제 공지를 띄우려면 위 announceModal의 제목·본문(·이미지)을 채운 뒤 아래 announceModalActive를 true로 바꾸세요.
+  (function(){
+    const announceModalActive = true;
+    const modal = document.getElementById('announceModal');
+    if (!announceModalActive || !modal) return;
+
+    const HIDE_KEY = 'yongmeori-announce-hide-date';
+    const todayStr = new Date().toDateString();
+    const hideCheckbox = document.getElementById('announceModalHideToday');
+
+    function closeAndMaybeRemember(){
+      if (hideCheckbox.checked) localStorage.setItem(HIDE_KEY, todayStr);
+      closeInfoModal('announceModal');
+    }
+    document.getElementById('announceModalCloseBtn').addEventListener('click', closeAndMaybeRemember);
+    modal.addEventListener('click', e => { if (e.target === modal) closeAndMaybeRemember(); });
+
+    if (localStorage.getItem(HIDE_KEY) !== todayStr) openInfoModal('announceModal');
+  })();
 
   // "홈 화면에 추가" — 어르신들도 한 번에 앱처럼 설치해서 쓸 수 있도록 안내
   (function(){
