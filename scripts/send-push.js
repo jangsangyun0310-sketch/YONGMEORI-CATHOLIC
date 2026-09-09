@@ -5,7 +5,7 @@
 const path = require('path');
 const admin = require('firebase-admin');
 
-const SITE_URL = 'https://jangsangyun0310-sketch.github.io/YONGMEORI-CATHOLIC/';
+const SITE_URL = 'https://jangsangyun0310-sketch.github.io/yongmeori-catholic/';
 
 let serviceAccount;
 try {
