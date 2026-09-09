@@ -1358,14 +1358,14 @@
       // 카카오톡이 이 스킴을 처리하지 못하면 화면 전환이 없으므로, 잠시 뒤 수동 안내로 대체한다.
       if (isInApp && isAndroid) {
         // 폰의 기본 브라우저로 튕기면 삼성인터넷일 때 WebAPK 설치가 Play Protect에
-        // 막히는 경우가 있어(삼성인터넷 자체 문제), 항상 크롬으로 지정해서 연다.
-        // 크롬이 없으면 이 intent가 실행되지 않고 fallbackTimer가 수동 안내로 대체한다.
-        const bareUrl = location.href.replace(/^https?:\/\//, '');
+        // 막히는 경우가 있어(삼성인터넷 자체 문제), 항상 크롬으로 열리게 시도한다.
+        // intent 스킴의 package= 지정은 카카오톡이 무시하고 기본 브라우저로 열어버려서,
+        // 크롬 전용 딥링크(googlechrome://)를 먼저 시도하고, 안 되면 수동 안내로 대체한다.
         const fallbackTimer = setTimeout(showInstallGuide, 1200);
         document.addEventListener('visibilitychange', () => {
           if (document.hidden) clearTimeout(fallbackTimer);
         }, { once: true });
-        location.href = 'intent://' + bareUrl + '#Intent;scheme=https;package=com.android.chrome;end';
+        location.href = 'googlechrome://navigate?url=' + encodeURIComponent(location.href);
         return;
       }
       showInstallGuide();
