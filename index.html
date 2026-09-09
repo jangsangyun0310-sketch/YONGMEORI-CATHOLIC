@@ -1361,7 +1361,7 @@
         // 막히는 경우가 있어(삼성인터넷 자체 문제), 항상 크롬으로 열리게 시도한다.
         // intent 스킴의 package= 지정은 카카오톡이 무시하고 기본 브라우저로 열어버려서,
         // 크롬 전용 딥링크(googlechrome://)를 먼저 시도하고, 안 되면 수동 안내로 대체한다.
-        const fallbackTimer = setTimeout(showInstallGuide, 1200);
+        const fallbackTimer = setTimeout(showInstallGuide, 2500);
         document.addEventListener('visibilitychange', () => {
           if (document.hidden) clearTimeout(fallbackTimer);
         }, { once: true });
