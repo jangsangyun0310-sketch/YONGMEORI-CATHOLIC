@@ -5,7 +5,7 @@
 const path = require('path');
 const admin = require('firebase-admin');
 
-const SITE_URL = 'https://jangsangyun0310-sketch.github.io/YONGMEORI-CATHOLIC/성당홈페이지.html';
+const SITE_URL = 'https://jangsangyun0310-sketch.github.io/YONGMEORI-CATHOLIC/';
 
 let serviceAccount;
 try {
@@ -46,7 +46,7 @@ async function main() {
     data: { announcementId: announcementRef.id },
     webpush: {
       fcmOptions: { link: SITE_URL },
-      notification: { icon: SITE_URL.replace('성당홈페이지.html', '') + 'images/icons/icon-192.png', tag: announcementRef.id }
+      notification: { icon: SITE_URL + 'images/icons/icon-192.png', tag: announcementRef.id }
     }
   };
 

@@ -24,13 +24,13 @@ jobs:
 
       - name: 변경 사항 커밋 & 푸시
         run: |
-          if git diff --quiet -- 성당홈페이지.html; then
+          if git diff --quiet -- index.html; then
             echo "No change, skipping commit."
             exit 0
           fi
           git config user.name "todayword-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add 성당홈페이지.html
+          git add index.html
           git commit -m "오늘의 말씀 자동 갱신: $(date -u -d '+9 hours' +'%Y.%m.%d')
 
           자동화된 커밋입니다 (매일 00:00 KST, GitHub Actions)"

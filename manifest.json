@@ -3,7 +3,7 @@
   "short_name": "용머리성당",
   "description": "전주 용머리성당 미사시간, 공지사항, 본당 일정, 갤러리, 오시는 길 안내",
   "lang": "ko",
-  "start_url": "성당홈페이지.html",
+  "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",

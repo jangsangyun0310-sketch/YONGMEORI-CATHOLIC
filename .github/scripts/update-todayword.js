@@ -1,5 +1,5 @@
 // Fetches today's Korean Catholic liturgical info from the official 가톨릭굿뉴스
-// daily-mass page and updates the "오늘의 말씀" widget in 성당홈페이지.html.
+// daily-mass page and updates the "오늘의 말씀" widget in index.html.
 //
 // Safety rule: if any expected value cannot be extracted with confidence,
 // this script exits with an error and leaves the HTML file untouched —
@@ -10,7 +10,7 @@ const fs = require('fs');
 const path = require('path');
 
 const SOURCE_URL = 'https://maria.catholic.or.kr/mobile/missa/missa_view.asp?today=on';
-const HTML_PATH = path.join(__dirname, '..', '..', '성당홈페이지.html');
+const HTML_PATH = path.join(__dirname, '..', '..', 'index.html');
 
 function fail(reason) {
   console.error(`FAIL: ${reason}`);
@@ -83,7 +83,7 @@ async function main() {
 
   file = file.replace(original, block);
   fs.writeFileSync(HTML_PATH, file, 'utf8');
-  console.log('Updated 성당홈페이지.html');
+  console.log('Updated index.html');
   // Signal to the workflow that a real content change was written.
   console.log('::set-output name=changed::true');
   if (process.env.GITHUB_OUTPUT) {
