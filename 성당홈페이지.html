@@ -114,6 +114,7 @@
   .brand-mark{height:112px; width:auto; flex:none;}
   .main-nav{display:flex; flex-direction:column; align-items:flex-end; gap:10px;}
   .main-nav ul{display:flex; gap:34px;}
+  .nav-bell-item{display:flex; align-items:center;}
   .main-nav a{
     font-size:17px; font-weight:500; color:var(--ink-soft);
     padding:6px 0; border-bottom:2px solid transparent;
@@ -735,6 +736,12 @@
     </div>
     <nav class="main-nav" id="mainNav">
       <ul>
+        <li class="nav-bell-item">
+          <button type="button" class="notif-bell notif-bell--desktop" id="notifBellBtnDesktop" aria-label="알림함 열기">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="notif-bell-badge" hidden></span>
+          </button>
+        </li>
         <li><a href="#intro">본당 소개</a></li>
         <li><a href="#mass">미사시간</a></li>
         <li><a href="#notice">공지사항 · 주보</a></li>
@@ -743,10 +750,6 @@
         <li><a href="#location">오시는 길</a></li>
       </ul>
       <div class="nav-sites-row">
-        <button type="button" class="notif-bell notif-bell--desktop" id="notifBellBtnDesktop" aria-label="알림함 열기">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          <span class="notif-bell-badge" hidden></span>
-        </button>
         <a href="https://cafe.daum.net/yong-meo-ri" target="_blank" rel="noopener" class="cafe-btn">
           <img src="images/daumcafe-icon.png" alt="" width="13" height="13">
           <span>다음카페</span>
