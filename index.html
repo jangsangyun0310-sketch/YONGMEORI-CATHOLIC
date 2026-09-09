@@ -1321,12 +1321,8 @@
   })();
 
   // "홈 화면에 추가" — 어르신들도 한 번에 앱처럼 설치해서 쓸 수 있도록 안내
-  //
-  // 카카오톡 인앱 브라우저는 intent:// 스킴은 처리하지만 그 안의 package= 지정은
-  // 무시하고 폰의 "기본 브라우저"로만 튕겨준다. 기본 브라우저가 삼성인터넷이면,
-  // 삼성인터넷 자체의 WebAPK 서명 문제로 Play Protect가 설치를 차단한다(우리 사이트와 무관).
-  // 반면 삼성인터넷은 카카오톡과 달리 완전한 브라우저라 package= 지정을 제대로 처리하므로,
-  // 카카오톡 → 삼성인터넷(1차 튕김) → 크롬(2차 튕김) → 자동 설치, 순서로 이어지게 만든다.
+  // 서학동성당 사이트와 동일한 방식: 폰의 기본 브라우저로 튕기고, 안 되면 수동 안내로 대체.
+  // (크롬을 강제로 지정하는 시도는 카카오톡이 무시해서 효과가 없고 부작용만 있었음)
   (function(){
     const installBtn = document.getElementById('installAppBtn');
     if (!installBtn) return;
@@ -1338,13 +1334,11 @@
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      tryAutoContinue();
     });
 
     const ua = navigator.userAgent;
     const isIOS = /iphone|ipad|ipod/i.test(ua);
     const isAndroid = /android/i.test(ua);
-    const isSamsungBrowser = /SamsungBrowser/i.test(ua);
     // 카카오톡·네이버·인스타그램 등 앱 내장 브라우저는 자체 메뉴만 있어서
     // "홈 화면에 추가"가 아예 없거나 다른 곳에 있는 경우가 많음
     const isInApp = /kakaotalk|naver\(|instagram|fban|fbav|everytimeapp|band\//i.test(ua);
@@ -1357,42 +1351,6 @@
       openInfoModal('installModal');
     }
 
-    // 튕겨나가는 각 단계에 이 표식을 실어서, 도착한 페이지가 "설치를 이어가는 중"임을 알게 한다.
-    const AUTO_PARAM = 'pwaInstall';
-    function bareUrlWithAutoParam(){
-      const url = new URL(location.href);
-      url.searchParams.set(AUTO_PARAM, '1');
-      return url.href.replace(/^https?:\/\//, '');
-    }
-    function stripAutoParam(){
-      const url = new URL(location.href);
-      if (!url.searchParams.has(AUTO_PARAM)) return;
-      url.searchParams.delete(AUTO_PARAM);
-      history.replaceState(null, '', url.pathname + url.search + url.hash);
-    }
-
-    const cameFromAutoChain = new URLSearchParams(location.search).get(AUTO_PARAM) === '1';
-    let autoHandled = false;
-    function tryAutoContinue(){
-      if (!cameFromAutoChain || autoHandled || !deferredPrompt) return;
-      autoHandled = true;
-      stripAutoParam();
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.finally(() => { deferredPrompt = null; });
-    }
-
-    if (cameFromAutoChain && isSamsungBrowser && isAndroid) {
-      // 삼성인터넷 도착: 곧바로 한 번 더 크롬으로 넘긴다(삼성인터넷에서는 package= 지정이 먹힘).
-      // 크롬이 없어서 이동이 안 되는 경우에도 주소창에 표식이 남지 않도록 정리해둔다.
-      setTimeout(stripAutoParam, 2500);
-      location.href = 'intent://' + bareUrlWithAutoParam() + '#Intent;scheme=https;package=com.android.chrome;end';
-    } else if (cameFromAutoChain) {
-      // 크롬 등 정상 브라우저 도착: beforeinstallprompt를 기다렸다가 버튼 클릭 없이 자동 설치.
-      // 몇 초 안에 설치 조건이 안 갖춰지면 조용히 포기하고 평소처럼 버튼을 누르게 둔다.
-      setTimeout(stripAutoParam, 4000);
-      tryAutoContinue();
-    }
-
     installBtn.addEventListener('click', async () => {
       if (deferredPrompt) {
         deferredPrompt.prompt();
@@ -1400,14 +1358,16 @@
         deferredPrompt = null;
         return;
       }
-      // 카카오톡 등 인앱 브라우저는 자체적으로 설치를 못 하므로 실제 브라우저로 튕겨나간다.
-      // 어디로 튕기든(삼성인터넷/크롬 등) 위의 자동 이어달리기 로직이 계속 처리한다.
+      // 카카오톡 등 인앱 브라우저는 "홈 화면에 추가" 기능이 없어서,
+      // 안드로이드에서는 intent 스킴으로 실제 브라우저(크롬/삼성인터넷)로 먼저 튕겨나가도록 시도한다.
+      // 카카오톡이 이 스킴을 처리하지 못하면 화면 전환이 없으므로, 잠시 뒤 수동 안내로 대체한다.
       if (isInApp && isAndroid) {
-        const fallbackTimer = setTimeout(showInstallGuide, 2500);
+        const bareUrl = location.href.replace(/^https?:\/\//, '');
+        const fallbackTimer = setTimeout(showInstallGuide, 1200);
         document.addEventListener('visibilitychange', () => {
           if (document.hidden) clearTimeout(fallbackTimer);
         }, { once: true });
-        location.href = 'intent://' + bareUrlWithAutoParam() + '#Intent;scheme=https;end';
+        location.href = 'intent://' + bareUrl + '#Intent;scheme=https;end';
         return;
       }
       showInstallGuide();
