@@ -12,12 +12,12 @@ importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js
 importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
 
 firebase.initializeApp({
-  apiKey: "REPLACE_ME",
-  authDomain: "REPLACE_ME.firebaseapp.com",
-  projectId: "REPLACE_ME",
-  storageBucket: "REPLACE_ME.appspot.com",
-  messagingSenderId: "REPLACE_ME",
-  appId: "REPLACE_ME"
+  apiKey: "AIzaSyAENs_exymTcWYciCX1txgp6oNqUwyOXys",
+  authDomain: "yongmeori-church.firebaseapp.com",
+  projectId: "yongmeori-church",
+  storageBucket: "yongmeori-church.firebasestorage.app",
+  messagingSenderId: "900493543605",
+  appId: "1:900493543605:web:ec90fd9ac9fc6e1d0156fc"
 });
 
 const messaging = firebase.messaging();
