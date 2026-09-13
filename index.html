@@ -48,7 +48,7 @@
     --maxw: 1120px;
   }
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth; --sticky-offset:0px;}
+  html{scroll-behavior:smooth; --sticky-offset:0px; overscroll-behavior-x:none;}
   section[id], #bulletin{scroll-margin-top:calc(var(--sticky-offset) - 64px);}
   body{
     margin:0;
@@ -60,6 +60,8 @@
     -webkit-font-smoothing:antialiased;
     word-break:keep-all;
     overflow-wrap:break-word;
+    overflow-x:hidden;
+    overscroll-behavior-x:none;
   }
   h1,h2,h3{
     font-family:'Fraunces', serif;
@@ -898,7 +900,7 @@
         <table class="mass-table">
           <thead><tr><th>요일</th><th>시간</th><th>미사</th><th></th></tr></thead>
           <tbody>
-            <tr><td>토요일</td><td class="time">18:00</td><td>저녁 주일미사</td><td class="note">학생미사</td></tr>
+            <tr><td>토요일</td><td class="time">18:00</td><td>주일미사(학생미사)</td><td class="note"></td></tr>
             <tr><td>주일</td><td class="time">06:00</td><td>아침미사</td><td class="note"></td></tr>
             <tr><td></td><td class="time">10:30</td><td>교중미사</td><td class="note"></td></tr>
           </tbody>
@@ -2265,7 +2267,7 @@
 
   // Schedule (본당 일정): scheduleData keyed by 'YYYY-MM-DD', each an array of { t: 제목, time: 일시, place: 장소 }
   const scheduleData = {
-    '2026-09-13': [{ t: '사무장 채용 접수 마감' }],
+    '2026-09-20': [{ t: '사무장 채용 접수 마감' }],
   };
 
   // 매년 돌아오는 축일 등 고정 일정: recurringSchedule keyed by 'MM-DD'
