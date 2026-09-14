@@ -115,17 +115,17 @@
   .cpbc-icon{height:13px; width:auto; flex:none;}
   .brand-mark{height:112px; width:auto; flex:none;}
   .main-nav{display:flex; flex-direction:column; align-items:flex-end; gap:10px;}
-  .main-nav ul{display:flex; gap:34px;}
+  .main-nav ul{display:flex; gap:22px;}
   .nav-bell-item{display:flex; align-items:center; gap:8px;}
   .main-nav a{
-    font-size:17px; font-weight:500; color:var(--ink-soft);
+    font-size:16px; font-weight:500; color:var(--ink-soft); white-space:nowrap;
     padding:6px 0; border-bottom:2px solid transparent;
     transition:color .15s ease, border-color .15s ease;
   }
   .main-nav a:hover{color:var(--wine);}
-  .nav-sites-row{display:flex; align-items:center; gap:10px;}
+  .nav-sites-row{display:flex; align-items:center; gap:8px;}
   .main-nav .cafe-btn{
-    padding:7px 14px; font-size:12.5px; font-weight:600; border-bottom:1px solid var(--line);
+    padding:7px 11px; font-size:12px; font-weight:600; border-bottom:1px solid var(--line); white-space:nowrap;
   }
   .main-nav .cafe-btn:hover{border-bottom-color:var(--wine);}
   .main-nav .cafe-btn::before{display:none;}
@@ -733,17 +733,6 @@
     }
     .main-nav a:hover::before{width:100%;}
   }
-
-  .back-to-top{
-    position:fixed; right:22px; bottom:22px; width:46px; height:46px; border-radius:50%;
-    background:var(--wine); color:var(--white); border:none; cursor:pointer; z-index:70;
-    display:flex; align-items:center; justify-content:center;
-    box-shadow:0 10px 24px -10px rgba(30,20,15,.55);
-    opacity:0; visibility:hidden; transform:translateY(14px);
-    transition:opacity .3s ease, transform .3s ease, visibility .3s, background .2s ease;
-  }
-  .back-to-top.show{opacity:1; visibility:visible; transform:translateY(0);}
-  .back-to-top:hover{background:var(--wine-deep);}
 
   /* ---------- 글씨 크게 보기 (본문 읽는 글자만 확대, 표/배지 등 좁은 UI는 그대로 둠) ---------- */
   body.text-large{font-size:18px;}
@@ -2555,16 +2544,6 @@
   updateStickyOffset();
   window.addEventListener('load', updateStickyOffset);
   window.addEventListener('resize', updateStickyOffset);
-
-  // Back-to-top button
-  const backToTop = document.createElement('button');
-  backToTop.className = 'back-to-top';
-  backToTop.type = 'button';
-  backToTop.setAttribute('aria-label', '맨 위로');
-  backToTop.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
-  document.body.appendChild(backToTop);
-  window.addEventListener('scroll', () => backToTop.classList.toggle('show', window.scrollY > 500), { passive: true });
-  backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
   // Logo: scroll to top AND refresh the page (e.g. 오늘의 말씀, 공지 등 최신 내용을 다시 불러오도록)
   document.getElementById('brandLogo').addEventListener('click', e => {
