@@ -740,7 +740,7 @@
 <header class="site-header">
   <div class="header-inner">
     <div class="brand-group">
-      <a href="#top" class="brand">
+      <a href="#top" class="brand" id="brandLogo">
         <img class="brand-mark" src="images/logo-horizontal.png" alt="용머리성당 YONGMEORI CATHOLIC CHURCH SINCE 1989">
       </a>
     </div>
@@ -2528,6 +2528,12 @@
   document.body.appendChild(backToTop);
   window.addEventListener('scroll', () => backToTop.classList.toggle('show', window.scrollY > 500), { passive: true });
   backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  // Logo: scroll to top AND refresh the page (e.g. 오늘의 말씀, 공지 등 최신 내용을 다시 불러오도록)
+  document.getElementById('brandLogo').addEventListener('click', e => {
+    e.preventDefault();
+    window.location.reload();
+  });
 
   // Match the intro photo's height to the right-column text block, so the two column bottoms align exactly
   const introPhoto = document.getElementById('introPhoto');
