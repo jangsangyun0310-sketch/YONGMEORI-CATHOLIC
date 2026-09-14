@@ -116,7 +116,7 @@
   .brand-mark{height:112px; width:auto; flex:none;}
   .main-nav{display:flex; flex-direction:column; align-items:flex-end; gap:10px;}
   .main-nav ul{display:flex; gap:34px;}
-  .nav-bell-item{display:flex; align-items:center;}
+  .nav-bell-item{display:flex; align-items:center; gap:8px;}
   .main-nav a{
     font-size:17px; font-weight:500; color:var(--ink-soft);
     padding:6px 0; border-bottom:2px solid transparent;
@@ -285,6 +285,20 @@
   @media (max-width:860px){
     .notif-bell--desktop{display:none;}
     .notif-bell--mobile{display:flex;}
+  }
+
+  .textsize-btn{
+    position:relative; flex:none; width:38px; height:38px;
+    border:1px solid var(--line); border-radius:8px; background:var(--white);
+    color:var(--wine-deep); display:flex; align-items:center; justify-content:center; cursor:pointer;
+    font-family:'Work Sans', sans-serif; font-weight:700; font-size:14px;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .textsize-btn.is-active{background:var(--wine); border-color:var(--wine); color:#fff;}
+  .textsize-btn--mobile{display:none;}
+  @media (max-width:860px){
+    .textsize-btn--desktop{display:none;}
+    .textsize-btn--mobile{display:flex;}
   }
 
   .notif-list{list-style:none; margin:0 0 4px; padding:0; display:flex; flex-direction:column; gap:2px; max-height:55vh; overflow-y:auto;}
@@ -722,6 +736,17 @@
   }
   .back-to-top.show{opacity:1; visibility:visible; transform:translateY(0);}
   .back-to-top:hover{background:var(--wine-deep);}
+
+  /* ---------- 글씨 크게 보기 (본문 읽는 글자만 확대, 표/배지 등 좁은 UI는 그대로 둠) ---------- */
+  body.text-large{font-size:18px;}
+  body.text-large .hero p.lead{font-size:19px;}
+  body.text-large .notice-title{font-size:17.5px;}
+  body.text-large .notice-body-inner{font-size:16px;}
+  body.text-large .announce-modal-text{font-size:17px;}
+  body.text-large .contact-list .value{font-size:17px;}
+  body.text-large .contact-list .label{font-size:14px;}
+  body.text-large .cal-detail-item .cal-item-title{font-size:16.5px;}
+  body.text-large .cal-detail-item .cal-item-meta{font-size:14px;}
 </style>
 </head>
 <body id="top">
@@ -747,6 +772,7 @@
     <nav class="main-nav" id="mainNav">
       <ul>
         <li class="nav-bell-item">
+          <button type="button" class="textsize-btn textsize-btn--desktop" id="textSizeBtnDesktop" aria-label="글씨 크게 보기" aria-pressed="false">가</button>
           <button type="button" class="notif-bell notif-bell--desktop" id="notifBellBtnDesktop" aria-label="알림함 열기">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
             <span class="notif-bell-badge" hidden></span>
@@ -786,6 +812,7 @@
         </button>
       </div>
     </nav>
+    <button type="button" class="textsize-btn textsize-btn--mobile" id="textSizeBtnMobile" aria-label="글씨 크게 보기" aria-pressed="false">가</button>
     <button type="button" class="notif-bell notif-bell--mobile" id="notifBellBtnMobile" aria-label="알림함 열기">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
       <span class="notif-bell-badge" hidden></span>
@@ -937,10 +964,10 @@
         <button class="notice-row">
           <span class="notice-tag">채용</span>
           <span class="notice-title">본당 사무장(사무직원) 채용 공고</span>
-          <span class="notice-date">접수마감 2026.09.13</span>
+          <span class="notice-date">접수마감 2026.09.20</span>
           <span class="notice-plus"></span>
         </button>
-        <div class="notice-body"><div class="notice-body-inner">본당 사무장을 모집합니다. 세례받은 지 3년 이상, 컴퓨터 운영 가능자, 운전면허 1종 소지자이면 지원 가능합니다. 접수는 9월 13일(주일)까지이며, 자세한 사항은 사무실(063-287-0441)로 문의해 주세요.</div></div>
+        <div class="notice-body"><div class="notice-body-inner">본당 사무장을 모집합니다. 세례받은 지 3년 이상, 컴퓨터 운영 가능자, 운전면허 1종 소지자이면 지원 가능합니다. 접수는 9월 20일(주일)까지이며, 자세한 사항은 사무실(063-287-0441)로 문의해 주세요.</div></div>
       </div>
       <div class="notice-item">
         <button class="notice-row">
@@ -2534,6 +2561,30 @@
     e.preventDefault();
     window.location.reload();
   });
+
+  // 글씨 크게 보기: 본문 읽는 글자만 확대(표·배지 등 좁은 UI는 그대로), 선택은 다음 방문에도 기억됨
+  (function(){
+    const TEXT_SIZE_KEY = 'yongmeori-text-large';
+    const buttons = [document.getElementById('textSizeBtnDesktop'), document.getElementById('textSizeBtnMobile')].filter(Boolean);
+    if (!buttons.length) return;
+
+    function apply(isLarge){
+      document.body.classList.toggle('text-large', isLarge);
+      buttons.forEach(btn => {
+        btn.classList.toggle('is-active', isLarge);
+        btn.setAttribute('aria-pressed', String(isLarge));
+        btn.setAttribute('aria-label', isLarge ? '글씨 원래대로 보기' : '글씨 크게 보기');
+      });
+    }
+
+    apply(localStorage.getItem(TEXT_SIZE_KEY) === '1');
+
+    buttons.forEach(btn => btn.addEventListener('click', () => {
+      const next = !document.body.classList.contains('text-large');
+      localStorage.setItem(TEXT_SIZE_KEY, next ? '1' : '0');
+      apply(next);
+    }));
+  })();
 
   // Match the intro photo's height to the right-column text block, so the two column bottoms align exactly
   const introPhoto = document.getElementById('introPhoto');
