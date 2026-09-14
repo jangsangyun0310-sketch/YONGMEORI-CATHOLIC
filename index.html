@@ -1165,16 +1165,15 @@
 <div class="info-modal" id="announceModal">
   <div class="info-modal-inner">
     <div class="info-modal-head">
-      <h3 id="announceModalTitle">인사말</h3>
+      <h3 id="announceModalTitle">추석 합동위령미사 안내</h3>
       <button class="info-modal-close" id="announceModalCloseBtn" data-close="announceModal" aria-label="닫기">✕</button>
     </div>
     <div class="info-modal-body">
       <img src="" alt="" class="announce-modal-img" id="announceModalImg" hidden>
-      <p class="announce-modal-text" id="announceModalText">안녕하세요.
-용머리성당 사무장으로 형제자매님들과 함께 하게 된
-장상윤 토마스아퀴나스입니다.
+      <p class="announce-modal-text" id="announceModalText">추석 합동위령미사는 10시 30분입니다.
+미사 30분 전 연도와 분향이 있습니다.
 
-잘 부탁드립니다.</p>
+합동미사 예물은 9월 20일(주일)까지 접수 바랍니다.</p>
       <label class="announce-modal-hide">
         <input type="checkbox" id="announceModalHideToday">
         오늘 하루 보지 않기
@@ -1308,7 +1307,7 @@
     const modal = document.getElementById('announceModal');
     if (!announceModalActive || !modal) return;
 
-    const HIDE_KEY = 'yongmeori-announce-hide-date-v3';
+    const HIDE_KEY = 'yongmeori-announce-hide-date-v4';
     const todayStr = new Date().toDateString();
     const hideCheckbox = document.getElementById('announceModalHideToday');
 
@@ -2267,7 +2266,11 @@
 
   // Schedule (본당 일정): scheduleData keyed by 'YYYY-MM-DD', each an array of { t: 제목, time: 일시, place: 장소 }
   const scheduleData = {
-    '2026-09-20': [{ t: '사무장 채용 접수 마감' }],
+    '2026-09-20': [
+      { t: '사무장 채용 접수 마감' },
+      { t: '추석 합동미사 예물 접수 마감' },
+    ],
+    '2026-09-25': [{ t: '추석 합동위령미사', time: '10시 30분 (미사 30분 전 연도·분향)' }],
   };
 
   // 매년 돌아오는 축일 등 고정 일정: recurringSchedule keyed by 'MM-DD'
