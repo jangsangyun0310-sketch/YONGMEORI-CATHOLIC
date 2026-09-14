@@ -135,6 +135,7 @@
   .nav-toggle svg{width:26px;height:26px;}
 
   @media (max-width:860px){
+    .header-inner{padding:10px 16px; gap:14px;}
     .main-nav{
       align-items:stretch; gap:0;
       position:fixed; inset:60px 0 auto 0; background:var(--paper);
@@ -296,9 +297,11 @@
   }
   .textsize-btn.is-active{background:var(--wine); border-color:var(--wine); color:#fff;}
   .textsize-btn--mobile{display:none;}
+  .header-mobile-actions{display:none; align-items:center; gap:8px;}
   @media (max-width:860px){
     .textsize-btn--desktop{display:none;}
     .textsize-btn--mobile{display:flex;}
+    .header-mobile-actions{display:flex;}
   }
 
   .notif-list{list-style:none; margin:0 0 4px; padding:0; display:flex; flex-direction:column; gap:2px; max-height:55vh; overflow-y:auto;}
@@ -681,7 +684,12 @@
     section{padding:64px 0;}
     section[id], #bulletin{scroll-margin-top:calc(var(--sticky-offset) - 56px);}
     .hero h1{font-size:38px;}
-    .brand-mark{height:64px;}
+    .brand-mark{height:56px;}
+  }
+  @media (max-width:400px){
+    .header-inner{padding:8px 12px; gap:10px;}
+    .header-mobile-actions{gap:6px;}
+    .brand-mark{height:46px;}
   }
 
   /* ---------- Motion ---------- */
@@ -812,14 +820,16 @@
         </button>
       </div>
     </nav>
-    <button type="button" class="textsize-btn textsize-btn--mobile" id="textSizeBtnMobile" aria-label="글씨 크게 보기" aria-pressed="false">가</button>
-    <button type="button" class="notif-bell notif-bell--mobile" id="notifBellBtnMobile" aria-label="알림함 열기">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      <span class="notif-bell-badge" hidden></span>
-    </button>
-    <button class="nav-toggle" id="navToggle" aria-label="메뉴 열기">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-    </button>
+    <div class="header-mobile-actions">
+      <button type="button" class="textsize-btn textsize-btn--mobile" id="textSizeBtnMobile" aria-label="글씨 크게 보기" aria-pressed="false">가</button>
+      <button type="button" class="notif-bell notif-bell--mobile" id="notifBellBtnMobile" aria-label="알림함 열기">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-bell-badge" hidden></span>
+      </button>
+      <button class="nav-toggle" id="navToggle" aria-label="메뉴 열기">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
   </div>
 </header>
 
