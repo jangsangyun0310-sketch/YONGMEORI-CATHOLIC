@@ -252,23 +252,20 @@
   }
   .install-guide-note{font-size:13.5px; color:var(--ink-soft); border-top:1px solid var(--line); padding-top:14px; margin:0;}
 
-  .push-fab{
-    position:fixed; right:18px; bottom:22px; z-index:70;
-    display:inline-flex; align-items:center; gap:8px;
+  .push-toggle-row{border-bottom:1px solid var(--line); padding-bottom:16px; margin-bottom:4px;}
+  .push-toggle-btn{
+    display:inline-flex; align-items:center; gap:8px; width:100%; justify-content:center;
     background:var(--wine); color:var(--white); border:none; border-radius:999px;
-    padding:13px 20px; font-family:inherit; font-size:14px; font-weight:700; line-height:1; cursor:pointer;
-    box-shadow:0 10px 24px -10px rgba(30,20,15,.55);
-    transition:background .2s ease, transform .15s ease;
+    padding:12px 20px; font-family:inherit; font-size:14.5px; font-weight:700; line-height:1; cursor:pointer;
+    transition:background .2s ease;
     -webkit-appearance:none; appearance:none;
   }
-  .push-fab:hover{background:var(--wine-deep);}
-  .push-fab svg{width:17px; height:17px; flex:none;}
-  .push-fab.is-subscribed{background:var(--ink);}
-  .push-fab.is-subscribed:hover{background:var(--ink); opacity:.9;}
-  @media (max-width:480px){
-    .push-fab{right:12px; bottom:16px; padding:11px 16px; font-size:13px;}
-    .push-fab svg{width:15px; height:15px;}
-  }
+  .push-toggle-btn:hover{background:var(--wine-deep);}
+  .push-toggle-btn svg{width:17px; height:17px; flex:none;}
+  .push-toggle-btn.is-subscribed{background:var(--paper-2); color:var(--ink); border:1px solid var(--line);}
+
+  .push-optin-actions{display:flex; gap:10px; margin-top:4px;}
+  .push-optin-actions .btn{flex:1; text-align:center;}
 
   .notif-bell{
     position:relative; flex:none; width:38px; height:38px;
@@ -753,11 +750,6 @@
   홈 화면에 추가
 </button>
 
-<button type="button" class="push-fab" id="pushAppBtn">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-  <span id="pushAppBtnLabel">알림 받기</span>
-</button>
-
 <div class="sticky-top">
 <header class="site-header">
   <div class="header-inner">
@@ -1180,8 +1172,31 @@
       <button class="info-modal-close" data-close="notifPanel" aria-label="닫기">✕</button>
     </div>
     <div class="info-modal-body">
+      <div class="push-toggle-row">
+        <button type="button" class="push-toggle-btn" id="pushAppBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span id="pushAppBtnLabel">알림 받기</span>
+        </button>
+      </div>
       <ul class="notif-list" id="notifList"></ul>
       <p class="install-guide-note" id="notifEmpty">아직 온 알림이 없어요.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 앱을 설치 후 처음 열었을 때 한 번만 자동으로 물어보는 알림 수신 동의 팝업 -->
+<div class="info-modal" id="pushOptInModal">
+  <div class="info-modal-inner">
+    <div class="info-modal-head">
+      <h3>알림을 받으시겠어요?</h3>
+      <button class="info-modal-close" data-close="pushOptInModal" aria-label="닫기">✕</button>
+    </div>
+    <div class="info-modal-body">
+      <p class="install-guide-lead">공지사항이 올라오면 휴대폰으로 바로 알려드려요. 나중에 알림함에서 언제든 켜고 끌 수 있어요.</p>
+      <div class="push-optin-actions">
+        <button type="button" class="btn btn-primary" id="pushOptInYes">네, 받을게요</button>
+        <button type="button" class="btn btn-ghost" id="pushOptInNo">괜찮아요</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1381,8 +1396,10 @@
     installBtn.addEventListener('click', async () => {
       if (deferredPrompt) {
         deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
+        const choice = await deferredPrompt.userChoice;
         deferredPrompt = null;
+        // 설치를 수락한 그 흐름 그대로 이어서 알림 허용까지 한 번에 물어본다
+        if (choice.outcome === 'accepted' && window.__pushSubscribe) window.__pushSubscribe();
         return;
       }
       // 카카오톡 등 인앱 브라우저는 "홈 화면에 추가" 기능이 없어서,
@@ -1562,6 +1579,43 @@
       if (subscribedNow()) unsubscribe();
       else subscribe();
     });
+
+    // Android에서 "홈 화면에 추가"를 수락한 직후 같은 탭(사용자 제스처) 안에서
+    // 알림 허용까지 바로 물어보기 위해 설치 로직에서 호출할 수 있도록 노출해둔다
+    window.__pushSubscribe = subscribe;
+
+    // 앱을 설치 후 처음 standalone으로 열었을 때 한 번만 자동으로 알림 수신을 물어봄
+    // (아이폰은 홈 화면 설치 전엔 알림 요청 자체가 불가능해서, 설치 다음 실행 시점에 물어보는 게 유일한 방법)
+    const OPT_IN_ASKED_KEY = 'yongmeori-push-optin-asked';
+    const optInModal = document.getElementById('pushOptInModal');
+    function maybeOfferPushOptIn(){
+      if (!optInModal) return;
+      if (isInApp || !isStandalone) return;
+      if (subscribedNow()) return;
+      if (Notification.permission === 'denied') return;
+      if (localStorage.getItem(OPT_IN_ASKED_KEY)) return;
+
+      function show(){
+        localStorage.setItem(OPT_IN_ASKED_KEY, '1');
+        openInfoModal('pushOptInModal');
+      }
+      // 오늘의 공지 팝업이 이미 떠 있으면, 겹치지 않도록 그 팝업이 닫힌 뒤에 띄운다
+      const announceModal = document.getElementById('announceModal');
+      if (announceModal && announceModal.classList.contains('open')) {
+        const obs = new MutationObserver(() => {
+          if (!announceModal.classList.contains('open')) { obs.disconnect(); show(); }
+        });
+        obs.observe(announceModal, { attributes: true, attributeFilter: ['class'] });
+      } else {
+        show();
+      }
+    }
+    document.getElementById('pushOptInYes').addEventListener('click', () => {
+      closeInfoModal('pushOptInModal');
+      subscribe();
+    });
+    document.getElementById('pushOptInNo').addEventListener('click', () => closeInfoModal('pushOptInModal'));
+    maybeOfferPushOptIn();
   })();
 
   // 알림함 — 성당에서 보낸 알림을 홈페이지 안에도 목록으로 남겨서,
