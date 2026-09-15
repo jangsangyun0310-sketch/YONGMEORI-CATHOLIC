@@ -680,16 +680,11 @@
   .contact-list .value-blue{color:#000;}
 
   /* ---------- Footer (연락처를 여기 모아둔다; 위 .contact-list 스타일은 밝은 배경 기준이라 여기서 색만 밝게 덮어쓴다) ---------- */
-  footer{background:var(--navy); color:#C7CCD6; padding:44px 0 28px;}
-  .footer-eyebrow{color:#9BA6BA;}
-  footer .contact-list--row{margin-top:16px; padding-top:20px; border-top-color:rgba(255,255,255,.16);}
+  footer{background:var(--navy); color:#C7CCD6; padding:44px 0;}
+  footer .contact-list--row{margin-top:0; padding-top:0; border-top:none;}
   footer .contact-list svg{color:#C7CCD6;}
   footer .contact-list .label{color:#8B93A3;}
   footer .contact-list .value, footer .contact-list .value-blue{color:#fff;}
-  .footer-bottom{
-    font-size:12.5px; color:#8B93A3; margin-top:32px; padding-top:20px;
-    border-top:1px solid rgba(255,255,255,.1);
-  }
 
 
   @media (max-width:1080px){
@@ -1053,7 +1048,6 @@
      같은 목록을 "연락처 안내" 버튼을 누르면 뜨는 팝업에도 그대로 복사해서 쓰므로(id="contactList"), id를 바꾸지 않는다. -->
 <footer>
   <div class="wrap">
-    <p class="eyebrow footer-eyebrow">연락처</p>
     <ul class="contact-list contact-list--row reveal-stagger" id="contactList">
       <li>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 22s7-7.2 7-12.5A7 7 0 0 0 5 9.5C5 14.8 12 22 12 22Z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
@@ -1076,9 +1070,6 @@
         <div><span class="label">팩스</span><span class="value">063-287-0440</span></div>
       </li>
     </ul>
-    <div class="footer-bottom">
-      <span>© <span id="year"></span> 천주교 전주교구 용머리성당. All rights reserved.</span>
-    </div>
   </div>
 </footer>
 
@@ -1259,8 +1250,6 @@
   }
   scrollLockLoop();
   window.addEventListener('load', () => { scrollLockUntil = Date.now() + 800; scrollLockLoop(); });
-
-  document.getElementById('year').textContent = new Date().getFullYear();
 
   // Hero slideshow: cross-fade through the front-page photos
   (function(){
