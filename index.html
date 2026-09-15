@@ -667,23 +667,10 @@
   .footer-bottom{font-size:12.5px; color:#8B93A3; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
 
   /* ---------- 관리자 진입 ---------- */
-  /* 화면 맨 아래의 작은 글자 링크 — 관리자가 처음 로그인하러 들어가는 곳 */
+  /* 화면 맨 아래의 작은 글자 링크 — 관리자가 로그인하러 들어가는 곳 (누르면 관리자 페이지로 이동해 거기서 로그인) */
   .admin-entry{text-align:center; margin:18px 0 0; font-size:12px;}
   .admin-entry a{color:#8B93A3; opacity:.6; text-decoration:none;}
   .admin-entry a:hover{opacity:1; text-decoration:underline;}
-  /* 로그인한 관리자에게만 보이는 "관리" 버튼 (오른쪽 아래) */
-  .admin-fab{
-    position:fixed; right:18px; bottom:22px; z-index:70;
-    display:inline-flex; align-items:center; gap:6px;
-    background:var(--ink); color:#fff; border-radius:999px;
-    padding:13px 20px; font-size:14px; font-weight:700; line-height:1; text-decoration:none;
-    box-shadow:0 10px 24px -10px rgba(30,20,15,.55);
-  }
-  .admin-fab:hover{opacity:.9;}
-  .admin-fab[hidden]{display:none;}
-  @media (max-width:480px){
-    .admin-fab{right:12px; bottom:16px; padding:11px 16px; font-size:13px;}
-  }
 
   @media (max-width:1080px){
     .hero-inner{grid-template-columns:1fr;}
@@ -1065,10 +1052,9 @@
     <span>© <span id="year"></span> 천주교 전주교구 용머리성당. All rights reserved.</span>
     <span>모이면 기도, 흩어지면 선교</span>
   </div>
-  <!-- 관리자 진입: 아래 작은 글자는 누구나 보이지만, "관리" 버튼은 구글 로그인한 관리자에게만 나타난다 -->
+  <!-- 관리자 진입: 누르면 관리자 페이지(admin/)로 이동해 거기서 구글 로그인한다 -->
   <p class="admin-entry"><a href="admin/" id="adminEntryLink">관리자</a></p>
 </footer>
-<a href="admin/" class="admin-fab" id="adminFab" hidden>✏️ 관리</a>
 
 <div class="info-modal" id="massModal">
   <div class="info-modal-inner">
@@ -2344,32 +2330,15 @@
     introResizeTimer = setTimeout(syncIntroPhotoHeight, 150);
   });
 
-  // ---------- 관리자 버튼 ----------
+  // ---------- 관리자 진입 링크 ----------
   // 관리자 페이지는 서버 기능(저장·사진 업로드·알림 발송)이 필요해서 Cloudflare Pages 주소(push-config.js의 ADMIN_URL)에서만 동작한다.
   // 홈페이지 주소(GitHub Pages)는 그대로 두고, "관리자" 링크만 그쪽으로 연결한다.
-  // "관리" 버튼은 구글 로그인한 계정이 관리자(대표 관리자이거나 Firestore admins 명단에 있는 사람)일 때만 보인다.
+  // (로그인 상태에 따라 이 링크를 숨기거나 바꾸는 건 하지 않는다 — 홈페이지와 관리자 페이지가 서로 다른 주소라
+  //  구글 로그인 상태가 서로 전달되지 않는다. 관리자는 이 링크를 눌러 관리자 페이지에서 로그인한다.)
   (function(){
     const entry = document.getElementById('adminEntryLink');
-    const fab = document.getElementById('adminFab');
     const adminUrl = window.ADMIN_URL || 'admin/';
     if (entry) entry.href = adminUrl;
-    if (fab) fab.href = adminUrl;
-    if (!fab || !window.firebase || !firebase.auth || !window.FIREBASE_CONFIG) return;
-
-    const owner = String(window.SITE_OWNER_EMAIL || '').toLowerCase();
-    getFirebaseApp();
-    firebase.auth().onAuthStateChanged(async (user) => {
-      if (!user || !user.email) { fab.hidden = true; return; }
-      const email = user.email.toLowerCase();
-      let isAdmin = email === owner;
-      if (!isAdmin) {
-        try {
-          const doc = await firebase.firestore().collection('admins').doc(email).get();
-          isAdmin = doc.exists;
-        } catch (e) { isAdmin = false; }
-      }
-      fab.hidden = !isAdmin;
-    });
   })();
 </script>
 
