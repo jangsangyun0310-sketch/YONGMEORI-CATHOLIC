@@ -667,10 +667,19 @@
     #fullScheduleModal .cal-nav-btn{display:none;}
     #fullScheduleModal .cal-nav{margin-bottom:14px;}
     .cal-full-scroll{overflow-x:visible;}
-    .cal-full-grid{min-width:0; width:100%;}
-    .cal-full-grid td{height:auto; min-height:80px;}
-    .cal-full-event{background:none; padding:0;}
-    .cal-full-event.is-multiday{background:none; padding-left:4px;}
+    /* 내용 양과 상관없이 달력 전체가 항상 A4 한 장(가로) 크기에 꼭 맞도록, 줄 수만큼 나눈 고정 높이를 쓴다.
+       (--print-row-h는 renderFullCalendar()가 그 달의 주(줄) 수에 맞춰 매번 계산해 넣어준다) */
+    .cal-full-grid{min-width:0; width:100%; height:155mm; table-layout:fixed;}
+    .cal-full-grid td{
+      height:var(--print-row-h, 30mm); max-height:var(--print-row-h, 30mm); min-height:0;
+      overflow:hidden; padding:3px 5px;
+    }
+    .cal-full-day-num{font-size:11px; margin-bottom:2px;}
+    .cal-full-event{
+      background:none; padding:0; font-size:9px; line-height:1.35;
+      display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+    }
+    .cal-full-event.is-multiday{background:none; padding-left:3px;}
     .cal-full-grid td.today{outline:none;}
   }
 
@@ -1147,7 +1156,7 @@
     <div class="info-modal-head">
       <h3>본당 일정 전체보기</h3>
       <div class="info-modal-head-actions">
-        <button type="button" class="cal-print-btn" id="calPrintBtn">
+        <button type="button" class="cal-print-btn" id="calPrintBtn" title="인쇄 대화상자에서 '자세히' → '머리글 및 바닥글'을 꺼주시면 날짜·주소 없이 달력만 인쇄됩니다">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
           인쇄하기
         </button>
@@ -2333,9 +2342,14 @@
     while (cells.length % 7 !== 0) cells.push({ day: nextMonthDay++, outside: true });
 
     const isCurrentRealMonth = fullCalYear === today.getFullYear() && fullCalMonth === today.getMonth() + 1;
+    const rowCount = cells.length / 7;
+    // 인쇄용: 달마다 주(줄) 수가 4~6개로 달라도, A4 한 장 안에서 달력 전체 높이가 항상 같도록
+    // 줄 수만큼 나눠 줄 높이를 미리 계산해둔다 (내용 양에 따라 칸이 늘어나지 않게).
+    const printRowMm = (155 / rowCount).toFixed(2) + 'mm';
 
-    for (let row = 0; row < cells.length / 7; row++) {
+    for (let row = 0; row < rowCount; row++) {
       const tr = document.createElement('tr');
+      tr.style.setProperty('--print-row-h', printRowMm);
       for (let col = 0; col < 7; col++) {
         const cell = cells[row * 7 + col];
         const td = document.createElement('td');
