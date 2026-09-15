@@ -243,6 +243,23 @@
     .install-fab svg{width:15px; height:15px;}
   }
 
+  /* 관리자 페이지로 가는 버튼. 설치 버튼과 반대쪽(오른쪽 아래)에 두고, 로그인 여부와 상관없이 항상 떠 있다
+     (일반 신자분들 화면에도 보이지만, 눌러도 관리자 로그인 화면으로 갈 뿐이라 문제 없다). */
+  .admin-fab{
+    position:fixed; right:18px; bottom:22px; z-index:70;
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--ink); color:var(--white); border-radius:999px;
+    padding:13px 20px; font-size:14px; font-weight:700; line-height:1; text-decoration:none;
+    box-shadow:0 10px 24px -10px rgba(30,20,15,.55);
+    transition:background .2s ease;
+  }
+  .admin-fab:hover{background:#000;}
+  .admin-fab svg{width:17px; height:17px; flex:none;}
+  @media (max-width:480px){
+    .admin-fab{right:12px; bottom:16px; padding:11px 16px; font-size:13px;}
+    .admin-fab svg{width:15px; height:15px;}
+  }
+
   .install-guide-lead{font-size:15.5px; font-weight:600; margin:0 0 16px;}
   .install-steps{list-style:none; margin:0 0 18px; padding:0; display:flex; flex-direction:column; gap:14px;}
   .install-steps li{display:flex; align-items:flex-start; gap:12px; font-size:15px; line-height:1.55;}
@@ -662,15 +679,18 @@
   .contact-list .value{font-size:15px; font-weight:500;}
   .contact-list .value-blue{color:#000;}
 
-  /* ---------- Footer ---------- */
-  footer{background:var(--navy); color:#C7CCD6; padding:26px 0;}
-  .footer-bottom{font-size:12.5px; color:#8B93A3; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+  /* ---------- Footer (연락처를 여기 모아둔다; 위 .contact-list 스타일은 밝은 배경 기준이라 여기서 색만 밝게 덮어쓴다) ---------- */
+  footer{background:var(--navy); color:#C7CCD6; padding:44px 0 28px;}
+  .footer-eyebrow{color:#9BA6BA;}
+  footer .contact-list--row{margin-top:16px; padding-top:20px; border-top-color:rgba(255,255,255,.16);}
+  footer .contact-list svg{color:#C7CCD6;}
+  footer .contact-list .label{color:#8B93A3;}
+  footer .contact-list .value, footer .contact-list .value-blue{color:#fff;}
+  .footer-bottom{
+    font-size:12.5px; color:#8B93A3; margin-top:32px; padding-top:20px;
+    border-top:1px solid rgba(255,255,255,.1);
+  }
 
-  /* ---------- 관리자 진입 ---------- */
-  /* 화면 맨 아래의 작은 글자 링크 — 관리자가 로그인하러 들어가는 곳 (누르면 관리자 페이지로 이동해 거기서 로그인) */
-  .admin-entry{text-align:center; margin:18px 0 0; font-size:12px;}
-  .admin-entry a{color:#8B93A3; opacity:.6; text-decoration:none;}
-  .admin-entry a:hover{opacity:1; text-decoration:underline;}
 
   @media (max-width:1080px){
     .hero-inner{grid-template-columns:1fr;}
@@ -755,6 +775,11 @@
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
   홈 화면에 추가
 </button>
+
+<a href="admin/" class="admin-fab" id="adminEntryLink">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+  관리자
+</a>
 
 <div class="sticky-top">
 <header class="site-header">
@@ -1021,8 +1046,15 @@
       <span><i style="background:#D7263D;"></i> 용머리성당</span>
       <span><i style="background:#2563EB;"></i> 전주시 內 다른 성당</span>
     </div>
+  </div>
+</section>
 
-    <ul class="contact-list contact-list--row reveal-stagger">
+<!-- 연락처는 본문에 따로 두지 않고 맨 아래 푸터에 모아둔다 (위 지도 캡션에 주소는 이미 나와 있음).
+     같은 목록을 "연락처 안내" 버튼을 누르면 뜨는 팝업에도 그대로 복사해서 쓰므로(id="contactList"), id를 바꾸지 않는다. -->
+<footer>
+  <div class="wrap">
+    <p class="eyebrow footer-eyebrow">연락처</p>
+    <ul class="contact-list contact-list--row reveal-stagger" id="contactList">
       <li>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 22s7-7.2 7-12.5A7 7 0 0 0 5 9.5C5 14.8 12 22 12 22Z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
         <div><span class="label">주소</span><span class="value value-blue">전북특별자치도 전주시 완산구 안행9길 5-8 (55105)</span></div>
@@ -1044,16 +1076,10 @@
         <div><span class="label">팩스</span><span class="value">063-287-0440</span></div>
       </li>
     </ul>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> 천주교 전주교구 용머리성당. All rights reserved.</span>
+    </div>
   </div>
-</section>
-
-<footer>
-  <div class="wrap footer-bottom">
-    <span>© <span id="year"></span> 천주교 전주교구 용머리성당. All rights reserved.</span>
-    <span>모이면 기도, 흩어지면 선교</span>
-  </div>
-  <!-- 관리자 진입: 누르면 관리자 페이지(admin/)로 이동해 거기서 구글 로그인한다 -->
-  <p class="admin-entry"><a href="admin/" id="adminEntryLink">관리자</a></p>
 </footer>
 
 <div class="info-modal" id="massModal">
@@ -1307,7 +1333,7 @@
   document.getElementById('massModalBody').innerHTML =
     document.querySelector('#mass .mass-grid').outerHTML;
   document.getElementById('locationModalBody').innerHTML =
-    document.querySelector('#location .contact-list').outerHTML;
+    document.getElementById('contactList').outerHTML;
 
   function openInfoModal(id){ document.getElementById(id).classList.add('open'); }
   function closeInfoModal(id){ document.getElementById(id).classList.remove('open'); }
