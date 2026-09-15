@@ -657,18 +657,21 @@
   /* 인쇄: 팝업이 열려 있을 때 인쇄하면 이 달력 표만 인쇄되고 나머지 화면은 빠진다.
      visibility:hidden은 자리를 그대로 차지해서 빈 페이지가 여러 장 딸려나오므로, display:none으로 아예 치운다. */
   @media print{
+    @page{ size: A4 landscape; margin: 10mm; }
     body > *:not(#fullScheduleModal){display:none !important;}
     #fullScheduleModal:not(.open){display:none !important;}
     #fullScheduleModal{position:static; inset:auto; display:block; background:#fff; padding:0; z-index:auto;}
     #fullScheduleModal .info-modal-inner{max-width:none; width:100%; max-height:none; overflow:visible; box-shadow:none; border-radius:0; background:#fff;}
-    #fullScheduleModal .info-modal-head{position:static;}
-    #fullScheduleModal .info-modal-close,
-    #fullScheduleModal .cal-print-btn,
+    /* 제목·인쇄·닫기 버튼 줄은 통째로 빼고, 달력 표만 남긴다 (달 표시는 남기고 이전·다음 달 버튼만 뺀다) */
+    #fullScheduleModal .info-modal-head{display:none;}
     #fullScheduleModal .cal-nav-btn{display:none;}
+    #fullScheduleModal .cal-nav{margin-bottom:14px;}
     .cal-full-scroll{overflow-x:visible;}
-    .cal-full-grid{min-width:0;}
+    .cal-full-grid{min-width:0; width:100%;}
     .cal-full-grid td{height:auto; min-height:80px;}
     .cal-full-event{background:none; padding:0;}
+    .cal-full-event.is-multiday{background:none; padding-left:4px;}
+    .cal-full-grid td.today{outline:none;}
   }
 
   /* ---------- Bulletin archive ---------- */
