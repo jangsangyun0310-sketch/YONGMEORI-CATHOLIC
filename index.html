@@ -2159,6 +2159,13 @@
     };
     return `${fmt(startIso)} ~ ${fmt(endIso)}`;
   }
+  // 전체 일정 보기(달력 칸)에서 여러 날짜 걸친 일정에 짧게 덧붙이는 "(~16)" 같은 표시.
+  // 끝나는 날짜가 다른 달이면 "(~10/2)"처럼 달도 같이 적는다.
+  function scheduleEndTag(startIso, endIso){
+    const [, sm] = startIso.split('-');
+    const [, em, ed] = endIso.split('-');
+    return sm === em ? `(~${Number(ed)})` : `(~${Number(em)}/${Number(ed)})`;
+  }
   function groupScheduleByDate(items){
     const byDate = {};
     items.forEach((it) => {
@@ -2343,19 +2350,17 @@
           if (isCurrentRealMonth && cell.day === today.getDate()) classes.push('today');
           td.className = classes.join(' ');
           const cellKey = dateKey(fullCalYear, fullCalMonth, cell.day);
-          const evHtml = getEvents(fullCalYear, fullCalMonth, cell.day).map((ev) => {
-            // 1박2일처럼 여러 날짜에 걸친 일정은 같은 제목을 매일 반복하는 대신, 시작일과 각 주의 첫 칸(일요일)에만
-            // 제목을 적고 나머지 칸은 화살표(→)로 "같은 일정이 이어진다"는 것만 표시한다.
-            const isMultiDay = ev.rangeStart && ev.rangeEnd && ev.rangeStart !== ev.rangeEnd;
-            let label;
-            if (isMultiDay) {
-              const isFirstAppearance = cellKey === ev.rangeStart || col === 0;
-              label = isFirstAppearance ? escapeHtml(ev.t) + (cellKey === ev.rangeEnd ? '' : ' →') : '→';
-            } else {
-              label = escapeHtml(ev.t) + (ev.time ? ` <span class="ev-time">· ${escapeHtml(ev.time)}</span>` : '');
-            }
-            return `<div class="cal-full-event${ev.isHoliday ? ' is-holiday' : ''}${isMultiDay ? ' is-multiday' : ''}">${label}</div>`;
-          }).join('');
+          const evHtml = getEvents(fullCalYear, fullCalMonth, cell.day)
+            // 1박2일처럼 여러 날짜에 걸친 일정은 같은 제목을 매일 반복하지 않고 시작일에만 "(~16)"처럼 끝나는
+            // 날짜를 짧게 덧붙여 보여준다. 한 달 전체가 한 화면에 다 보이므로 시작일 한 번이면 충분하다.
+            .filter((ev) => !(ev.rangeStart && ev.rangeEnd && ev.rangeStart !== ev.rangeEnd) || cellKey === ev.rangeStart)
+            .map((ev) => {
+              const isMultiDay = ev.rangeStart && ev.rangeEnd && ev.rangeStart !== ev.rangeEnd;
+              const label = isMultiDay
+                ? escapeHtml(ev.t) + scheduleEndTag(ev.rangeStart, ev.rangeEnd)
+                : escapeHtml(ev.t) + (ev.time ? ` <span class="ev-time">· ${escapeHtml(ev.time)}</span>` : '');
+              return `<div class="cal-full-event${ev.isHoliday ? ' is-holiday' : ''}${isMultiDay ? ' is-multiday' : ''}">${label}</div>`;
+            }).join('');
           td.innerHTML = `<div class="cal-full-day-num">${cell.day}</div>${evHtml}`;
         }
         tr.appendChild(td);
