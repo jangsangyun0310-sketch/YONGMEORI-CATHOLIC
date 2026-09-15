@@ -209,9 +209,15 @@ function sanitizeContent(name, data) {
     };
   }
   if (name === 'schedule') {
+    // endDate가 있으면 1박2일처럼 여러 날짜에 걸친 일정. 시작일보다 빠르거나 형식이 잘못되면 그냥 하루짜리로 저장한다.
     return {
       items: items.slice(0, 1000)
-        .map((s) => ({ date: str(s.date, 10), title: str(s.title, 120), time: str(s.time, 80), place: str(s.place, 80) }))
+        .map((s) => {
+          const date = str(s.date, 10);
+          const endDateRaw = str(s.endDate, 10);
+          const endDate = /^\d{4}-\d{2}-\d{2}$/.test(endDateRaw) && endDateRaw > date ? endDateRaw : '';
+          return { date, endDate, title: str(s.title, 120), time: str(s.time, 80), place: str(s.place, 80) };
+        })
         .filter((s) => /^\d{4}-\d{2}-\d{2}$/.test(s.date) && s.title)
         .sort((a, b) => a.date.localeCompare(b.date)),
     };

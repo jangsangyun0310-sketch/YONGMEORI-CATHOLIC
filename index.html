@@ -2036,11 +2036,38 @@
   // Schedule (본당 일정): content/schedule.json에서 불러옴 (관리자 페이지에서 편집)
   // scheduleData keyed by 'YYYY-MM-DD', each an array of { t: 제목, time: 일시, place: 장소 }
   let scheduleData = {};
+  // 1박2일처럼 여러 날에 걸친 일정은 endDate에 마지막 날짜가 들어있다. 시작일~종료일의 모든 날짜에
+  // 같은 일정을 넣어서, 달력에서 그 사이 어느 날을 눌러도 보이게 한다.
+  function eachDateInRange(startIso, endIso){
+    const [sy, sm, sd] = startIso.split('-').map(Number);
+    const [ey, em, ed] = endIso.split('-').map(Number);
+    const cur = new Date(sy, sm - 1, sd);
+    const end = new Date(ey, em - 1, ed);
+    const out = [];
+    while (cur <= end && out.length < 60) { // 60일 넘는 일정은 입력 실수로 보고 안전하게 끊는다
+      out.push(`${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, '0')}-${String(cur.getDate()).padStart(2, '0')}`);
+      cur.setDate(cur.getDate() + 1);
+    }
+    return out;
+  }
+  const SCHEDULE_DOW = ['일', '월', '화', '수', '목', '금', '토'];
+  function scheduleRangeLabel(startIso, endIso){
+    const fmt = (iso) => {
+      const [y, m, d] = iso.split('-').map(Number);
+      return `${m}월 ${d}일(${SCHEDULE_DOW[new Date(y, m - 1, d).getDay()]})`;
+    };
+    return `${fmt(startIso)} ~ ${fmt(endIso)}`;
+  }
   function groupScheduleByDate(items){
     const byDate = {};
     items.forEach((it) => {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(String(it.date || ''))) return;
-      (byDate[it.date] = byDate[it.date] || []).push({ t: it.title || '', time: it.time || '', place: it.place || '' });
+      const hasEnd = /^\d{4}-\d{2}-\d{2}$/.test(String(it.endDate || '')) && it.endDate > it.date;
+      const endDate = hasEnd ? it.endDate : it.date;
+      const range = hasEnd ? scheduleRangeLabel(it.date, endDate) : '';
+      eachDateInRange(it.date, endDate).forEach((key) => {
+        (byDate[key] = byDate[key] || []).push({ t: it.title || '', time: it.time || '', place: it.place || '', range });
+      });
     });
     return byDate;
   }
@@ -2150,12 +2177,18 @@
     if (!items.length) {
       html += '<div class="cal-detail-empty">등록된 일정이 없습니다.</div>';
     } else {
-      html += items.map(item => `
+      html += items.map(item => {
+        const metaParts = [];
+        if (item.range) metaParts.push('기간 · ' + escapeHtml(item.range));
+        if (item.time) metaParts.push('일시 · ' + escapeHtml(item.time));
+        if (item.place) metaParts.push('장소 · ' + escapeHtml(item.place));
+        return `
         <div class="cal-detail-item">
           <div class="cal-item-title">${escapeHtml(item.t)}</div>
-          <div class="cal-item-meta">${item.time ? '일시 · ' + escapeHtml(item.time) : ''}${item.time && item.place ? '<br>' : ''}${item.place ? '장소 · ' + escapeHtml(item.place) : ''}</div>
+          <div class="cal-item-meta">${metaParts.join('<br>')}</div>
         </div>
-      `).join('');
+      `;
+      }).join('');
     }
     calDetail.innerHTML = html;
   }

@@ -608,16 +608,18 @@
       body.innerHTML = '<div class="empty">아직 등록된 일정이 없습니다.<br>오른쪽 위 "새로 추가"를 눌러주세요.</div>';
       return;
     }
-    // 오늘 이후 일정이 먼저(가까운 순), 지난 일정은 아래에
+    // 오늘 이후 일정이 먼저(가까운 순), 지난 일정은 아래에. 여러 날짜에 걸친 일정은 끝나는 날짜까지 지나야 "지난 일정"으로 본다.
     const todayKey = todayIso();
+    const effEnd = (it) => (it.endDate && it.endDate > it.date ? it.endDate : it.date);
+    const dateLabel = (it) => effEnd(it) !== it.date ? `${esc(isoLabel(it.date))} ~ ${esc(isoLabel(it.endDate))}` : esc(isoLabel(it.date));
     const ordered = items.map((it, i) => ({ it, i }));
-    const upcoming = ordered.filter((o) => o.it.date >= todayKey).sort((a, b) => a.it.date.localeCompare(b.it.date));
-    const past = ordered.filter((o) => o.it.date < todayKey).sort((a, b) => b.it.date.localeCompare(a.it.date));
+    const upcoming = ordered.filter((o) => effEnd(o.it) >= todayKey).sort((a, b) => a.it.date.localeCompare(b.it.date));
+    const past = ordered.filter((o) => effEnd(o.it) < todayKey).sort((a, b) => b.it.date.localeCompare(a.it.date));
     const card = ({ it, i }) => `
       <div class="card">
         <div class="main">
           <div class="title">${esc(it.title || '(제목 없음)')}</div>
-          <div class="meta">${esc(isoLabel(it.date))}${it.time ? ' · ' + esc(it.time) : ''}${it.place ? ' · ' + esc(it.place) : ''}</div>
+          <div class="meta">${dateLabel(it)}${it.time ? ' · ' + esc(it.time) : ''}${it.place ? ' · ' + esc(it.place) : ''}</div>
         </div>
         <div class="acts">
           <button type="button" class="btn btn--outline btn--sm" data-edit="${i}">수정</button>
@@ -658,7 +660,9 @@
         <label class="f">주보 사진 <small>앞면·뒷면 등 여러 장 가능. 새로 고르면 기존 사진은 전부 바뀝니다</small></label><div data-file></div>`;
     } else if (section === 'schedule') {
       html = `
-        ${isoDateField('날짜', item.date)}
+        ${isoDateField('시작 날짜', item.date)}
+        <label class="f">끝나는 날짜 <small>1박2일처럼 여러 날짜에 걸치면 마지막 날짜를 골라주세요. 하루짜리면 비워두세요</small></label>
+        <input type="date" data-k="endDate" value="${esc(item.endDate || '')}">
         <label class="f">일정 이름</label><input type="text" data-k="title" value="${esc(item.title || '')}" maxlength="120" placeholder="예: 추석 합동위령미사">
         <label class="f">시간 <small>없어도 됩니다</small></label><input type="text" data-k="time" value="${esc(item.time || '')}" maxlength="80" placeholder="예: 10시 30분 (미사 30분 전 연도·분향)">
         <label class="f">장소 <small>없어도 됩니다</small></label><input type="text" data-k="place" value="${esc(item.place || '')}" maxlength="80" placeholder="예: 대성전">`;
@@ -688,7 +692,9 @@
         if (!date) { alert('날짜(또는 문구)를 적어주세요.'); return; }
       } else if (section === 'schedule') {
         date = val('date');
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) { alert('날짜를 골라주세요.'); return; }
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) { alert('시작 날짜를 골라주세요.'); return; }
+        const endDate = val('endDate');
+        if (endDate && endDate < date) { alert('끝나는 날짜가 시작 날짜보다 빠릅니다. 다시 확인해주세요.'); return; }
       } else {
         date = isoToDots(val('date'));
         if (!date) { alert('날짜를 골라주세요.'); return; }
@@ -714,7 +720,7 @@
           const b = { date, title, image: images[0] || '', images };
           if (isNew) items.unshift(b); else items[index] = b;
         } else if (section === 'schedule') {
-          const s = { date, title, time: val('time'), place: val('place') };
+          const s = { date, endDate: val('endDate'), title, time: val('time'), place: val('place') };
           if (isNew) items.push(s); else items[index] = s;
         }
         unbusy();
