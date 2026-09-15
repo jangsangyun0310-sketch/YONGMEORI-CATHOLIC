@@ -653,11 +653,11 @@
   .cal-full-grid td.sat .cal-full-day-num{color:var(--cal-blue);}
   .cal-full-grid td.holiday .cal-full-day-num{color:var(--cal-red);}
   .cal-full-grid td.today{outline:2px solid var(--wine); outline-offset:-2px;}
-  .cal-full-event{font-size:10.5px; line-height:1.4; margin-top:2px; padding:1px 4px; border-radius:3px; background:#E3D6B4; border:1px solid #CBB98D; word-break:keep-all;}
-  .cal-full-event.is-holiday{color:var(--cal-red); background:none; border:none; padding:0;}
+  .cal-full-event{font-size:10.5px; line-height:1.4; margin-top:2px; padding:1px 3px; border-radius:3px; background:var(--paper-2); word-break:keep-all;}
+  .cal-full-event.is-holiday{color:var(--cal-red); background:none; padding:0;}
   .cal-full-event .ev-time{color:var(--ink-soft);}
   /* 여러 날짜에 걸친 일정: 왼쪽에 진한 선을 둬서 옆 칸으로 이어지는 하나의 일정처럼 보이게 한다 */
-  .cal-full-event.is-multiday{background:#E7C1CB; border-color:#D69AA9; border-left:3px solid var(--wine); font-weight:600; padding-left:4px;}
+  .cal-full-event.is-multiday{background:var(--paper-2); border-left:3px solid var(--wine); font-weight:600; padding-left:4px;}
   @media (max-width:600px){
     .cal-full-grid td{height:76px; padding:4px;}
     .cal-full-event{font-size:9.5px;}
@@ -683,11 +683,9 @@
     .cal-full-grid{min-width:0; width:100%; table-layout:fixed;}
     .cal-full-grid td{padding:3px 5px; height:var(--print-row-h, 30mm);}
     .cal-full-day-num{font-size:11px; margin-bottom:2px;}
-    /* 잉크 절약보다 화면과 똑같이 보이는 걸 우선한다 — 요일 줄·다른 달 칸 배경도 화면과 같은 색 그대로 둔다 */
-    .cal-full-event{
-      background:#E3D6B4; border:1px solid #CBB98D; border-radius:3px; padding:1px 4px; font-size:9px; line-height:1.35;
-    }
-    .cal-full-event.is-multiday{background:#E7C1CB; border-color:#D69AA9; border-left:2px solid var(--wine); padding-left:4px;}
+    /* 일정 칩 색은 화면과 같은 값을 그대로 쓴다 (배경색이 인쇄에서 아예 안 보이던 원인은 색 자체가
+       아니라 크롬 인쇄창의 "배경 그래픽" 옵션이 꺼져 있던 것이었다 — 그 옵션만 켜면 화면과 똑같이 나온다) */
+    .cal-full-event{font-size:9px;}
     .cal-full-grid td.today{outline:none;}
   }
 
