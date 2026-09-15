@@ -570,8 +570,9 @@
 
   /* ---------- Schedule (본당 일정) ---------- */
   .cal-nav{
-    display:flex; align-items:center; justify-content:center; gap:20px; margin-bottom:28px;
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px 16px; margin-bottom:28px;
   }
+  .cal-nav-center{display:flex; align-items:center; justify-content:center; gap:20px; flex:1;}
   .cal-nav-btn{
     width:36px; height:36px; border-radius:50%; border:1px solid var(--line); background:var(--white);
     font-size:18px; color:var(--ink-soft); cursor:pointer; display:flex; align-items:center; justify-content:center;
@@ -579,6 +580,19 @@
   }
   .cal-nav-btn:hover{border-color:var(--wine); color:var(--wine); background:var(--paper-2);}
   .cal-month{font-family:'Fraunces',serif; font-size:22px; font-weight:600; min-width:9ch; text-align:center;}
+  /* 달력 왼쪽 위, 연·월과 같은 줄에 두는 "전체 일정 보기" 버튼 — 이전·다음 달 버튼과 같은 톤으로 맞췄다 */
+  .cal-fullview-btn{
+    display:inline-flex; align-items:center; gap:6px; flex:none;
+    padding:8px 14px; border-radius:999px; border:1px solid var(--line); background:var(--white);
+    color:var(--ink-soft); font-family:inherit; font-size:13px; font-weight:600; cursor:pointer;
+    transition:border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .cal-fullview-btn:hover{border-color:var(--wine); color:var(--wine); background:var(--paper-2);}
+  .cal-fullview-btn svg{width:14px; height:14px;}
+  @media (max-width:480px){
+    .cal-nav{justify-content:center;}
+    .cal-nav-center{flex:none;}
+  }
   .cal-layout{display:grid; grid-template-columns:1.1fr 1fr; gap:40px; align-items:start;}
   .cal-grid{width:100%; border-collapse:collapse; table-layout:fixed;}
   .cal-grid th{
@@ -621,11 +635,6 @@
     .cal-layout{grid-template-columns:1fr; gap:24px;}
   }
 
-  /* "전체 일정 보기" 버튼 */
-  .cal-actions{text-align:center; margin:-10px 0 28px;}
-  .cal-actions .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 20px; font-size:13.5px;}
-  .cal-actions svg{width:16px; height:16px;}
-
   /* 전체 일정 보기 팝업: 한 달을 표(달력)로, 칸 안에 일정 내용까지 바로 보이게 */
   .cal-full-inner{max-width:920px;}
   .cal-full-scroll{overflow-x:auto;}
@@ -644,11 +653,11 @@
   .cal-full-grid td.sat .cal-full-day-num{color:var(--cal-blue);}
   .cal-full-grid td.holiday .cal-full-day-num{color:var(--cal-red);}
   .cal-full-grid td.today{outline:2px solid var(--wine); outline-offset:-2px;}
-  .cal-full-event{font-size:10.5px; line-height:1.4; margin-top:2px; padding:1px 3px; border-radius:3px; background:var(--paper-2); word-break:keep-all;}
-  .cal-full-event.is-holiday{color:var(--cal-red); background:none; padding:0;}
+  .cal-full-event{font-size:10.5px; line-height:1.4; margin-top:2px; padding:1px 4px; border-radius:3px; background:#E3D6B4; border:1px solid #CBB98D; word-break:keep-all;}
+  .cal-full-event.is-holiday{color:var(--cal-red); background:none; border:none; padding:0;}
   .cal-full-event .ev-time{color:var(--ink-soft);}
   /* 여러 날짜에 걸친 일정: 왼쪽에 진한 선을 둬서 옆 칸으로 이어지는 하나의 일정처럼 보이게 한다 */
-  .cal-full-event.is-multiday{background:var(--paper-2); border-left:3px solid var(--wine); font-weight:600; padding-left:4px;}
+  .cal-full-event.is-multiday{background:#E7C1CB; border-color:#D69AA9; border-left:3px solid var(--wine); font-weight:600; padding-left:4px;}
   @media (max-width:600px){
     .cal-full-grid td{height:76px; padding:4px;}
     .cal-full-event{font-size:9.5px;}
@@ -680,10 +689,10 @@
     .cal-full-grid th{background:#fff;}
     .cal-full-grid td.outside{background:#fff;}
     .cal-full-event{
-      background:#E7DCBE; border:1px solid #F0E8D5; border-radius:3px; padding:1px 4px; font-size:9px; line-height:1.35;
+      background:#E3D6B4; border:1px solid #CBB98D; border-radius:3px; padding:1px 4px; font-size:9px; line-height:1.35;
       display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
     }
-    .cal-full-event.is-multiday{background:#EFD1D8; border-color:#F7E7EA; border-left:2px solid var(--wine); padding-left:4px;}
+    .cal-full-event.is-multiday{background:#E7C1CB; border-color:#D69AA9; border-left:2px solid var(--wine); padding-left:4px;}
     .cal-full-grid td.today{outline:none;}
   }
 
@@ -1070,15 +1079,15 @@
     <h2 class="section-verse" style="margin-bottom:28px;">"당신의 길을 주님께 맡겨라." (시편 37,5)</h2>
 
     <div class="cal-nav">
-      <button class="cal-nav-btn" id="calPrev" type="button" aria-label="이전 달">‹</button>
-      <div class="cal-month" id="calMonthLabel"></div>
-      <button class="cal-nav-btn" id="calNext" type="button" aria-label="다음 달">›</button>
-    </div>
-    <div class="cal-actions">
-      <button type="button" class="btn btn-ghost" id="calFullViewBtn">
+      <button type="button" class="cal-fullview-btn" id="calFullViewBtn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
         전체 일정 보기
       </button>
+      <div class="cal-nav-center">
+        <button class="cal-nav-btn" id="calPrev" type="button" aria-label="이전 달">‹</button>
+        <div class="cal-month" id="calMonthLabel"></div>
+        <button class="cal-nav-btn" id="calNext" type="button" aria-label="다음 달">›</button>
+      </div>
     </div>
 
     <div class="cal-layout">
@@ -1169,9 +1178,11 @@
     </div>
     <div class="info-modal-body">
       <div class="cal-nav">
-        <button class="cal-nav-btn" id="fullCalPrev" type="button" aria-label="이전 달">‹</button>
-        <div class="cal-month" id="fullCalMonthLabel"></div>
-        <button class="cal-nav-btn" id="fullCalNext" type="button" aria-label="다음 달">›</button>
+        <div class="cal-nav-center">
+          <button class="cal-nav-btn" id="fullCalPrev" type="button" aria-label="이전 달">‹</button>
+          <div class="cal-month" id="fullCalMonthLabel"></div>
+          <button class="cal-nav-btn" id="fullCalNext" type="button" aria-label="다음 달">›</button>
+        </div>
       </div>
       <div class="cal-full-scroll">
         <table class="cal-full-grid">
