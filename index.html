@@ -667,6 +667,8 @@
      visibility:hidden은 자리를 그대로 차지해서 빈 페이지가 여러 장 딸려나오므로, display:none으로 아예 치운다. */
   @media print{
     @page{ size: A4 landscape; margin: 10mm; }
+    /* 인쇄 페이지에서 달력 표가 못 채우는 남은 공간에 사이트 기본 배경색(크림색)이 비쳐 보이던 것을 막는다 */
+    html, body{background:#fff !important;}
     body > *:not(#fullScheduleModal){display:none !important;}
     #fullScheduleModal:not(.open){display:none !important;}
     #fullScheduleModal{position:static; inset:auto; display:block; background:#fff; padding:0; z-index:auto;}
@@ -676,10 +678,10 @@
     #fullScheduleModal .cal-nav-btn{display:none;}
     #fullScheduleModal .cal-nav{margin-bottom:14px;}
     .cal-full-scroll{overflow-x:visible;}
-    /* 칸 높이를 강제로 맞추지 않는다 — 그렇게 하면 화면에서 다 보이던 내용이 인쇄에서는 잘려서
-       "화면과 내용이 다르다"는 문제가 생겼다. 화면과 똑같이, 내용이 많은 날은 칸이 늘어나게 둔다. */
+    /* 칸 높이는 그 달의 주(줄) 수만큼 A4 한 장을 나눈 최소 높이(--print-row-h)로 채워서 달력이 항상
+       A4에 꽉 차게 하되, 그보다 내용이 많은 날은 잘리지 않고 칸이 더 늘어나게(min-height) 둔다. */
     .cal-full-grid{min-width:0; width:100%; table-layout:fixed;}
-    .cal-full-grid td{padding:3px 5px;}
+    .cal-full-grid td{padding:3px 5px; height:var(--print-row-h, 30mm);}
     .cal-full-day-num{font-size:11px; margin-bottom:2px;}
     /* 잉크 절약보다 화면과 똑같이 보이는 걸 우선한다 — 요일 줄·다른 달 칸 배경도 화면과 같은 색 그대로 둔다 */
     .cal-full-event{
@@ -2351,9 +2353,13 @@
 
     const isCurrentRealMonth = fullCalYear === today.getFullYear() && fullCalMonth === today.getMonth() + 1;
     const rowCount = cells.length / 7;
+    // 인쇄용: 그 달의 주(줄) 수(4~6개)만큼 A4 한 장 높이를 나눈 값을 "최소" 칸 높이로 써서, 내용이
+    // 적은 보통 때는 달력이 항상 A4에 꽉 차고, 내용이 많은 날은 이 값보다 더 늘어나 잘리지 않는다.
+    const printRowMm = (155 / rowCount).toFixed(2) + 'mm';
 
     for (let row = 0; row < rowCount; row++) {
       const tr = document.createElement('tr');
+      tr.style.setProperty('--print-row-h', printRowMm);
       for (let col = 0; col < 7; col++) {
         const cell = cells[row * 7 + col];
         const td = document.createElement('td');
