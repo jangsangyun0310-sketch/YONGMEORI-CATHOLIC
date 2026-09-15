@@ -647,6 +647,8 @@
   .cal-full-event{font-size:10.5px; line-height:1.4; margin-top:2px; padding:1px 3px; border-radius:3px; background:var(--paper-2); word-break:keep-all;}
   .cal-full-event.is-holiday{color:var(--cal-red); background:none; padding:0;}
   .cal-full-event .ev-time{color:var(--ink-soft);}
+  /* 여러 날짜에 걸친 일정: 왼쪽에 진한 선을 둬서 옆 칸으로 이어지는 하나의 일정처럼 보이게 한다 */
+  .cal-full-event.is-multiday{background:var(--paper-2); border-left:3px solid var(--wine); font-weight:600; padding-left:4px;}
   @media (max-width:600px){
     .cal-full-grid td{height:76px; padding:4px;}
     .cal-full-event{font-size:9.5px;}
@@ -2162,7 +2164,7 @@
       const endDate = hasEnd ? it.endDate : it.date;
       const range = hasEnd ? scheduleRangeLabel(it.date, endDate) : '';
       eachDateInRange(it.date, endDate).forEach((key) => {
-        (byDate[key] = byDate[key] || []).push({ t: it.title || '', time: it.time || '', place: it.place || '', range });
+        (byDate[key] = byDate[key] || []).push({ t: it.title || '', time: it.time || '', place: it.place || '', range, rangeStart: it.date, rangeEnd: endDate });
       });
     });
     return byDate;
@@ -2337,9 +2339,20 @@
           if (isHoliday(fullCalYear, fullCalMonth, cell.day)) classes.push('holiday');
           if (isCurrentRealMonth && cell.day === today.getDate()) classes.push('today');
           td.className = classes.join(' ');
-          const evHtml = getEvents(fullCalYear, fullCalMonth, cell.day).map((ev) => `
-            <div class="cal-full-event${ev.isHoliday ? ' is-holiday' : ''}">${escapeHtml(ev.t)}${ev.time ? ` <span class="ev-time">· ${escapeHtml(ev.time)}</span>` : ''}</div>
-          `).join('');
+          const cellKey = dateKey(fullCalYear, fullCalMonth, cell.day);
+          const evHtml = getEvents(fullCalYear, fullCalMonth, cell.day).map((ev) => {
+            // 1박2일처럼 여러 날짜에 걸친 일정은 같은 제목을 매일 반복하는 대신, 시작일과 각 주의 첫 칸(일요일)에만
+            // 제목을 적고 나머지 칸은 화살표(→)로 "같은 일정이 이어진다"는 것만 표시한다.
+            const isMultiDay = ev.rangeStart && ev.rangeEnd && ev.rangeStart !== ev.rangeEnd;
+            let label;
+            if (isMultiDay) {
+              const isFirstAppearance = cellKey === ev.rangeStart || col === 0;
+              label = isFirstAppearance ? escapeHtml(ev.t) + (cellKey === ev.rangeEnd ? '' : ' →') : '→';
+            } else {
+              label = escapeHtml(ev.t) + (ev.time ? ` <span class="ev-time">· ${escapeHtml(ev.time)}</span>` : '');
+            }
+            return `<div class="cal-full-event${ev.isHoliday ? ' is-holiday' : ''}${isMultiDay ? ' is-multiday' : ''}">${label}</div>`;
+          }).join('');
           td.innerHTML = `<div class="cal-full-day-num">${cell.day}</div>${evHtml}`;
         }
         tr.appendChild(td);
