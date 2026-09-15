@@ -678,10 +678,16 @@
     #fullScheduleModal .cal-nav-btn{display:none;}
     #fullScheduleModal .cal-nav{margin-bottom:14px;}
     .cal-full-scroll{overflow-x:visible;}
-    /* 칸 높이는 그 달의 주(줄) 수만큼 A4 한 장을 나눈 최소 높이(--print-row-h)로 채워서 달력이 항상
-       A4에 꽉 차게 하되, 그보다 내용이 많은 날은 잘리지 않고 칸이 더 늘어나게(min-height) 둔다. */
+    /* 칸 크기는 그 달의 주(줄) 수만큼 A4 한 장을 나눈 값(--print-row-h)으로 고정한다 — 절대 늘어나지
+       않는다. 내용이 많아서 넘치면 칸 크기 대신 글자 크기를 줄여서 맞춘다 (아래 beforeprint 스크립트). */
     .cal-full-grid{min-width:0; width:100%; table-layout:fixed;}
-    .cal-full-grid td{padding:3px 5px; height:var(--print-row-h, 30mm);}
+    /* <td>(표 셀) 자체에는 height/overflow를 줘도 브라우저가 내용에 맞춰 그냥 늘려버린다.
+       그래서 셀 안의 진짜 div(.cal-full-cell-inner)에 고정 높이 + overflow:hidden을 준다 —
+       block 요소는 이게 실제로 지켜진다. */
+    .cal-full-grid td{padding:0;}
+    .cal-full-cell-inner{
+      height:var(--print-row-h, 30mm); overflow:hidden; padding:3px 5px; box-sizing:border-box;
+    }
     .cal-full-day-num{font-size:11px; margin-bottom:2px;}
     /* 일정 칩 색은 화면과 같은 값을 그대로 쓴다 (배경색이 인쇄에서 아예 안 보이던 원인은 색 자체가
        아니라 크롬 인쇄창의 "배경 그래픽" 옵션이 꺼져 있던 것이었다 — 그 옵션만 켜면 화면과 똑같이 나온다) */
@@ -2363,7 +2369,7 @@
         const td = document.createElement('td');
         if (cell.outside) {
           td.className = 'outside';
-          td.innerHTML = `<div class="cal-full-day-num">${cell.day}</div>`;
+          td.innerHTML = `<div class="cal-full-cell-inner"><div class="cal-full-day-num">${cell.day}</div></div>`;
         } else {
           const classes = [];
           if (col === 0) classes.push('sun');
@@ -2383,7 +2389,10 @@
                 : escapeHtml(ev.t) + (ev.time ? ` <span class="ev-time">· ${escapeHtml(ev.time)}</span>` : '');
               return `<div class="cal-full-event${ev.isHoliday ? ' is-holiday' : ''}${isMultiDay ? ' is-multiday' : ''}">${label}</div>`;
             }).join('');
-          td.innerHTML = `<div class="cal-full-day-num">${cell.day}</div>${evHtml}`;
+          // 표(<td>)에는 height/overflow를 줘도 브라우저가 강제로 지키지 않고 내용에 맞춰 늘어나 버린다
+          // (표 셀의 오래된 동작). 그래서 안에 진짜 block 요소(div)를 하나 두고 그 div에 높이를 고정해야
+          // 인쇄용 "칸 크기 고정 + 넘치면 글자 축소"가 실제로 동작한다.
+          td.innerHTML = `<div class="cal-full-cell-inner"><div class="cal-full-day-num">${cell.day}</div>${evHtml}</div>`;
         }
         tr.appendChild(td);
       }
@@ -2407,6 +2416,26 @@
     openInfoModal('fullScheduleModal');
   });
   document.getElementById('calPrintBtn').addEventListener('click', () => window.print());
+
+  // 인쇄용 달력 칸은 크기를 절대 늘리지 않는다(A4 한 장 고정). 대신 그날 일정이 많아서 칸을 넘치면
+  // 그 칸의 글자만 살짝씩 줄여서 넘치지 않게 맞춘다. 인쇄가 끝나면 화면은 원래 크기로 되돌린다.
+  window.addEventListener('beforeprint', () => {
+    // 넘치는지는 .cal-full-cell-inner(div)에서 재야 한다 — <td>(표 셀)의 scrollHeight/clientHeight는
+    // 넘쳐도 항상 같은 값을 줘서(표 셀의 오래된 동작) 넘침을 감지할 수 없다.
+    document.querySelectorAll('#fullCalBody .cal-full-cell-inner').forEach((inner) => {
+      const events = inner.querySelectorAll('.cal-full-event');
+      if (!events.length) return;
+      const base = parseFloat(getComputedStyle(events[0]).fontSize) || 9;
+      let size = base;
+      while (inner.scrollHeight > inner.clientHeight + 1 && size > base * 0.55) {
+        size -= 0.5;
+        events.forEach((ev) => { ev.style.fontSize = size + 'px'; });
+      }
+    });
+  });
+  window.addEventListener('afterprint', () => {
+    document.querySelectorAll('#fullCalBody .cal-full-event').forEach((ev) => { ev.style.fontSize = ''; });
+  });
 
   renderCalendar();
   renderCalDetail();
