@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>용머리성당 홈페이지 관리</title>
+<link rel="icon" type="image/png" sizes="32x32" href="../images/icons/icon-32.png">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --wine: #6E1E2C; --wine-dark: #4E1420; --ink: #2A2320; --ink-soft: #5B5148;
+    --line: #D8CDB8; --ivory: #F6F1E4; --ivory-deep: #EFE7D2; --danger: #b3413a;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: 18px; }
+  body {
+    margin: 0; font-family: "Noto Sans KR", "Malgun Gothic", sans-serif; color: var(--ink);
+    background: var(--ivory); line-height: 1.55; -webkit-text-size-adjust: 100%;
+  }
+  [hidden] { display: none !important; }
+  .top {
+    position: sticky; top: 0; z-index: 10; background: var(--wine); color: #fff;
+    padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .top strong { font-size: 1.05rem; }
+  .top .who { font-size: .8rem; opacity: .9; display: flex; align-items: center; gap: 10px; }
+  .top button { background: rgba(255,255,255,.18); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font: inherit; font-size: .85rem; cursor: pointer; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 20px 16px 60px; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; }
+  h2 { font-size: 1.25rem; margin: 0; }
+  p.desc { color: var(--ink-soft); margin: 0 0 20px; font-size: .95rem; }
+  .center { text-align: center; padding: 60px 0; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 54px; padding: 12px 22px; border-radius: 12px; border: 2px solid transparent;
+    font: inherit; font-size: 1.05rem; font-weight: 700; cursor: pointer; text-decoration: none;
+    background: var(--wine); color: #fff; transition: background .15s;
+  }
+  .btn:hover { background: var(--wine-dark); }
+  .btn:disabled { opacity: .55; cursor: default; }
+  .btn--outline { background: #fff; color: var(--wine); border-color: var(--wine); }
+  .btn--outline:hover { background: var(--ivory-deep); }
+  .btn--danger { background: #fff; color: var(--danger); border-color: var(--danger); }
+  .btn--danger:hover { background: #fbeceb; }
+  .btn--sm { min-height: 44px; padding: 8px 16px; font-size: .95rem; border-radius: 10px; }
+  .btn--block { width: 100%; }
+  .btn--google { background: #fff; color: var(--ink); border-color: var(--line); font-size: 1.1rem; min-height: 64px; }
+  .btn--google:hover { background: #f4f4f4; }
+  .btn--google img { width: 26px; height: 26px; }
+
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
+  .tile {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    min-height: 130px; background: #fff; border: 2px solid var(--line); border-radius: 16px;
+    font: inherit; font-size: 1.1rem; font-weight: 700; color: var(--ink); cursor: pointer;
+    box-shadow: 0 6px 18px rgba(43,38,32,.06);
+  }
+  .tile:hover { border-color: var(--wine); color: var(--wine); }
+  .tile .ico { font-size: 2.2rem; line-height: 1; }
+  .tile small { font-weight: 400; color: var(--ink-soft); font-size: .8rem; }
+
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+  .bar .back { background: none; border: none; color: var(--wine); font: inherit; font-size: 1rem; font-weight: 700; cursor: pointer; padding: 8px 0; }
+  .list { display: flex; flex-direction: column; gap: 12px; }
+  .card {
+    background: #fff; border: 1.5px solid var(--line); border-radius: 14px; padding: 14px 16px;
+    display: flex; gap: 14px; align-items: center;
+  }
+  .card .thumb { width: 84px; height: 84px; object-fit: cover; border-radius: 10px; flex-shrink: 0; background: var(--ivory-deep); }
+  .card .main { flex: 1; min-width: 0; }
+  .card .title { font-weight: 700; font-size: 1.05rem; word-break: break-all; }
+  .card .meta { color: var(--ink-soft); font-size: .85rem; margin-top: 2px; }
+  .card .acts { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+  .empty { text-align: center; color: var(--ink-soft); padding: 40px 0; }
+
+  .form { background: #fff; border: 1.5px solid var(--line); border-radius: 16px; padding: 20px 18px; }
+  label.f { display: block; font-weight: 700; margin: 18px 0 6px; }
+  label.f:first-child { margin-top: 0; }
+  label.f small { font-weight: 400; color: var(--ink-soft); font-size: .8rem; margin-left: 6px; }
+  input[type=text], input[type=date], input[type=email], textarea {
+    width: 100%; font: inherit; font-size: 1.05rem; padding: 13px 14px; border: 2px solid var(--line);
+    border-radius: 10px; background: #fff; color: var(--ink);
+  }
+  input:focus, textarea:focus { outline: none; border-color: var(--wine); }
+  textarea { min-height: 150px; resize: vertical; }
+  .switch { display: flex; align-items: center; gap: 12px; cursor: pointer; font-weight: 700; }
+  .switch input { width: 28px; height: 28px; accent-color: var(--wine); }
+  .file-box { border: 2px dashed var(--line); border-radius: 12px; padding: 16px; text-align: center; background: var(--ivory); }
+  .file-box input { display: none; }
+  .file-box .preview { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
+  .file-box .preview img { width: 120px; height: 120px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); }
+  .file-box .hint { color: var(--ink-soft); font-size: .85rem; margin: 8px 0 0; }
+  .actions { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+  .actions .btn { flex: 1; }
+  .status { margin-top: 16px; padding: 12px 14px; border-radius: 10px; font-size: .95rem; white-space: pre-wrap; }
+  .status.ok { background: #eef3e8; color: #3F6B4A; }
+  .status.err { background: #fbeceb; color: var(--danger); }
+  .status.busy { background: var(--ivory-deep); color: var(--ink-soft); }
+  .note { background: var(--ivory-deep); border-radius: 10px; padding: 12px 14px; color: var(--ink-soft); font-size: .9rem; margin-bottom: 16px; }
+  .row { display: flex; gap: 10px; }
+  .row input { flex: 1; }
+  .album-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; }
+  .album-photo { position: relative; aspect-ratio: 1; }
+  .album-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); display: block; }
+  .album-photo-x {
+    position: absolute; top: -8px; right: -8px; width: 32px; height: 32px; border-radius: 999px;
+    border: 2px solid #fff; background: var(--danger); color: #fff; font-size: 16px; font-weight: 700; cursor: pointer;
+  }
+  .album-photo.is-removed img { opacity: .3; }
+  .album-photo.is-removed .album-photo-x { background: var(--wine); }
+  .overlay { position: fixed; inset: 0; background: rgba(24,20,16,.55); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .overlay .box { background: #fff; border-radius: 16px; padding: 22px 20px; max-width: 420px; width: 100%; text-align: center; font-size: 1.05rem; }
+  @media (max-width: 480px) {
+    html { font-size: 17px; }
+    .tiles { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .card { flex-wrap: wrap; }
+    .card .acts { flex-direction: row; width: 100%; }
+    .card .acts .btn { flex: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <strong>용머리성당 홈페이지 관리</strong>
+  <div class="who" id="whoBox" hidden>
+    <span id="whoName"></span>
+    <button type="button" id="logoutBtn">로그아웃</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- 1. 로그인 전 -->
+  <div id="viewLogin" class="center" hidden>
+    <h1>관리자 로그인</h1>
+    <p class="desc">성당에서 관리자로 등록한 구글(지메일) 계정으로 로그인해주세요.</p>
+    <button type="button" class="btn btn--google" id="loginBtn">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="">
+      구글 계정으로 로그인
+    </button>
+    <div class="status err" id="loginError" hidden></div>
+    <p style="margin-top:40px;"><a href="https://jangsangyun0310-sketch.github.io/YONGMEORI-CATHOLIC/" style="color:var(--ink-soft);">← 홈페이지로 돌아가기</a></p>
+  </div>
+
+  <!-- 2. 확인 중 -->
+  <div id="viewChecking" class="center" hidden>
+    <p class="desc">관리자 확인 중입니다…</p>
+  </div>
+
+  <!-- 3. 관리자가 아닌 계정 -->
+  <div id="viewDenied" class="center" hidden>
+    <h1>관리자로 등록되지 않은 계정입니다</h1>
+    <p class="desc" id="deniedEmail"></p>
+    <p class="desc">대표 관리자에게 위 이메일 주소를 알려주시면 등록해 드립니다.</p>
+    <button type="button" class="btn btn--outline" id="deniedLogoutBtn">다른 계정으로 로그인</button>
+  </div>
+
+  <!-- 4. 관리 메뉴 -->
+  <div id="viewHome" hidden>
+    <h1>무엇을 하시겠어요?</h1>
+    <p class="desc">원하는 항목을 누르세요. 저장하면 1~2분 뒤 홈페이지에 반영됩니다.</p>
+    <div class="tiles">
+      <button type="button" class="tile" data-section="notices"><span class="ico">📢</span>공지사항</button>
+      <button type="button" class="tile" data-section="bulletins"><span class="ico">📰</span>주보</button>
+      <button type="button" class="tile" data-section="gallery"><span class="ico">📷</span>갤러리 사진</button>
+      <button type="button" class="tile" data-section="schedule"><span class="ico">📅</span>본당 일정</button>
+      <button type="button" class="tile" data-section="announce"><span class="ico">🪧</span>접속 시 팝업</button>
+      <button type="button" class="tile" data-section="push"><span class="ico">🔔</span>알림 보내기<small>신자분들 휴대폰으로</small></button>
+      <button type="button" class="tile" data-section="admins" id="adminsTile" hidden><span class="ico">👥</span>관리자 명단</button>
+    </div>
+    <p style="margin-top:30px;text-align:center;"><a href="https://jangsangyun0310-sketch.github.io/YONGMEORI-CATHOLIC/" target="_blank" style="color:var(--ink-soft);">홈페이지 보기 ↗</a></p>
+  </div>
+
+  <!-- 5. 각 관리 화면 -->
+  <div id="viewSection" hidden>
+    <div class="bar">
+      <button type="button" class="back" id="backBtn">← 처음으로</button>
+      <h2 id="sectionTitle"></h2>
+      <button type="button" class="btn btn--sm" id="addBtn">＋ 새로 추가</button>
+    </div>
+    <div class="status" id="sectionStatus" hidden></div>
+    <div id="sectionBody"></div>
+  </div>
+
+</div>
+
+<div class="overlay" id="busyOverlay" hidden><div class="box" id="busyText">처리 중입니다…</div></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="../push-config.js?v=20260915"></script>
+<script>
+(function () {
+  // 관리자 페이지는 저장·사진 업로드·알림 발송을 처리하는 서버 기능(/api)이 있는 Cloudflare Pages 주소에서만 동작한다.
+  // 홈페이지(GitHub Pages) 주소로 잘못 들어오면 그쪽으로 보낸다.
+  if (window.ADMIN_URL && /github\.io$/i.test(location.hostname)) {
+    location.replace(window.ADMIN_URL);
+    return;
+  }
+
+  const OWNER_EMAIL = (window.SITE_OWNER_EMAIL || '').toLowerCase();
+  firebase.initializeApp(window.FIREBASE_CONFIG);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  const $ = (id) => document.getElementById(id);
+  const views = ['viewLogin', 'viewChecking', 'viewDenied', 'viewHome', 'viewSection'];
+  function show(id) { views.forEach((v) => { $(v).hidden = v !== id; }); window.scrollTo(0, 0); }
+  function busy(text) { $('busyText').textContent = text || '처리 중입니다…'; $('busyOverlay').hidden = false; }
+  function unbusy() { $('busyOverlay').hidden = true; }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+  function setStatus(kind, text) {
+    const el = $('sectionStatus');
+    if (!text) { el.hidden = true; return; }
+    el.className = 'status ' + kind; el.textContent = text; el.hidden = false;
+  }
+  const SAVED_MSG = '저장했습니다. 홈페이지에는 1~2분 뒤에 반영됩니다.';
+  // 예전 주보는 다음카페 첨부 주소, 새로 올린 사진은 저장소 안 경로(images/...)
+  function imgSrc(p) { return /^https?:\/\//.test(p) ? p : '../' + p; }
+
+  // ---------- 로그인 ----------
+  let currentUser = null;
+  $('loginBtn').addEventListener('click', async () => {
+    $('loginError').hidden = true;
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    try {
+      await auth.signInWithPopup(provider);
+    } catch (err) {
+      const code = err && err.code;
+      if (code === 'auth/popup-blocked' || code === 'auth/operation-not-supported-in-this-environment') {
+        auth.signInWithRedirect(provider);
+        return;
+      }
+      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return;
+      let msg = '로그인에 실패했습니다. 다시 시도해주세요.';
+      if (code === 'auth/unauthorized-domain') msg = '이 주소가 Firebase 승인 도메인에 등록되어 있지 않습니다. (관리자에게 문의)';
+      if (code === 'auth/operation-not-allowed') msg = 'Firebase에서 구글 로그인이 아직 켜져 있지 않습니다. (관리자에게 문의)';
+      $('loginError').textContent = msg + (code ? ' [' + code + ']' : '');
+      $('loginError').hidden = false;
+    }
+  });
+  $('logoutBtn').addEventListener('click', () => auth.signOut());
+  $('deniedLogoutBtn').addEventListener('click', () => auth.signOut());
+
+  auth.onAuthStateChanged(async (user) => {
+    currentUser = user;
+    $('whoBox').hidden = !user;
+    if (!user) { show('viewLogin'); return; }
+    $('whoName').textContent = user.displayName || user.email;
+    show('viewChecking');
+    try {
+      await api('me');
+      $('adminsTile').hidden = (user.email || '').toLowerCase() !== OWNER_EMAIL;
+      show('viewHome');
+    } catch (err) {
+      if (err.status === 403) {
+        $('deniedEmail').textContent = user.email || '';
+        show('viewDenied');
+      } else {
+        $('deniedEmail').textContent = (user.email || '') + ' — ' + err.message;
+        show('viewDenied');
+      }
+    }
+  });
+
+  // ---------- 서버 API ----------
+  async function api(path, opts = {}) {
+    const token = await auth.currentUser.getIdToken();
+    const res = await fetch('/api/' + path, {
+      ...opts,
+      headers: { Authorization: 'Bearer ' + token, ...(opts.headers || {}) },
+    });
+    let data = {};
+    try { data = await res.json(); } catch (e) { /* 빈 응답 */ }
+    if (!res.ok) {
+      const err = new Error(data.error || ('오류가 발생했습니다 (' + res.status + ')'));
+      err.status = res.status;
+      throw err;
+    }
+    return data;
+  }
+  function apiJson(path, body) {
+    return api(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  }
+
+  // ---------- 사진 처리: 휴대폰 사진은 너무 크므로 올리기 전에 줄인다 ----------
+  async function loadBitmap(file) {
+    try {
+      return await createImageBitmap(file, { imageOrientation: 'from-image' });
+    } catch (e) {
+      return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('사진을 읽을 수 없습니다.')); };
+        img.src = url;
+      });
+    }
+  }
+  async function compressImage(file, maxSide, quality) {
+    const img = await loadBitmap(file);
+    const w = img.width, h = img.height;
+    const scale = Math.min(1, maxSide / Math.max(w, h));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(w * scale);
+    canvas.height = Math.round(h * scale);
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    if (img.close) img.close();
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
+    if (!blob) throw new Error('사진 변환에 실패했습니다.');
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(',')[1]);
+      reader.onerror = () => reject(new Error('사진을 읽을 수 없습니다.'));
+      reader.readAsDataURL(blob);
+    });
+    return { base64, previewUrl: URL.createObjectURL(blob) };
+  }
+  function makeUploadPath() {
+    const d = new Date();
+    const p = (n) => String(n).padStart(2, '0');
+    const stamp = `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
+    const rand = Math.random().toString(36).slice(2, 6);
+    return `images/uploads/${d.getFullYear()}/${stamp}-${rand}.jpg`;
+  }
+  async function uploadImage(base64) {
+    const path = makeUploadPath();
+    const res = await api('upload', { method: 'POST', headers: { 'Content-Type': 'text/plain', 'X-Upload-Path': path }, body: base64 });
+    return { path: res.path, sha: res.sha };
+  }
+
+  // 사진 선택 상자 UI. 선택하면 바로 줄여서 미리보기까지 보여준다.
+  function fileBox({ multiple, current, maxSide, quality, allowRemove }) {
+    // current는 경로 하나 또는 경로 배열(주보 여러 면)
+    const currentList = Array.isArray(current) ? current.filter(Boolean) : (current ? [current] : []);
+    current = currentList[0] || '';
+    const box = document.createElement('div');
+    box.className = 'file-box';
+    box.innerHTML = `
+      <label class="btn btn--outline btn--sm"><input type="file" accept="image/*" ${multiple ? 'multiple' : ''}>📷 ${current ? '사진 바꾸기' : '사진 고르기'}</label>
+      ${allowRemove && current ? '<button type="button" class="btn btn--danger btn--sm" style="margin-left:8px;">사진 지우기</button>' : ''}
+      <p class="hint">${multiple ? '여러 장을 한 번에 골라도 됩니다. (휴대폰은 사진을 길게 눌러 여러 장 선택, PC는 Ctrl 누르고 클릭)' : '휴대폰 사진첩이나 컴퓨터에서 고르세요.'}</p>
+      <div class="preview"></div>
+    `;
+    const input = box.querySelector('input');
+    const preview = box.querySelector('.preview');
+    const state = { pending: [], current: current || '', removed: false };
+    function renderPreview() {
+      preview.innerHTML = '';
+      if (state.pending.length) {
+        state.pending.forEach((p) => { const im = document.createElement('img'); im.src = p.previewUrl; preview.appendChild(im); });
+      } else if (state.current && !state.removed) {
+        currentList.forEach((p) => { const im = document.createElement('img'); im.src = imgSrc(p); im.referrerPolicy = 'no-referrer'; preview.appendChild(im); });
+      }
+    }
+    renderPreview();
+    input.addEventListener('change', async () => {
+      const files = Array.from(input.files || []);
+      if (!files.length) return;
+      busy('사진을 준비하는 중입니다…');
+      try {
+        state.pending = [];
+        for (const f of files) state.pending.push(await compressImage(f, maxSide, quality));
+        state.removed = false;
+        renderPreview();
+      } catch (err) {
+        alert(err.message || '사진을 읽을 수 없습니다.');
+      } finally { unbusy(); }
+    });
+    const removeBtn = box.querySelector('.btn--danger');
+    if (removeBtn) removeBtn.addEventListener('click', () => { state.removed = true; state.pending = []; renderPreview(); });
+    return { el: box, state };
+  }
+
+  // ---------- 날짜 ----------
+  function todayDots() {
+    const d = new Date(); const p = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}.${p(d.getMonth() + 1)}.${p(d.getDate())}`;
+  }
+  function todayIso() { return dotsToIso(todayDots()); }
+  function dotsToIso(s) { const m = String(s || '').match(/^(\d{4})\.(\d{2})\.(\d{2})$/); return m ? `${m[1]}-${m[2]}-${m[3]}` : ''; }
+  function isoToDots(s) { const m = String(s || '').match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? `${m[1]}.${m[2]}.${m[3]}` : ''; }
+  function dateField(name, value) {
+    return `<label class="f">${name}</label><input type="date" data-k="date" value="${esc(dotsToIso(value || todayDots()))}">`;
+  }
+  function isoDateField(name, value) {
+    return `<label class="f">${name}</label><input type="date" data-k="date" value="${esc(value || todayIso())}">`;
+  }
+  const DOW = ['일', '월', '화', '수', '목', '금', '토'];
+  function isoLabel(iso) {
+    const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!m) return iso || '';
+    const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    return `${m[1]}.${m[2]}.${m[3]} (${DOW[d.getDay()]})`;
+  }
+
+  // ---------- 화면 전환 ----------
+  const TITLES = { notices: '공지사항', bulletins: '주보', gallery: '갤러리 사진', schedule: '본당 일정', announce: '접속 시 팝업', push: '알림 보내기', admins: '관리자 명단' };
+  let section = null;
+  let data = null; // 현재 항목의 내용 (서버에서 받은 것)
+
+  document.querySelectorAll('.tile').forEach((t) => t.addEventListener('click', () => openSection(t.dataset.section)));
+  $('backBtn').addEventListener('click', () => show('viewHome'));
+
+  async function openSection(name) {
+    section = name;
+    $('sectionTitle').textContent = TITLES[name];
+    $('addBtn').hidden = !(name === 'notices' || name === 'bulletins' || name === 'gallery' || name === 'schedule');
+    setStatus('', '');
+    $('sectionBody').innerHTML = '';
+    show('viewSection');
+    if (name === 'push') { renderPush(); return; }
+    if (name === 'admins') { renderAdmins(); return; }
+    data = null;
+    $('addBtn').disabled = true;
+    busy('불러오는 중입니다…');
+    try {
+      data = (await api('content?name=' + name)).data;
+      $('addBtn').disabled = false;
+      renderList();
+    } catch (err) {
+      setStatus('err', '불러오기 실패: ' + err.message);
+      // 목록을 못 불러온 상태에서 저장하면 기존 내용을 덮어쓸 수 있으므로, 다시 불러오기만 허용한다
+      $('sectionBody').innerHTML = '<div class="empty"><button type="button" class="btn btn--outline" id="retryLoadBtn">다시 불러오기</button></div>';
+      $('retryLoadBtn').addEventListener('click', () => openSection(name));
+    } finally { unbusy(); }
+  }
+  $('addBtn').addEventListener('click', () => { if (data) renderForm(-1); });
+
+  // 저장: 항목 전체를 한 번에 서버로 보내 GitHub에 커밋한다
+  async function saveContent(newData, blobs) {
+    if (!data) { setStatus('err', '목록을 먼저 불러와야 합니다. "← 처음으로"를 눌렀다가 다시 들어와 주세요.'); return; }
+    busy('저장하는 중입니다… (사진이 있으면 조금 걸립니다)');
+    try {
+      const res = await apiJson('save', { name: section, data: newData, blobs: blobs || [] });
+      data = res.data;
+      renderList();
+      setStatus('ok', SAVED_MSG);
+    } catch (err) {
+      setStatus('err', '저장 실패: ' + err.message);
+    } finally { unbusy(); }
+  }
+
+  // ---------- 목록 ----------
+  // 갤러리: 같은 날짜·같은 제목의 사진을 하나의 앨범으로 묶는다
+  function albumKey(it) { return (it.date || '') + '|' + (it.title || ''); }
+  function groupAlbums(items) {
+    const map = new Map();
+    items.forEach((it, i) => {
+      const k = albumKey(it);
+      if (!map.has(k)) map.set(k, { key: k, date: it.date || '', title: it.title || '', photos: [] });
+      map.get(k).photos.push({ index: i, image: it.image || '' });
+    });
+    return [...map.values()];
+  }
+
+  function renderList() {
+    const body = $('sectionBody');
+    if (section === 'announce') { renderAnnounceForm(); return; }
+    if (section === 'gallery') { renderAlbumList(); return; }
+    if (section === 'schedule') { renderScheduleList(); return; }
+    const items = data.items || [];
+    if (!items.length) {
+      body.innerHTML = '<div class="empty">아직 등록된 내용이 없습니다.<br>오른쪽 위 "새로 추가"를 눌러주세요.</div>';
+      return;
+    }
+    // 공지사항은 홈페이지에 보이는 순서(저장 순서) 그대로, 주보는 최신 날짜순으로 보여준다
+    const ordered = items.map((it, i) => ({ it, i }));
+    if (section === 'bulletins') ordered.sort((a, b) => String(b.it.date || '').localeCompare(String(a.it.date || '')));
+    body.innerHTML = '<div class="list">' + ordered.map(({ it, i }) => `
+      <div class="card">
+        ${section !== 'notices' ? (it.image ? `<img class="thumb" src="${esc(imgSrc(it.image))}" referrerpolicy="no-referrer" alt="">` : '<div class="thumb"></div>') : ''}
+        <div class="main">
+          <div class="title">${esc(it.title || '(제목 없음)')}</div>
+          <div class="meta">${esc(it.date || '')}${section === 'notices' && it.tag ? ' · ' + esc(it.tag) : ''}${section === 'bulletins' && it.images && it.images.length > 1 ? ' · ' + it.images.length + '장' : ''}</div>
+        </div>
+        <div class="acts">
+          <button type="button" class="btn btn--outline btn--sm" data-edit="${i}">수정</button>
+          <button type="button" class="btn btn--danger btn--sm" data-del="${i}">삭제</button>
+        </div>
+      </div>`).join('') + '</div>';
+    body.querySelectorAll('[data-edit]').forEach((b) => b.addEventListener('click', () => renderForm(Number(b.dataset.edit))));
+    body.querySelectorAll('[data-del]').forEach((b) => b.addEventListener('click', () => {
+      const it = items[Number(b.dataset.del)];
+      if (!confirm(`"${it.title || it.date}" 항목을 삭제할까요?`)) return;
+      const next = { items: items.filter((_, idx) => idx !== Number(b.dataset.del)) };
+      saveContent(next, []);
+    }));
+  }
+
+  // ---------- 갤러리 앨범 목록 ----------
+  function renderAlbumList() {
+    const body = $('sectionBody');
+    const items = data.items || [];
+    const albums = groupAlbums(items).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+    if (!albums.length) {
+      body.innerHTML = '<div class="empty">아직 등록된 사진이 없습니다.<br>오른쪽 위 "새로 추가"를 눌러주세요.</div>';
+      return;
+    }
+    body.innerHTML = '<div class="list">' + albums.map((al) => {
+      const cover = al.photos.find((p) => p.image);
+      return `
+      <div class="card">
+        ${cover ? `<img class="thumb" src="${esc(imgSrc(cover.image))}" alt="">` : '<div class="thumb"></div>'}
+        <div class="main">
+          <div class="title">${esc(al.title || '(제목 없음)')}</div>
+          <div class="meta">${esc(al.date)} · 사진 ${al.photos.length}장</div>
+        </div>
+        <div class="acts">
+          <button type="button" class="btn btn--outline btn--sm" data-album-edit="${esc(al.key)}">수정·사진 추가</button>
+          <button type="button" class="btn btn--danger btn--sm" data-album-del="${esc(al.key)}">앨범 삭제</button>
+        </div>
+      </div>`;
+    }).join('') + '</div>';
+    body.querySelectorAll('[data-album-edit]').forEach((b) => b.addEventListener('click', () => renderAlbumForm(b.dataset.albumEdit)));
+    body.querySelectorAll('[data-album-del]').forEach((b) => b.addEventListener('click', () => {
+      const al = albums.find((a) => a.key === b.dataset.albumDel);
+      if (!al) return;
+      if (!confirm(`"${al.title || al.date}" 앨범의 사진 ${al.photos.length}장을 모두 삭제할까요?`)) return;
+      saveContent({ items: items.filter((it) => albumKey(it) !== al.key) }, []);
+    }));
+  }
+
+  // ---------- 갤러리 앨범 추가/수정 폼 ----------
+  // key가 없으면 새 앨범. 있으면 그 앨범의 날짜·제목 수정, 사진 빼기, 사진 추가.
+  function renderAlbumForm(key) {
+    const isNew = !key;
+    const items = data.items || [];
+    const album = isNew ? { date: '', title: '', photos: [] } : groupAlbums(items).find((a) => a.key === key);
+    if (!album) { renderList(); return; }
+    const body = $('sectionBody');
+    setStatus('', '');
+    const removed = new Set(); // 이 폼에서 ✕ 누른 기존 사진(원래 index)
+    const form = document.createElement('div');
+    form.className = 'form';
+    form.innerHTML = `
+      ${dateField('사진 날짜', album.date)}
+      <label class="f">앨범 제목 <small>행사 이름 등</small></label><input type="text" data-k="title" value="${esc(album.title)}" maxlength="200" placeholder="예: 본당 설립 기념 미사">
+      ${isNew ? '' : '<label class="f">지금 있는 사진 <small>✕를 누르면 그 사진만 빠집니다 (저장해야 반영)</small></label><div class="album-photos" data-existing></div>'}
+      <label class="f">${isNew ? '사진' : '사진 추가'} <small>여러 장 선택 가능</small></label><div data-file></div>
+      <div class="actions"><button type="button" class="btn" data-save>저장</button><button type="button" class="btn btn--outline" data-cancel>취소</button></div>`;
+    body.innerHTML = '';
+    body.appendChild(form);
+
+    const existingEl = form.querySelector('[data-existing]');
+    if (existingEl) {
+      album.photos.forEach((p) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'album-photo';
+        wrap.innerHTML = `<img src="${esc(imgSrc(p.image))}" alt=""><button type="button" class="album-photo-x" aria-label="이 사진 빼기">✕</button>`;
+        wrap.querySelector('button').addEventListener('click', () => {
+          if (removed.has(p.index)) { removed.delete(p.index); wrap.classList.remove('is-removed'); }
+          else { removed.add(p.index); wrap.classList.add('is-removed'); }
+        });
+        existingEl.appendChild(wrap);
+      });
+    }
+
+    const fb = fileBox({ multiple: true, current: '', maxSide: 1600, quality: 0.82, allowRemove: false });
+    form.querySelector('[data-file]').replaceWith(fb.el);
+    const val = (k) => { const el = form.querySelector(`[data-k="${k}"]`); return el ? el.value.trim() : ''; };
+
+    form.querySelector('[data-cancel]').addEventListener('click', renderList);
+    form.querySelector('[data-save]').addEventListener('click', async () => {
+      const date = isoToDots(val('date'));
+      if (!date) { alert('날짜를 골라주세요.'); return; }
+      const title = val('title');
+      if (!title) { alert('앨범 제목을 적어주세요.'); return; }
+      const keptCount = album.photos.length - removed.size;
+      if (isNew && !fb.state.pending.length) { alert('사진을 골라주세요.'); return; }
+      if (!isNew && keptCount + fb.state.pending.length === 0) { alert('사진이 한 장도 남지 않습니다. 앨범을 없애려면 목록에서 "앨범 삭제"를 눌러주세요.'); return; }
+
+      busy('저장하는 중입니다… (사진이 있으면 조금 걸립니다)');
+      try {
+        const blobs = [];
+        const uploaded = [];
+        for (let i = 0; i < fb.state.pending.length; i++) {
+          $('busyText').textContent = `사진 올리는 중… (${i + 1}/${fb.state.pending.length})`;
+          const u = await uploadImage(fb.state.pending[i].base64);
+          blobs.push(u); uploaded.push(u.path);
+        }
+        // 이 앨범에 속하지 않는 사진은 그대로 두고, 앨범 사진은 새 날짜·제목으로 다시 넣는다
+        const albumIdx = new Set(album.photos.map((p) => p.index));
+        const others = items.filter((_, i) => !albumIdx.has(i));
+        const kept = album.photos.filter((p) => !removed.has(p.index)).map((p) => ({ date, title, image: p.image }));
+        const added = uploaded.map((p) => ({ date, title, image: p }));
+        unbusy();
+        await saveContent({ items: [...kept, ...added, ...others] }, blobs);
+      } catch (err) {
+        unbusy();
+        setStatus('err', '저장 실패: ' + err.message);
+      }
+    });
+  }
+
+  // ---------- 본당 일정 목록 ----------
+  function renderScheduleList() {
+    const body = $('sectionBody');
+    const items = data.items || [];
+    if (!items.length) {
+      body.innerHTML = '<div class="empty">아직 등록된 일정이 없습니다.<br>오른쪽 위 "새로 추가"를 눌러주세요.</div>';
+      return;
+    }
+    // 오늘 이후 일정이 먼저(가까운 순), 지난 일정은 아래에
+    const todayKey = todayIso();
+    const ordered = items.map((it, i) => ({ it, i }));
+    const upcoming = ordered.filter((o) => o.it.date >= todayKey).sort((a, b) => a.it.date.localeCompare(b.it.date));
+    const past = ordered.filter((o) => o.it.date < todayKey).sort((a, b) => b.it.date.localeCompare(a.it.date));
+    const card = ({ it, i }) => `
+      <div class="card">
+        <div class="main">
+          <div class="title">${esc(it.title || '(제목 없음)')}</div>
+          <div class="meta">${esc(isoLabel(it.date))}${it.time ? ' · ' + esc(it.time) : ''}${it.place ? ' · ' + esc(it.place) : ''}</div>
+        </div>
+        <div class="acts">
+          <button type="button" class="btn btn--outline btn--sm" data-edit="${i}">수정</button>
+          <button type="button" class="btn btn--danger btn--sm" data-del="${i}">삭제</button>
+        </div>
+      </div>`;
+    body.innerHTML = '<div class="list">' + upcoming.map(card).join('')
+      + (past.length ? `<div class="note" style="margin:8px 0 0;">지난 일정 (${past.length}건)</div>` + past.map(card).join('') : '')
+      + '</div>';
+    body.querySelectorAll('[data-edit]').forEach((b) => b.addEventListener('click', () => renderForm(Number(b.dataset.edit))));
+    body.querySelectorAll('[data-del]').forEach((b) => b.addEventListener('click', () => {
+      const it = items[Number(b.dataset.del)];
+      if (!confirm(`"${it.title}" (${isoLabel(it.date)}) 일정을 삭제할까요?`)) return;
+      saveContent({ items: items.filter((_, idx) => idx !== Number(b.dataset.del)) }, []);
+    }));
+  }
+
+  // ---------- 추가/수정 폼 (공지사항·주보·본당 일정) ----------
+  function renderForm(index) {
+    if (section === 'gallery') { renderAlbumForm(index < 0 ? '' : index); return; }
+    const isNew = index < 0;
+    const item = isNew ? {} : data.items[index];
+    const body = $('sectionBody');
+    setStatus('', '');
+    const form = document.createElement('div');
+    form.className = 'form';
+    let html = '';
+    if (section === 'notices') {
+      html = `
+        <label class="f">말머리 <small>예: 공지, 안내, 채용, 모집</small></label><input type="text" data-k="tag" value="${esc(item.tag || '공지')}" maxlength="30">
+        <label class="f">제목</label><input type="text" data-k="title" value="${esc(item.title || '')}" maxlength="120" placeholder="예: 추석 합동위령미사 안내">
+        <label class="f">날짜 <small>예: 2026.09.20 / 접수마감 2026.09.20 / 상시 모집</small></label><input type="text" data-k="date" value="${esc(item.date || todayDots())}" maxlength="30">
+        <label class="f">내용</label><textarea data-k="body" placeholder="공지 내용을 적어주세요.">${esc(item.body || '')}</textarea>`;
+    } else if (section === 'bulletins') {
+      html = `
+        ${dateField('주보 날짜 (주일)', item.date)}
+        <label class="f">제목 <small>예: 연중 제23주일</small></label><input type="text" data-k="title" value="${esc(item.title || '')}" maxlength="120">
+        <label class="f">주보 사진 <small>앞면·뒷면 등 여러 장 가능. 새로 고르면 기존 사진은 전부 바뀝니다</small></label><div data-file></div>`;
+    } else if (section === 'schedule') {
+      html = `
+        ${isoDateField('날짜', item.date)}
+        <label class="f">일정 이름</label><input type="text" data-k="title" value="${esc(item.title || '')}" maxlength="120" placeholder="예: 추석 합동위령미사">
+        <label class="f">시간 <small>없어도 됩니다</small></label><input type="text" data-k="time" value="${esc(item.time || '')}" maxlength="80" placeholder="예: 10시 30분 (미사 30분 전 연도·분향)">
+        <label class="f">장소 <small>없어도 됩니다</small></label><input type="text" data-k="place" value="${esc(item.place || '')}" maxlength="80" placeholder="예: 대성전">`;
+    }
+    html += `<div class="actions"><button type="button" class="btn" data-save>저장</button><button type="button" class="btn btn--outline" data-cancel>취소</button></div>`;
+    form.innerHTML = html;
+    body.innerHTML = '';
+    body.appendChild(form);
+
+    let fb = null;
+    const fileSlot = form.querySelector('[data-file]');
+    if (fileSlot) {
+      // 주보: 앞면·뒷면 등 여러 장, 기존 사진은 모두 미리보기
+      const currentImages = item.images && item.images.length ? item.images : (item.image ? [item.image] : []);
+      fb = fileBox({ maxSide: 2000, quality: 0.85, multiple: true, current: currentImages, allowRemove: false });
+      fileSlot.replaceWith(fb.el);
+    }
+    const val = (k) => { const el = form.querySelector(`[data-k="${k}"]`); return el ? el.value.trim() : ''; };
+
+    form.querySelector('[data-cancel]').addEventListener('click', renderList);
+    form.querySelector('[data-save]').addEventListener('click', async () => {
+      const title = val('title');
+      if (!title) { alert(section === 'schedule' ? '일정 이름을 적어주세요.' : '제목을 적어주세요.'); return; }
+      let date;
+      if (section === 'notices') {
+        date = val('date');
+        if (!date) { alert('날짜(또는 문구)를 적어주세요.'); return; }
+      } else if (section === 'schedule') {
+        date = val('date');
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) { alert('날짜를 골라주세요.'); return; }
+      } else {
+        date = isoToDots(val('date'));
+        if (!date) { alert('날짜를 골라주세요.'); return; }
+      }
+
+      busy('저장하는 중입니다… (사진이 있으면 조금 걸립니다)');
+      try {
+        const blobs = [];
+        const uploaded = [];
+        if (fb) {
+          for (let i = 0; i < fb.state.pending.length; i++) {
+            $('busyText').textContent = `사진 올리는 중… (${i + 1}/${fb.state.pending.length})`;
+            const u = await uploadImage(fb.state.pending[i].base64);
+            blobs.push(u); uploaded.push(u.path);
+          }
+        }
+        const items = (data.items || []).slice();
+        if (section === 'notices') {
+          const n = { tag: val('tag'), title, date, body: val('body') };
+          if (isNew) items.unshift(n); else items[index] = n;
+        } else if (section === 'bulletins') {
+          const images = uploaded.length ? uploaded : (item.images && item.images.length ? item.images : (item.image ? [item.image] : []));
+          const b = { date, title, image: images[0] || '', images };
+          if (isNew) items.unshift(b); else items[index] = b;
+        } else if (section === 'schedule') {
+          const s = { date, title, time: val('time'), place: val('place') };
+          if (isNew) items.push(s); else items[index] = s;
+        }
+        unbusy();
+        await saveContent({ items }, blobs);
+      } catch (err) {
+        unbusy();
+        setStatus('err', '저장 실패: ' + err.message);
+      }
+    });
+  }
+
+  // ---------- 접속 시 팝업 ----------
+  function renderAnnounceForm() {
+    const body = $('sectionBody');
+    const a = data || {};
+    const form = document.createElement('div');
+    form.className = 'form';
+    form.innerHTML = `
+      <div class="note">홈페이지에 처음 들어올 때 뜨는 안내창입니다. "팝업 켜기"를 끄면 안 뜹니다. 사진만 올리고 내용은 비워둬도 됩니다.</div>
+      <label class="switch"><input type="checkbox" data-k="active" ${a.active ? 'checked' : ''}> 팝업 켜기</label>
+      <label class="f">제목</label><input type="text" data-k="title" value="${esc(a.title || '')}" maxlength="120">
+      <label class="f">내용 <small>없어도 됩니다</small></label><textarea data-k="text">${esc(a.text || '')}</textarea>
+      <label class="f">사진 <small>없어도 됩니다</small></label><div data-file></div>
+      <div class="actions"><button type="button" class="btn" data-save>저장</button></div>`;
+    body.innerHTML = '';
+    body.appendChild(form);
+    const fb = fileBox({ multiple: false, current: a.image || '', maxSide: 1200, quality: 0.82, allowRemove: true });
+    form.querySelector('[data-file]').replaceWith(fb.el);
+    form.querySelector('[data-save]').addEventListener('click', async () => {
+      const title = form.querySelector('[data-k="title"]').value.trim();
+      const text = form.querySelector('[data-k="text"]').value.trim();
+      const active = form.querySelector('[data-k="active"]').checked;
+      if (active && !title) { alert('제목을 적어주세요.'); return; }
+      busy('저장하는 중입니다…');
+      try {
+        const blobs = [];
+        let image = fb.state.removed ? '' : (a.image || '');
+        if (fb.state.pending.length) {
+          const u = await uploadImage(fb.state.pending[0].base64);
+          blobs.push(u); image = u.path;
+        }
+        if (active && !text && !image) { unbusy(); alert('내용이나 사진 중 하나는 있어야 합니다.'); return; }
+        unbusy();
+        await saveContent({ active, title, text, image }, blobs);
+      } catch (err) {
+        unbusy();
+        setStatus('err', '저장 실패: ' + err.message);
+      }
+    });
+  }
+
+  // ---------- 알림 보내기 ----------
+  function renderPush() {
+    const body = $('sectionBody');
+    body.innerHTML = `
+      <div class="form">
+        <div class="note">여기서 보내면 "알림 받기"를 켠 신자분들 휴대폰에 알림이 가고, 홈페이지 알림함에도 남습니다. 취소할 수 없으니 내용을 한 번 더 확인해주세요.</div>
+        <label class="f">제목</label><input type="text" id="pushTitle" maxlength="60" placeholder="예: 이번 주 미사 시간 변경 안내">
+        <label class="f">내용</label><textarea id="pushBody" maxlength="500" placeholder="알림에 보여줄 내용을 적어주세요."></textarea>
+        <div class="actions"><button type="button" class="btn" id="pushSendBtn">🔔 발송하기</button></div>
+      </div>`;
+    $('pushSendBtn').addEventListener('click', async () => {
+      const title = $('pushTitle').value.trim();
+      const text = $('pushBody').value.trim();
+      if (!title || !text) { alert('제목과 내용을 모두 적어주세요.'); return; }
+      if (!confirm(`정말 보낼까요?\n\n[${title}]\n${text}`)) return;
+      busy('알림을 보내는 중입니다…');
+      try {
+        const res = await apiJson('send-push', { title, body: text });
+        $('pushTitle').value = ''; $('pushBody').value = '';
+        setStatus('ok', res.message || '발송 완료');
+      } catch (err) {
+        setStatus('err', '발송 실패: ' + err.message);
+      } finally { unbusy(); }
+    });
+  }
+
+  // ---------- 관리자 명단 (대표 관리자만) ----------
+  async function renderAdmins() {
+    const body = $('sectionBody');
+    body.innerHTML = `
+      <div class="form">
+        <div class="note">여기에 적힌 구글(지메일) 계정만 이 관리 화면을 쓸 수 있습니다. 대표 관리자(${esc(OWNER_EMAIL)})는 항상 포함됩니다.</div>
+        <label class="f">관리자 추가 <small>지메일 주소</small></label>
+        <div class="row"><input type="email" id="adminEmail" placeholder="example@gmail.com"><button type="button" class="btn btn--sm" id="adminAddBtn">추가</button></div>
+        <label class="f" style="margin-top:24px;">현재 관리자</label>
+        <div class="list" id="adminList"></div>
+      </div>`;
+    async function load() {
+      const snap = await db.collection('admins').get();
+      const list = $('adminList');
+      const emails = snap.docs.map((d) => d.id).sort();
+      list.innerHTML = emails.length ? '' : '<div class="empty" style="padding:16px 0;">아직 추가한 관리자가 없습니다.</div>';
+      emails.forEach((email) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<div class="main"><div class="title">${esc(email)}</div></div><div class="acts"><button type="button" class="btn btn--danger btn--sm">삭제</button></div>`;
+        card.querySelector('button').addEventListener('click', async () => {
+          if (!confirm(`${email} 님을 관리자에서 뺄까요?`)) return;
+          await db.collection('admins').doc(email).delete();
+          load();
+        });
+        list.appendChild(card);
+      });
+    }
+    $('adminAddBtn').addEventListener('click', async () => {
+      const email = $('adminEmail').value.trim().toLowerCase();
+      if (!/^[^\s@/]+@[^\s@/]+\.[^\s@/]+$/.test(email)) { alert('이메일 주소를 정확히 적어주세요.'); return; }
+      try {
+        await db.collection('admins').doc(email).set({ addedAt: firebase.firestore.FieldValue.serverTimestamp(), addedBy: currentUser.email });
+        $('adminEmail').value = '';
+        setStatus('ok', email + ' 님을 관리자로 추가했습니다. 이제 그분이 구글 로그인하면 바로 쓸 수 있습니다.');
+        load();
+      } catch (err) {
+        setStatus('err', '추가 실패: ' + err.message + '\n(Firestore 규칙에 admins 권한이 설정되어 있는지 확인하세요)');
+      }
+    });
+    try { await load(); } catch (err) { setStatus('err', '명단 불러오기 실패: ' + err.message); }
+  }
+})();
+</script>
+</body>
+</html>

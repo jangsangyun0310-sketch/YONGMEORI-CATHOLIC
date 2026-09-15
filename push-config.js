@@ -14,3 +14,12 @@ window.FIREBASE_CONFIG = {
 
 // Firebase 콘솔 > 프로젝트 설정 > 클라우드 메시징 > 웹 구성 > "웹 푸시 인증서" 에서 키 쌍을 생성하면 나오는 값
 window.FIREBASE_VAPID_KEY = "BI1DV79Cf0IWsK8WTwVFRPk_RMyKamlbmNIOmJOTM3wtGAoRKAc8XToR6UfvuHu_FFD3nCA4HC8cS2meAGRxT-c";
+
+// 대표 관리자 구글 계정. 이 계정은 Firestore admins 명단에 없어도 항상 관리자로 취급되며,
+// 관리자 페이지에서 다른 관리자를 추가·삭제할 수 있는 유일한 계정이다.
+window.SITE_OWNER_EMAIL = "jangsangyun0310@gmail.com";
+
+// 관리자 페이지 주소. 홈페이지는 GitHub Pages 주소를 그대로 쓰고(홈 화면 설치 링크가 바뀌지 않도록),
+// 저장·사진 업로드·알림 발송 같은 서버 기능이 필요한 관리자 페이지만 Cloudflare Pages에서 돌아간다.
+// docs/관리자-설정-안내.md 의 B단계에서 만든 프로젝트 이름과 같아야 한다.
+window.ADMIN_URL = "https://yongmeori-catholic.pages.dev/admin/";

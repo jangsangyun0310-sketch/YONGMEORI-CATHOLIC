@@ -1,0 +1,32 @@
+// Firestore 보안 규칙 — Firebase 콘솔 > Firestore Database > 규칙 탭에 이 파일 내용을 통째로 붙여넣고 "게시"
+//
+// - push_tokens   : 알림 구독 토큰. 홈페이지가 로그인 없이 저장/삭제한다 (읽기는 서버 함수만).
+// - announcements : 알림함 목록. 누구나 읽고, 쓰기는 서버(관리자 페이지의 알림 발송)만.
+// - admins        : 관리자 명단. 문서 ID = 구글 이메일. 본인 것만 확인 가능, 추가/삭제는 대표 관리자만.
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner() {
+      return request.auth != null
+        && request.auth.token.email == 'jangsangyun0310@gmail.com';
+    }
+
+    match /push_tokens/{token} {
+      allow read: if false;
+      allow create, update, delete: if true;
+    }
+
+    match /announcements/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /admins/{email} {
+      allow get: if isOwner()
+        || (request.auth != null && request.auth.token.email == email);
+      allow list: if isOwner();
+      allow write: if isOwner();
+    }
+  }
+}
