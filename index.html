@@ -1306,6 +1306,24 @@
   </div>
 </div>
 
+<!-- 링크를 처음 받고 들어온 신자에게 한 번만 뜨는 환영 + 바로가기 설치 안내 팝업 -->
+<div class="info-modal" id="welcomeInstallModal">
+  <div class="info-modal-inner">
+    <div class="info-modal-head">
+      <h3>용머리성당 홈페이지에 오신 것을 환영합니다</h3>
+      <button class="info-modal-close" data-close="welcomeInstallModal" aria-label="닫기">✕</button>
+    </div>
+    <div class="info-modal-body">
+      <p class="install-guide-lead">지금 <strong>"설치하기"</strong>를 한 번만 눌러두시면, 다음부터는 휴대폰 화면의 아이콘만 눌러도 이 홈페이지로 바로 들어올 수 있어요.</p>
+      <div class="push-optin-actions">
+        <button type="button" class="btn btn-primary" id="welcomeInstallYes">설치하기</button>
+        <button type="button" class="btn btn-ghost" id="welcomeInstallNo">다음에 할게요</button>
+      </div>
+      <p class="install-guide-note">설치해도 용량을 차지하지 않고, 언제든 지울 수 있어요.</p>
+    </div>
+  </div>
+</div>
+
 <!-- 앱을 설치 후 처음 열었을 때 한 번만 자동으로 물어보는 알림 수신 동의 팝업 -->
 <div class="info-modal" id="pushOptInModal">
   <div class="info-modal-inner">
@@ -1519,7 +1537,7 @@
       openInfoModal('installModal');
     }
 
-    installBtn.addEventListener('click', async () => {
+    async function triggerInstall(){
       if (deferredPrompt) {
         deferredPrompt.prompt();
         const choice = await deferredPrompt.userChoice;
@@ -1541,6 +1559,49 @@
         return;
       }
       showInstallGuide();
+    }
+
+    installBtn.addEventListener('click', triggerInstall);
+    // 환영 팝업의 "설치하기" 버튼에서도 같은 설치 흐름을 그대로 재사용할 수 있도록 노출해둔다
+    window.__triggerInstall = triggerInstall;
+  })();
+
+  // 링크를 처음 받고 들어온 신자를 위한 환영 + 설치 안내 팝업 — 한 번만 보여주고 다시 뜨지 않는다
+  (function(){
+    const modal = document.getElementById('welcomeInstallModal');
+    if (!modal) return;
+
+    const alreadyInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (alreadyInstalled) return;
+
+    const SHOWN_KEY = 'yongmeori-welcome-install-shown';
+    if (localStorage.getItem(SHOWN_KEY)) return;
+
+    document.getElementById('welcomeInstallYes').addEventListener('click', () => {
+      closeInfoModal('welcomeInstallModal');
+      if (window.__triggerInstall) window.__triggerInstall();
+    });
+    document.getElementById('welcomeInstallNo').addEventListener('click', () => {
+      closeInfoModal('welcomeInstallModal');
+    });
+
+    function maybeShow(){
+      if (localStorage.getItem(SHOWN_KEY)) return;
+      localStorage.setItem(SHOWN_KEY, '1');
+      openInfoModal('welcomeInstallModal');
+    }
+
+    // 오늘의 공지 팝업이 뜰 차례라면, 겹치지 않도록 그 팝업이 닫힌 뒤에 띄운다
+    Promise.resolve(window.__announceReady).then(() => {
+      const announceModal = document.getElementById('announceModal');
+      if (announceModal && announceModal.classList.contains('open')) {
+        const obs = new MutationObserver(() => {
+          if (!announceModal.classList.contains('open')) { obs.disconnect(); maybeShow(); }
+        });
+        obs.observe(announceModal, { attributes: true, attributeFilter: ['class'] });
+      } else {
+        maybeShow();
+      }
     });
   })();
 
