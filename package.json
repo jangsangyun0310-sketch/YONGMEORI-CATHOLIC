@@ -1,11 +1,19 @@
 {
-  "name": "yongmeori-push-admin",
+  "name": "yongmeori-catholic",
   "private": true,
-  "description": "용머리성당 홈페이지 — 웹 푸시 알림 발송용 관리 스크립트 (사이트 자체는 정적 파일이라 별도 빌드가 필요 없습니다)",
+  "description": "용머리성당 홈페이지 — Cloudflare Workers + D1",
+  "type": "module",
   "scripts": {
-    "send-push": "node scripts/send-push.js"
+    "dev": "wrangler dev",
+    "deploy": "wrangler d1 migrations apply DB --remote && wrangler deploy",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "check": "node --check src/worker.js",
+    "test": "node --test tests/*.test.mjs",
+    "test:browser": "node tests/browser.mjs"
   },
-  "dependencies": {
-    "firebase-admin": "^12.6.0"
+  "devDependencies": {
+    "playwright": "^1.63.0",
+    "wrangler": "^4.136.3"
   }
 }

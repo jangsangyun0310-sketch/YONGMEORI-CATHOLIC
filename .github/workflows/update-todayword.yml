@@ -1,37 +1,22 @@
 name: 오늘의 말씀 자동 갱신
 
+# 매일 자정(한국 시간)에 홈페이지 서버를 불러, 서버가 가톨릭굿뉴스에서 오늘의 말씀을 읽어 D1에 저장하게 한다.
+# (예전처럼 index.html을 고쳐 커밋하지 않으므로 매일 사이트를 다시 배포하지 않는다)
+# 서버가 값을 확실히 읽지 못하면 오류로 끝나고, 그러면 GitHub가 실패 메일을 보내준다.
 on:
   schedule:
     # 15:00 UTC = 00:00 KST
     - cron: '0 15 * * *'
   workflow_dispatch: {}
 
-permissions:
-  contents: write
-
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: 가톨릭굿뉴스에서 오늘의 말씀 가져와 반영
-        run: node .github/scripts/update-todayword.js
-
-      - name: 변경 사항 커밋 & 푸시
+      - name: 서버에 오늘의 말씀 갱신 요청
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          if git diff --quiet -- index.html; then
-            echo "No change, skipping commit."
-            exit 0
-          fi
-          git config user.name "todayword-bot"
-          git config user.email "actions@users.noreply.github.com"
-          git add index.html
-          git commit -m "오늘의 말씀 자동 갱신: $(date -u -d '+9 hours' +'%Y.%m.%d')
-
-          자동화된 커밋입니다 (매일 00:00 KST, GitHub Actions)"
-          git push
+          curl --fail-with-body --silent --show-error --retry 3 --retry-delay 20 --retry-all-errors \
+            -X POST -H "Authorization: Bearer ${CRON_SECRET}" \
+            https://yongmeori-catholic.jangsangyun0310.workers.dev/api/cron/todayword

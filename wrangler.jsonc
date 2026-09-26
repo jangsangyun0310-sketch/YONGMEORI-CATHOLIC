@@ -1,0 +1,27 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "yongmeori-catholic",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-09-25",
+  "workers_dev": true,
+  // 화면 파일은 public/ 폴더만 공개한다 (src/, migrations/, 비밀 파일 등은 절대 공개되지 않음)
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "yongmeori-church",
+      "database_id": "c4a95d58-6c86-41a0-b176-3c4b320c49ed",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {
+    "GITHUB_REPO": "jangsangyun0310-sketch/YONGMEORI-CATHOLIC",
+    "GITHUB_BRANCH": "main",
+    "OWNER_EMAIL": "jangsangyun0310@gmail.com"
+  },
+  "observability": { "enabled": true }
+}
