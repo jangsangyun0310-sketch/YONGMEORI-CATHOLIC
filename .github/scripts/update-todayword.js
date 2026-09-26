@@ -37,7 +37,7 @@ async function main() {
 
   // B) today's Gospel quote, book, and citation
   const gospelMatch = html.match(
-    /&lt;([^&]+?)&gt;<br>[^\s]*\s*([가-힣]+?)(?:이|가) 전한 거룩한 복음입니다\.([0-9]+,[0-9,\-.]+)<br>/
+    /&lt;([^&]+?)&gt;<br>[^\s]*\s*([가-힣]+?)(?:이|가) 전한 거룩한 복음입니다\.([0-9]+,[0-9,\-.ㄱ-ㅎ]+)<br>/
   );
   if (!gospelMatch) fail('could not find the Gospel quote/citation pattern');
   const [, quoteRaw, book, citation] = gospelMatch;
