@@ -101,7 +101,7 @@
 - [ ] 새로 올라가는 공지/팝업/본당 일정 텍스트는 게시 전 한글 맞춤법·띄어쓰기 자동 점검 (메모리 `proofread-korean-text-before-posting` 적용)
 - [x] GitHub 토큰(`yongmeori-worker`, 이 저장소 Contents 읽기/쓰기만) 만들어 Worker 비밀값 `GITHUB_TOKEN`에 넣기 — 2026-09-26 사용자와 함께 완료
 - [x] Workers 자동 배포 연결 (main, Deploy command `npx wrangler deploy`) — 2026-09-26 완료. D1 표 구조 변경은 `npm run db:migrate:remote`로 따로 적용
-- [ ] **사용자와 함께: 카카오 개발자 사이트에 새 도메인 등록** — 등록 전까지 지도 칸이 회색 (docs C항목)
+- [x] 카카오 개발자 사이트에 새 도메인 등록 (앱 → 플랫폼 키 → JavaScript 키 → JavaScript SDK 도메인) — 2026-09-26 완료, 실제 사이트에서 지도·핀 표시 확인. 이 앱은 "카카오맵 무료 쿼터" 상태
 - [ ] 실사용 확인(구글 로그인·사진 올리기·자동 배포) 후 정리: GitHub Pages 끄기, 예전 Cloudflare Pages `yongmeori-catholic.pages.dev` 삭제, Firebase 승인 도메인에서 `pages.dev`·`github.io` 제거, 예전 classic 토큰 `yongmeori admin` 삭제
 - [ ] 홈 화면에 예전 주소(github.io)로 설치한 사람이 있으면 새 주소로 다시 설치해야 함 (운영 전이라 영향 적음)
 - [ ] 완료된 변경 사항은 항상 자동으로 커밋 + 푸시 (메모리 `always-commit-and-push`)
