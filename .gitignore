@@ -1,4 +1,5 @@
-.claude/
+.claude/*
+!.claude/settings.json
 .github/scripts/auto-pull.log
 node_modules/
 .wrangler/
