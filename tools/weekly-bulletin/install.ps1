@@ -1,6 +1,8 @@
-# 주보 자동 올림을 윈도우 작업 스케줄러에 등록 (이 컴퓨터에서 한 번만 실행)
-#   매주 금요일 18:00 올림, 토요일 10:00 다시 확인(금요일에 컴퓨터가 꺼져 있었거나 주보를 고친 경우)
-#   놓친 시간은 컴퓨터를 켜면 바로 실행. 지우려면: Unregister-ScheduledTask -TaskName '용머리 주보 자동 올림'
+# Register the weekly bulletin upload in Windows Task Scheduler (run once on this computer).
+#   Fri 18:00 upload, Sat 10:00 re-check (if the PC was off on Friday or the bulletin was edited).
+#   Missed runs start when the PC is turned on. To remove: Unregister-ScheduledTask -TaskName 'YongmeoriBulletinWeekly'
+# NOTE: keep this file ASCII-only. Windows PowerShell 5.1 reads BOM-less UTF-8 as ANSI and breaks Korean text.
+$name = 'YongmeoriBulletinWeekly'
 $script = Join-Path $PSScriptRoot 'weekly.ps1'
 $action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$script`""
 $triggers = @(
@@ -8,5 +10,5 @@ $triggers = @(
   (New-ScheduledTaskTrigger -Weekly -DaysOfWeek Saturday -At '10:00')
 )
 $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit (New-TimeSpan -Hours 1)
-Register-ScheduledTask -TaskName '용머리 주보 자동 올림' -Action $action -Trigger $triggers -Settings $settings -Force | Out-Null
-Get-ScheduledTask -TaskName '용머리 주보 자동 올림' | Get-ScheduledTaskInfo | Select-Object TaskName, NextRunTime
+Register-ScheduledTask -TaskName $name -Description 'Yongmeori Catholic Church: weekly bulletin auto upload' -Action $action -Trigger $triggers -Settings $settings -Force | Out-Null
+Get-ScheduledTask -TaskName $name | Get-ScheduledTaskInfo | Select-Object TaskName, NextRunTime
