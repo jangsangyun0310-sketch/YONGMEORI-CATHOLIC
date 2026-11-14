@@ -3,6 +3,7 @@
 #  2) 한글 2020으로 쪽마다 그림을 만든다
 #  3) 원칙(2026-11-14 사용자): 앞뒷면은 모두 보여 준다. 양면 인쇄 때문에 같은 내용이 반복된 쪽만 뺀다
 #  4) 그림을 저장소에 commit·push → 배포 확인 → D1(bulletins, bulletin_images)에 넣는다
+#  5) 주보 글에 나온 일정을 홈페이지 본당 일정에 넣는다(schedule.mjs, 이미 있는 일정은 건너뜀)
 # 수동 실행 예: powershell -ExecutionPolicy Bypass -File weekly.ps1 -Date 2026.11.22 -DryRun
 param([string]$Date, [switch]$DryRun, [switch]$Force)
 
@@ -179,7 +180,7 @@ function Get-Title([string]$text, [string]$dateStr) {
 }
 
 # ---------- git (별도 작업 폴더: 사용자가 작업 중인 저장소는 건드리지 않음) ----------
-function Git { & git @args; if ($LASTEXITCODE -ne 0) { throw "git $($args -join ' ') 실패" } }
+function Git { & git.exe @args; if ($LASTEXITCODE -ne 0) { throw "git $($args -join ' ') 실패" } }
 function Prep-Worktree([int]$year) {
   if (-not (Test-Path "$Wt\.git")) {
     Git -C $Repo fetch -q origin
@@ -193,7 +194,7 @@ function Prep-Worktree([int]$year) {
 function Push-Worktree([string]$msg) {
   Git -C $Wt commit -q -m $msg
   for ($i = 0; $i -lt 3; $i++) {
-    & git -C $Wt push -q origin HEAD:main
+    & git.exe -C $Wt push -q origin HEAD:main
     if ($LASTEXITCODE -eq 0) { return }
     Start-Sleep 5; Git -C $Wt pull -q --rebase origin main   # 그사이 관리자 페이지가 올린 커밋이 있으면 위에 얹는다
   }
@@ -241,7 +242,11 @@ function Process([datetime]$d, $state) {
   if (-not $f) { Log "$ds 주보 파일 없음"; return }
   $mt = $f.LastWriteTime.ToString('s')
   $prev = $state[$ds]
-  if (-not $Force -and $prev -and $prev.file -eq $f.FullName -and $prev.mtime -eq $mt) { Log "$ds 이미 올림(바뀐 것 없음): $($f.Name)"; return }
+  if (-not $Force -and $prev -and $prev.file -eq $f.FullName -and $prev.mtime -eq $mt) {
+    # 주보는 올렸는데 일정 등록만 실패했으면(예: 인터넷 끊김) 일정만 다시
+    if (-not $prev.sched -and (Test-Path "$Data\text\$ds.txt")) { Add-Schedule $ds $state; return }
+    Log "$ds 이미 올림(바뀐 것 없음): $($f.Name)"; return
+  }
 
   Log "$ds 처리 시작: $($f.Name) (수정 $mt)"
   $rd = "$Tmp\render"; New-Item -ItemType Directory -Force $rd | Out-Null
@@ -257,18 +262,24 @@ function Process([datetime]$d, $state) {
     $n++; $rel = "images/uploads/$($d.Year)/bulletin-$ymd-$n.jpg"
     Save-Jpg $pg "$outRoot\$($rel -replace '/', '\')"; $pg.Dispose(); $rels += $rel
   }
-  if ($DryRun) { Log "$ds [미리보기] $($rels -join ', ') → $outRoot"; return }
+  New-Item -ItemType Directory -Force "$Data\text" | Out-Null
+  [IO.File]::WriteAllText("$Data\text\$ds.txt", $r.text, (New-Object Text.UTF8Encoding $false))
+  if ($DryRun) { Log "$ds [미리보기] $($rels -join ', ') → $outRoot"; Add-Schedule $ds $state; return }
 
   # 홈페이지에 이미 이 날짜 주보가 있는지 (관리자 페이지로 직접 올린 것은 건드리지 않음)
-  $ex = D1-Query "SELECT id FROM bulletins WHERE date=$(Q $ds) ORDER BY id"
-  if ($ex.Count -gt 0 -and -not $prev) { Log "$ds 홈페이지에 이미 있음(직접 올린 것) → 건너뜀"; Git -C $Wt reset -q --hard origin/main; return }
+  $ex = @(D1-Query "SELECT id FROM bulletins WHERE date=$(Q $ds) ORDER BY id")  # @( ): 한 줄 결과도 배열로(PS 5.1은 한 개짜리 .Count가 없음)
+  if ($ex.Count -gt 0 -and (-not $prev -or $prev.manual)) {
+    Log "$ds 홈페이지에 이미 있음(직접 올린 것) → 주보 그림은 건너뜀, 일정만 확인"; Git -C $Wt reset -q --hard origin/main
+    $state[$ds] = @{ file = $f.FullName; mtime = $mt; manual = $true; at = (Get-Date).ToString('s'); sched = $false }
+    Save-State $state; Add-Schedule $ds $state; return
+  }
 
   for ($k = $rels.Count + 1; $k -le 3; $k++) {   # 지난번보다 쪽이 줄었으면 남은 그림 삭제
     $old = "public/images/uploads/$($d.Year)/bulletin-$ymd-$k.jpg"
     if (Test-Path "$Wt\$($old -replace '/', '\')") { Git -C $Wt rm -q $old }
   }
   Git -C $Wt add -- ($rels | ForEach-Object { "public/$_" })
-  & git -C $Wt diff --cached --quiet
+  & git.exe -C $Wt diff --cached --quiet
   if ($LASTEXITCODE -ne 0) {
     Push-Worktree "주보 자동 올림: $ds $title"
     $last = "$Wt\public\$($rels[-1] -replace '/', '\')"
@@ -292,9 +303,26 @@ function Process([datetime]$d, $state) {
   $api = Invoke-RestMethod "$Site/api/home" -Headers @{ 'Cache-Control' = 'no-cache' }
   $b = @($api.bulletins) | Where-Object { $_.date -eq $ds } | Select-Object -First 1
   if (-not $b -or @($b.images).Count -ne $rels.Count) { throw "$ds 홈페이지 확인 실패" }
-  $state[$ds] = @{ file = $f.FullName; mtime = $mt; title = $title; images = $rels; at = (Get-Date).ToString('s') }
+  $state[$ds] = @{ file = $f.FullName; mtime = $mt; title = $title; images = $rels; at = (Get-Date).ToString('s'); sched = $false }
   Save-State $state
   Log "$ds 올림 완료: $title ($($rels.Count)장)"
+  Add-Schedule $ds $state
+}
+
+# ---------- 주보에 나온 일정 → 홈페이지 본당 일정 (schedule.mjs, 2026-11-14 사용자 요청) ----------
+function Add-Schedule([string]$ds, $state) {
+  $args2 = @("$PSScriptRoot\schedule.mjs", '--text', "$Data\text\$ds.txt", '--date', $ds, '--state', "$Data\schedule.json")
+  if ($DryRun) { $args2 += '--dry' }
+  $old = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+  $out = & node @args2 2>&1 | Where-Object { "$_" -notmatch 'DeprecationWarning|trace-deprecation' }
+  $code = $LASTEXITCODE; $ErrorActionPreference = $old
+  foreach ($l in $out) { Log "$ds 일정: $l" }
+  if ($code -ne 0) { throw "$ds 일정 자동 등록 실패(주보는 올라감, 다음 실행 때 다시 시도)" }
+  if (-not $DryRun -and $state[$ds]) {
+    $s = $state[$ds]
+    if ($s -is [hashtable]) { $s.sched = $true } else { $s | Add-Member -Force sched $true }
+    Save-State $state
+  }
 }
 
 # ---------- 시작 ----------
