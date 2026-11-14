@@ -25,7 +25,7 @@
   - 이번 주일 주보는 **금요일 18시부터** 올림(작성 중 초안 방지, 사용자 결정). 지난 주일 것을 못 올렸으면 같이 올림. 같은 파일을 고치면 다시 올림. 관리자 페이지로 직접 올린 날짜는 건드리지 않음
   - 양면 인쇄용 반복 쪽 판별: 1쪽 위·아래 절반과 2쪽 아래·위 절반을 위아래로 밀어 가며 비교(차이 0.05 미만이면 같은 쪽). 시험: 2025.11.16(0.02·0.03 → 1쪽만), 2026.11.15(0 → 1쪽만), 2024.07.07·2023.11.19(0.10 이상 → 앞뒷면 2장) 모두 맞음
   - 미리보기: `powershell -ExecutionPolicy Bypass -File tools\weekly-bulletin\weekly.ps1 -Date 2026.11.22 -DryRun`
-- [ ] **사용자가 할 일:** 작업 스케줄러 등록 — 저장소 폴더에서 `powershell -ExecutionPolicy Bypass -File tools\weekly-bulletin\install.ps1` 한 번 실행 (매주 금 18:00, 토 10:00. Claude는 권한이 막혀 등록하지 못함)
+- [x] 작업 스케줄러 등록 완료(2026-11-14, 사용자): 작업 이름 `YongmeoriBulletinWeekly`, 매주 금 18:00·토 10:00, 첫 실행 2026-11-20 18:00. 지우려면 PowerShell에서 `Unregister-ScheduledTask -TaskName YongmeoriBulletinWeekly`
 
 ### 2026-11-13 예전 주보(2010~2026) 750호 + 행사 사진 앨범 143개 올림 (사용자 요청, 사용자 자리 비운 동안 진행)
 - **주보 원본:** `F:\1BONA\8용머리까치\연도년까치\` 폴더 바로 안의 한글 파일(.hwp/.hwpx) 1,091개. 하위 폴더(월보 시안·백업)는 제외
