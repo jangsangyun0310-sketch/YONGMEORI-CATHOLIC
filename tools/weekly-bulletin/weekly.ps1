@@ -250,8 +250,9 @@ function Wait-Deployed([string]$rel, [long]$size) {
   for ($i = 0; $i -lt 40; $i++) {
     Start-Sleep 15
     try {
-      $r = Invoke-WebRequest "$Site/$rel" -Method Head -UseBasicParsing -Headers @{ 'Cache-Control' = 'no-cache' }
-      if ([long]$r.Headers['Content-Length'] -eq $size) { return }
+      # HEAD는 캐시된 응답(CF-Cache-Status: HIT)에 Content-Length가 없어 끝까지 못 알아봄(2026-11-21) → 받아서 크기 비교
+      $r = Invoke-WebRequest "$Site/$rel" -UseBasicParsing -Headers @{ 'Cache-Control' = 'no-cache' }
+      if ([long]$r.RawContentLength -eq $size) { return }
     } catch {}
   }
   throw "배포 확인 시간 초과: $rel"
