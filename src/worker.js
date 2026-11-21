@@ -31,7 +31,7 @@ async function listSchedule(db) {
 
 async function listBulletins(db) {
   const [b, imgs] = await db.batch([
-    db.prepare('SELECT id, date, title FROM bulletins ORDER BY date DESC, id DESC'),
+    db.prepare('SELECT id, date, title, kind FROM bulletins ORDER BY date DESC, id DESC'),
     db.prepare('SELECT bulletin_id, path FROM bulletin_images ORDER BY bulletin_id, position'),
   ]);
   const byId = new Map(b.results.map((r) => [r.id, { ...r, images: [] }]));
@@ -70,7 +70,7 @@ async function getAlbum(db, id) {
 
 async function getBulletin(db, id) {
   const [b, imgs] = await db.batch([
-    db.prepare('SELECT id, date, title FROM bulletins WHERE id = ?').bind(id),
+    db.prepare('SELECT id, date, title, kind FROM bulletins WHERE id = ?').bind(id),
     db.prepare('SELECT path FROM bulletin_images WHERE bulletin_id = ? ORDER BY position').bind(id),
   ]);
   if (!b.results.length) return null;
@@ -199,18 +199,19 @@ async function handleAdmin(request, env, url, route) {
     const date = dotDate(p.date);
     const title = str(p.title, 120);
     if (!title) throw new HttpError(400, '제목을 적어주세요.');
-    const images = readPaths(p.images, 20);
+    const images = readPaths(p.images, 40);
+    const kind = p.kind === 'monthly' ? 'monthly' : 'weekly'; // 용머리 까치 월보는 monthly
     const id = idMatch('bulletins');
     const old = id ? await getBulletin(db, id) : { images: [] };
     if (!old) throw new HttpError(404, '이미 삭제된 주보입니다.');
     await syncPhotos(env, me.email, '주보', { blobs: readBlobs(p.blobs), newPaths: images, oldPaths: old.images, exclude: { kind: 'bulletin', id: id || -1 } });
     const stmts = [];
     if (id) {
-      stmts.push(db.prepare(`UPDATE bulletins SET date = ?, title = ?, updated_at = ${NOW} WHERE id = ?`).bind(date, title, id));
+      stmts.push(db.prepare(`UPDATE bulletins SET date = ?, title = ?, kind = ?, updated_at = ${NOW} WHERE id = ?`).bind(date, title, kind, id));
       stmts.push(db.prepare('DELETE FROM bulletin_images WHERE bulletin_id = ?').bind(id));
       images.forEach((path, i) => stmts.push(db.prepare('INSERT INTO bulletin_images (bulletin_id, path, position) VALUES (?, ?, ?)').bind(id, path, i)));
     } else {
-      stmts.push(db.prepare('INSERT INTO bulletins (date, title) VALUES (?, ?)').bind(date, title));
+      stmts.push(db.prepare('INSERT INTO bulletins (date, title, kind) VALUES (?, ?, ?)').bind(date, title, kind));
       // 한 번에 묶어 실행(batch)하는 동안에는 다른 쓰기가 끼어들지 않으므로 방금 넣은 주보 번호가 max(id)다
       images.forEach((path, i) => stmts.push(db.prepare('INSERT INTO bulletin_images (bulletin_id, path, position) VALUES ((SELECT max(id) FROM bulletins), ?, ?)').bind(path, i)));
     }

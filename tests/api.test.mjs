@@ -121,6 +121,18 @@ test('주보: 사진을 커밋하고, 사진을 바꾸면 빠진 사진은 저�
 
   const home = await call('/api/home');
   assert.deepEqual(home.data.bulletins[0].images, [c.path]);
+  assert.equal(home.data.bulletins[0].kind, 'weekly', '종류를 안 보내면 주보');
+});
+
+test('월보: 종류(monthly)로 저장하고, 고칠 때 종류를 바꿀 수 있다', async () => {
+  const m = await upload('monthly-a');
+  const created = await call('/api/admin/bulletins', { token: 'owner-token', method: 'POST', body: { date: '2022.05.01', title: '2022년 5월호', kind: 'monthly', images: [m.path], blobs: [m] } });
+  assert.equal(created.status, 200, JSON.stringify(created.data));
+  const item = created.data.items.find((b) => b.title === '2022년 5월호');
+  assert.equal(item.kind, 'monthly');
+  const changed = await call(`/api/admin/bulletins/${item.id}`, { token: 'owner-token', method: 'PUT', body: { date: '2022.05.01', title: '2022년 5월호', kind: 'weekly', images: [m.path], blobs: [] } });
+  assert.equal(changed.data.items.find((b) => b.id === item.id).kind, 'weekly');
+  await call(`/api/admin/bulletins/${item.id}`, { token: 'owner-token', method: 'DELETE' });
 });
 
 test('사진 정보 위조 방지: 올리지 않은 업로드 경로는 거부한다', async () => {

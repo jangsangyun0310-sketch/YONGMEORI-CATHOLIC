@@ -709,6 +709,13 @@
     background:var(--paper-2); border:1px solid var(--line); border-radius:6px; padding:24px 28px; margin-bottom:36px;
   }
   .bulletin-latest h3{font-size:19px; margin:4px 0 8px;}
+  .bulletin-kind-tabs{display:flex; gap:0; margin-bottom:18px; border-bottom:1px solid var(--line);}
+  .bulletin-kind-tabs[hidden]{display:none;}
+  .kind-tab{
+    padding:10px 18px 11px; font-size:15px; font-weight:600; color:var(--ink-soft); background:none; border:0;
+    border-bottom:3px solid transparent; margin-bottom:-1px; cursor:pointer;
+  }
+  .kind-tab.active{color:var(--wine); border-bottom-color:var(--wine);}
   .bulletin-year-tabs{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px;}
   .year-tab{
     padding:8px 16px; font-size:13.5px; font-weight:600; color:var(--ink-soft);
@@ -1079,6 +1086,10 @@
     <div id="bulletin" style="margin-top:44px; padding-top:36px; border-top:1px solid var(--line);">
       <div class="bulletin-latest" id="bulletinLatest"></div>
 
+      <div class="bulletin-kind-tabs" id="bulletinKindTabs" role="tablist">
+        <button type="button" class="kind-tab active" data-kind="weekly" role="tab" aria-selected="true">주보</button>
+        <button type="button" class="kind-tab" data-kind="monthly" role="tab" aria-selected="false">용머리 까치 (월보)</button>
+      </div>
       <div class="bulletin-year-tabs" id="bulletinYearTabs"></div>
       <ul class="bulletin-week-list" id="bulletinWeekList"></ul>
     </div>
@@ -2174,15 +2185,18 @@
   lightbox.addEventListener('click', e => { if(e.target === lightbox) lightbox.classList.remove('open'); });
 
   // Bulletin (주보) archive — 서버에서 불러옴 (관리자 페이지에서 편집)
-  // 연도별로 묶는다: { '2024': [{d,t,i:[...]}] }
-  let bulletinData = {};
+  // 주보(weekly)와 용머리 까치 월보(monthly)를 탭으로 나눈다. 연도별로 묶는다: { '2024': [{d,t,i:[...]}] }
+  const bulletinByKind = { weekly: {}, monthly: {} };
+  let bulletinKind = 'weekly';
+  let bulletinData = bulletinByKind.weekly;
+  const KIND_NAME = { weekly: '주보', monthly: '월보' };
   function groupBulletinsByYear(items){
     const byYear = {};
     items.forEach((b) => {
       const y = String(b.date || '').slice(0, 4);
       if (!y) return;
       const images = Array.isArray(b.images) && b.images.length ? b.images : (b.image ? [b.image] : []);
-      (byYear[y] = byYear[y] || []).push({ d: b.date, t: b.title || '', i: images });
+      (byYear[y] = byYear[y] || []).push({ d: b.date, t: b.title || '', i: images, k: b.kind || 'weekly' });
     });
     Object.keys(byYear).forEach((y) => byYear[y].sort((a, b) => a.d.localeCompare(b.d)));
     return byYear;
@@ -2191,14 +2205,14 @@
   // 탭에 보여줄 연도: 자료가 있는 연도 + 2010년부터 올해까지 (자료 없는 해는 비활성)
   function bulletinYearList(){
     const years = new Set(Object.keys(bulletinData));
-    for (let y = 2010; y <= new Date().getFullYear(); y++) years.add(String(y));
+    if (bulletinKind === 'weekly') for (let y = 2010; y <= new Date().getFullYear(); y++) years.add(String(y));
     return [...years].sort((a, b) => b.localeCompare(a));
   }
   let currentBulletinYear = null;
 
   function renderBulletinLatest(){
     const el = document.getElementById('bulletinLatest');
-    const all = Object.values(bulletinData).flat();
+    const all = Object.values(bulletinByKind.weekly).flat(); // 맨 위 카드는 항상 이번 주 주보
     if (!all.length) {
       el.innerHTML = `
         <div>
@@ -2241,12 +2255,12 @@
     const listEl = document.getElementById('bulletinWeekList');
     listEl.innerHTML = '';
     if (!currentBulletinYear) {
-      listEl.innerHTML = '<li class="bulletin-empty-note">연도를 선택하면 주보 목록이 표시됩니다.</li>';
+      listEl.innerHTML = `<li class="bulletin-empty-note">연도를 선택하면 ${KIND_NAME[bulletinKind]} 목록이 표시됩니다.</li>`;
       return;
     }
     const items = bulletinData[currentBulletinYear];
     if (!items || !items.length) {
-      listEl.innerHTML = '<li class="bulletin-empty-note">아직 등록된 주보가 없습니다. 자료가 확보되는 대로 추가하겠습니다.</li>';
+      listEl.innerHTML = `<li class="bulletin-empty-note">아직 등록된 ${KIND_NAME[bulletinKind]}가 없습니다. 자료가 확보되는 대로 추가하겠습니다.</li>`;
       return;
     }
     items.slice().reverse().forEach(item => {
@@ -2263,16 +2277,33 @@
 
   function openBulletin(item){
     lightboxInner.classList.remove('has-nav', 'is-photo');
-    lightboxImg.innerHTML = item.i.map(src => `<img src="${escapeHtml(src)}" alt="${escapeHtml(item.d)} 주보" referrerpolicy="no-referrer">`).join('');
+    const kindName = item.k === 'monthly' ? '월보' : '주보';
+    lightboxImg.innerHTML = item.i.map(src => `<img src="${escapeHtml(src)}" alt="${escapeHtml(item.d)} ${kindName}" loading="lazy" referrerpolicy="no-referrer">`).join('');
     lightboxCap.textContent = `${item.d} · ${item.t}` + (item.i.length > 1 ? ` (${item.i.length}면, 아래로 넘겨 보세요)` : '');
     lightbox.classList.add('open');
   }
 
-  loadContent('bulletins').then((data) => {
-    bulletinData = groupBulletinsByYear((data && data.items) || []);
-    renderBulletinLatest();
+  function setBulletinKind(kind){
+    bulletinKind = kind;
+    bulletinData = bulletinByKind[kind];
+    const years = Object.keys(bulletinData).sort();
+    currentBulletinYear = kind === 'monthly' ? (years[years.length - 1] || null) : null; // 월보는 가장 최근 해를 바로 펼침
+    document.querySelectorAll('#bulletinKindTabs .kind-tab').forEach((b) => {
+      const on = b.dataset.kind === kind;
+      b.classList.toggle('active', on); b.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
     renderBulletinYearTabs();
     renderBulletinWeekList();
+  }
+  document.querySelectorAll('#bulletinKindTabs .kind-tab').forEach((b) => b.addEventListener('click', () => setBulletinKind(b.dataset.kind)));
+
+  loadContent('bulletins').then((data) => {
+    const items = (data && data.items) || [];
+    bulletinByKind.weekly = groupBulletinsByYear(items.filter((b) => b.kind !== 'monthly'));
+    bulletinByKind.monthly = groupBulletinsByYear(items.filter((b) => b.kind === 'monthly'));
+    document.getElementById('bulletinKindTabs').hidden = !Object.keys(bulletinByKind.monthly).length; // 월보가 없으면 탭 숨김
+    renderBulletinLatest();
+    setBulletinKind(bulletinKind);
   }).catch((err) => console.error('주보 불러오기 실패', err));
 
   // Schedule (본당 일정): 서버에서 불러옴 (관리자 페이지에서 편집)

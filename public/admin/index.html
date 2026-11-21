@@ -78,7 +78,7 @@
   label.f { display: block; font-weight: 700; margin: 18px 0 6px; }
   label.f:first-child { margin-top: 0; }
   label.f small { font-weight: 400; color: var(--ink-soft); font-size: .8rem; margin-left: 6px; }
-  input[type=text], input[type=date], input[type=email], textarea {
+  input[type=text], input[type=date], input[type=email], textarea, select {
     width: 100%; font: inherit; font-size: 1.05rem; padding: 13px 14px; border: 2px solid var(--line);
     border-radius: 10px; background: #fff; color: var(--ink);
   }
@@ -451,6 +451,7 @@
       const cover = section === 'bulletins' ? (it.images || [])[0] : section === 'gallery' ? (it.photos || [])[0] : '';
       let meta = esc(it.date || '');
       if (section === 'notices' && it.tag) meta += ' · ' + esc(it.tag);
+      if (section === 'bulletins' && it.kind === 'monthly') meta = '월보 · ' + meta;
       if (section === 'bulletins' && (it.images || []).length > 1) meta += ' · ' + it.images.length + '장';
       if (section === 'gallery') meta += ' · 사진 ' + (it.photos || []).length + '장';
       return `
@@ -533,8 +534,13 @@
         <label class="f">내용</label><textarea data-k="body" maxlength="5000" placeholder="공지 내용을 적어주세요.">${esc(item.body || '')}</textarea>`;
     } else if (section === 'bulletins') {
       html = `
-        ${dateField('주보 날짜 (주일)', item.date)}
-        <label class="f">제목 <small>예: 연중 제23주일</small></label><input type="text" data-k="title" value="${esc(item.title || '')}" maxlength="120">
+        <label class="f">종류</label>
+        <select data-k="kind">
+          <option value="weekly"${item.kind === 'monthly' ? '' : ' selected'}>주보 (매주)</option>
+          <option value="monthly"${item.kind === 'monthly' ? ' selected' : ''}>용머리 까치 월보</option>
+        </select>
+        ${dateField('날짜 (주보는 주일, 월보는 발행일)', item.date)}
+        <label class="f">제목 <small>예: 연중 제23주일 / 2026년 성탄 및 신년호</small></label><input type="text" data-k="title" value="${esc(item.title || '')}" maxlength="120">
         <label class="f">주보 사진 <small>앞면·뒷면 등 여러 장 가능. 새로 고르면 기존 사진은 전부 바뀝니다</small></label><div data-file></div>`;
     } else if (section === 'schedule') {
       html = `
@@ -591,7 +597,7 @@
         return;
       }
       const images = blobs.length ? blobs.map((b) => b.path) : (item.images || []);
-      send(method, path, { date, title, images, blobs }, '저장하는 중입니다…');
+      send(method, path, { date, title, kind: val('kind') === 'monthly' ? 'monthly' : 'weekly', images, blobs }, '저장하는 중입니다…');
     });
   }
 

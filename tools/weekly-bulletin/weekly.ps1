@@ -238,7 +238,7 @@ function Process([datetime]$d, $state) {
   if ($DryRun) { Log "$ds [미리보기] $($rels -join ', ') → $outRoot"; Add-Schedule $ds $state; return }
 
   # 홈페이지에 이미 이 날짜 주보가 있는지 (관리자 페이지로 직접 올린 것은 건드리지 않음)
-  $ex = @(D1-Query "SELECT id FROM bulletins WHERE date=$(Q $ds) ORDER BY id")  # @( ): 한 줄 결과도 배열로(PS 5.1은 한 개짜리 .Count가 없음)
+  $ex = @(D1-Query "SELECT id FROM bulletins WHERE date=$(Q $ds) AND kind='weekly' ORDER BY id")  # @( ): 한 줄 결과도 배열로(PS 5.1은 한 개짜리 .Count가 없음)
   if ($ex.Count -gt 0 -and (-not $prev -or $prev.manual)) {
     Log "$ds 홈페이지에 이미 있음(직접 올린 것) → 주보 그림은 건너뜀, 일정만 확인"; Git -C $Wt reset -q --hard origin/main
     $state[$ds] = @{ file = $f.FullName; mtime = $mt; manual = $true; at = (Get-Date).ToString('s'); sched = $false }
@@ -266,13 +266,13 @@ function Process([datetime]$d, $state) {
     for ($i = 0; $i -lt $rels.Count; $i++) { $sql.Add("INSERT INTO bulletin_images (bulletin_id, path, position) VALUES ($id, $(Q $rels[$i]), $i);") }
   } else {
     $sql.Add("INSERT INTO bulletins (date, title) VALUES ($(Q $ds), $(Q $title));")
-    for ($i = 0; $i -lt $rels.Count; $i++) { $sql.Add("INSERT INTO bulletin_images (bulletin_id, path, position) VALUES ((SELECT max(id) FROM bulletins WHERE date=$(Q $ds)), $(Q $rels[$i]), $i);") }
+    for ($i = 0; $i -lt $rels.Count; $i++) { $sql.Add("INSERT INTO bulletin_images (bulletin_id, path, position) VALUES ((SELECT max(id) FROM bulletins WHERE date=$(Q $ds) AND kind='weekly'), $(Q $rels[$i]), $i);") }
   }
   D1-File (($sql -join "`n") + "`n")
 
   # 확인: 홈페이지 자료에 이 날짜 주보와 그림이 보이는지
   $api = Invoke-RestMethod "$Site/api/home" -Headers @{ 'Cache-Control' = 'no-cache' }
-  $b = @($api.bulletins) | Where-Object { $_.date -eq $ds } | Select-Object -First 1
+  $b = @($api.bulletins) | Where-Object { $_.date -eq $ds -and $_.kind -ne 'monthly' } | Select-Object -First 1
   if (-not $b -or @($b.images).Count -ne $rels.Count) { throw "$ds 홈페이지 확인 실패" }
   $state[$ds] = @{ file = $f.FullName; mtime = $mt; title = $title; images = $rels; at = (Get-Date).ToString('s'); sched = $false }
   Save-State $state
