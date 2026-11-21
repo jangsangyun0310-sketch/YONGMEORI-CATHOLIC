@@ -1,7 +1,7 @@
 ﻿# 용머리 까치(주보) 자동 올림 — 윈도우 작업 스케줄러가 매주 금요일 18시에 올리고 토요일 10시에 다시 확인 (install.ps1로 등록)
 #  1) F:\1BONA\8용머리까치\연도년까치\ 에서 이번 주일 날짜의 주보 한글 파일을 찾는다 (가장 나중에 고친 것)
 #  2) 한글 2020으로 쪽마다 그림을 만든다
-#  3) 원칙(2026-11-14 사용자): 앞뒷면은 모두 보여 준다. 양면 인쇄 때문에 같은 내용이 반복된 쪽만 뺀다
+#  3) 원칙(2026-11-14 사용자): 앞뒷면은 모두 보여 준다. 양면 인쇄 때문에 같은 내용이 반복된 쪽, 지난 호가 남은 쪽은 뺀다
 #  4) 그림을 저장소에 commit·push → 배포 확인 → D1(bulletins, bulletin_images)에 넣는다
 #  5) 주보 글에 나온 일정을 홈페이지 본당 일정에 넣는다(schedule.mjs, 이미 있는 일정은 건너뜀)
 # 수동 실행 예: powershell -ExecutionPolicy Bypass -File weekly.ps1 -Date 2026.11.22 -DryRun
@@ -125,6 +125,25 @@ function ThumbH($img, [int]$x, [int]$y, [int]$w, [int]$h) {
   $small.Dispose(); return , $v
 }
 function HalfDiff($a, $ay, $b, $by, [int]$h) { return [ShiftDiff]::Min((ThumbH $a 0 $ay $a.Width $h), (ThumbH $b 0 $by $b.Width $h), 64, 240, 30) }
+# 1쪽 머리글(로고·"용머리 까치" 제목, 오른쪽 날짜 칸 제외)이 2쪽 위쪽이나 가운데에 또 나오는지 — 가장 작은 차이
+# 2026.11.22: 한글 파일 2쪽에 지난 호(11.15)가 남아 있어 두 장이 올라감. 시험: 그 경우 0.012, 진짜 A4 앞뒷면 33호는 모두 0.055 이상
+function ThumbR($img, [int]$x, [int]$y, [int]$w, [int]$h, [int]$sw, [int]$sh) {
+  $small = New-Object System.Drawing.Bitmap $sw, $sh
+  $g = [System.Drawing.Graphics]::FromImage($small)
+  $g.DrawImage($img, (New-Object System.Drawing.Rectangle 0, 0, $sw, $sh), (New-Object System.Drawing.Rectangle $x, $y, $w, $h), [System.Drawing.GraphicsUnit]::Pixel); $g.Dispose()
+  $v = New-Object 'double[]' ($sw * $sh)
+  for ($i = 0; $i -lt $sw; $i++) { for ($j = 0; $j -lt $sh; $j++) { $v[$i * $sh + $j] = $small.GetPixel($i, $j).GetBrightness() } }
+  $small.Dispose(); return , $v
+}
+function MastheadDiff($p1, $p2) {
+  $a = ThumbR $p1 0 0 ([int]($p1.Width * 0.68)) ([int]($p1.Height * 0.10)) 136 40
+  $best = 9.0
+  foreach ($y0 in @(0, [int]($p2.Height / 2))) {
+    $b = ThumbR $p2 0 $y0 ([int]($p2.Width * 0.68)) ([int]($p2.Height * 0.10)) 136 40
+    $d = [ShiftDiff]::Min($a, $b, 136, 40, 8); if ($d -lt $best) { $best = $d }
+  }
+  return $best
+}
 function Ink($img) { $v = Thumb $img 0 0 $img.Width $img.Height; return @($v | Where-Object { $_ -lt 0.85 }).Count / $v.Length }
 function StackFull($a, $b) {
   $bmp = New-Object System.Drawing.Bitmap $a.Width, ($a.Height + $b.Height)
@@ -156,6 +175,9 @@ function Decide-Pages($files) {
     $d1 = HalfDiff $p1 $h $p2 0 $h
     $d2 = HalfDiff $p1 0 $p2 $h $h
     if ($d1 -lt 0.05 -and $d2 -lt 0.05) { $p2.Dispose(); return @{ layout = "양면 인쇄용(같은 내용 반복) → 1쪽만 [$([Math]::Round($d1,3)), $([Math]::Round($d2,3))]"; pages = @($p1) } }
+    # 2쪽에 주보 머리글이 또 있으면(지난 호가 남은 쪽 등) 1쪽이 이미 앞·뒷면 한 장 → 1쪽만
+    $m = MastheadDiff $p1 $p2
+    if ($m -lt 0.03) { $p2.Dispose(); return @{ layout = "2쪽에 주보 머리글이 또 있음(지난 호가 남은 쪽 등) → 1쪽만 [$([Math]::Round($m,3))]"; pages = @($p1) } }
     if ((Ink $p2) -lt 0.003) { $p2.Dispose(); return @{ layout = '2쪽이 빈 쪽 → 1쪽만'; pages = @($p1) } }
     return @{ layout = "A4 앞뒷면 2장 [$([Math]::Round($d1,3)), $([Math]::Round($d2,3))]"; pages = @($p1, $p2) }
   }
