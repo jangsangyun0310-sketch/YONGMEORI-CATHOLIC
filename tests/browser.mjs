@@ -93,9 +93,12 @@ try {
   await page.screenshot({ path: `${OUT}/home-album.png` });
   await page.click('#lightboxClose');
 
-  // 오늘 날짜를 눌러 일정 보기
-  await page.click('#calBody .cal-day.today');
+  // 누르지 않아도 오늘 일정이 바로 보여야 함
+  assert.ok(await page.$('#calBody .cal-day.today.selected'), '처음부터 오늘 날짜가 골라져 있어야 함');
   await page.waitForSelector('#calDetail .cal-item-title');
+  assert.match(await page.textContent('#calDetail .cal-detail-date'), /^오늘 · /);
+  await page.locator('#schedule').scrollIntoViewIfNeeded();
+  await page.screenshot({ path: `${OUT}/home-schedule-today.png` });
   // 공휴일(예: 추석 연휴)이 겹치면 공휴일이 먼저 나오므로 목록 안에 있는지만 본다
   const dayTitles = await page.$$eval('#calDetail .cal-item-title', (els) => els.map((e) => e.textContent));
   assert.ok(dayTitles.includes('오늘의 본당 행사'), JSON.stringify(dayTitles));

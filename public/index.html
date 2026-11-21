@@ -2386,10 +2386,11 @@
   const today = new Date();
   let calYear = today.getFullYear();
   let calMonth = today.getMonth() + 1;
-  let calSelected = null;
-
   function pad2(n){ return String(n).padStart(2, '0'); }
   function dateKey(y, m, d){ return `${y}-${pad2(m)}-${pad2(d)}`; }
+  // 처음 열면 오늘 날짜를 골라 둔 상태로 시작해서, 누르지 않아도 오늘 일정이 바로 보이게 한다
+  const todayKey = dateKey(today.getFullYear(), today.getMonth() + 1, today.getDate());
+  let calSelected = todayKey;
   function monthDayKey(m, d){ return `${pad2(m)}-${pad2(d)}`; }
   function isHoliday(y, m, d){
     return !!(fixedHolidayNames[monthDayKey(m, d)] || lunarHolidayNames[dateKey(y, m, d)]);
@@ -2453,9 +2454,10 @@
     }
     const [y, m, d] = calSelected.split('-').map(Number);
     const items = getEvents(y, m, d);
-    let html = `<div class="cal-detail-date">${y}년 ${m}월 ${d}일</div>`;
+    const isToday = calSelected === todayKey;
+    let html = `<div class="cal-detail-date">${isToday ? '오늘 · ' : ''}${y}년 ${m}월 ${d}일 (${SCHEDULE_DOW[new Date(y, m - 1, d).getDay()]})</div>`;
     if (!items.length) {
-      html += '<div class="cal-detail-empty">등록된 일정이 없습니다.</div>';
+      html += `<div class="cal-detail-empty">${isToday ? '오늘은 ' : ''}등록된 일정이 없습니다.</div>`;
     } else {
       html += items.map(item => {
         const metaParts = [];
